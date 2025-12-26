@@ -9,11 +9,18 @@ import SwiftUI
 
 struct MoreTabView: View {
     var body: some View {
-        PlaceholderView(
-            icon: "ellipsis",
-            title: "更多",
-            subtitle: "更多功能模块"
-        )
+        NavigationStack {
+            List {
+                Section("开发者工具") {
+                    NavigationLink {
+                        SupabaseTestView()
+                    } label: {
+                        Label("Supabase 连接测试", systemImage: "network")
+                    }
+                }
+            }
+            .navigationTitle("更多")
+        }
     }
 }
 
