@@ -8,10 +8,10 @@
 import SwiftUI
 import Supabase
 
-// 初始化 Supabase 客户端
+// 初始化 Supabase 客户端（使用 AppConfig 配置）
 let supabase = SupabaseClient(
-    supabaseURL: URL(string: "https://zkcjvhdhartrrekzjtjg.supabase.co")!,
-    supabaseKey: "sb_publishable_uVzbdyBvBhzQi9WV3uOlBA_GWGGrR07"
+    supabaseURL: URL(string: AppConfig.Supabase.projectURL)!,
+    supabaseKey: AppConfig.Supabase.publishableKey
 )
 
 struct SupabaseTestView: View {

@@ -595,42 +595,110 @@ struct AuthView: View {
     // MARK: - ==================== 第三方登录 ====================
     private var thirdPartyLoginView: some View {
         VStack(spacing: 12) {
-            // Apple 登录
-            Button {
-                showToastMessage("即将开放")
-            } label: {
-                HStack {
-                    Image(systemName: "apple.logo")
-                        .font(.title3)
-                    Text("通过 Apple 登录")
-                        .fontWeight(.semibold)
+            // Apple 登录按钮（符合 Apple Human Interface Guidelines）
+            if AppConfig.Features.enableAppleSignIn {
+                Button {
+                    Task {
+                        await authManager.signInWithApple()
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "apple.logo")
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("通过 Apple 登录")
+                            .font(.system(size: 17, weight: .semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(Color.black)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    )
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.black)
-                .foregroundColor(.white)
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                )
+                .disabled(authManager.isLoading)
             }
 
-            // Google 登录
-            Button {
-                showToastMessage("即将开放")
-            } label: {
-                HStack {
-                    Image(systemName: "g.circle.fill")
-                        .font(.title3)
-                    Text("通过 Google 登录")
-                        .fontWeight(.semibold)
+            // Google 登录按钮
+            if AppConfig.Features.enableGoogleSignIn {
+                Button {
+                    Task {
+                        await authManager.signInWithGoogle()
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        // Google "G" Logo
+                        googleLogo
+                            .frame(width: 18, height: 18)
+                        Text("通过 Google 登录")
+                            .font(.system(size: 17, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(Color.white)
+                    .foregroundColor(Color(red: 0.26, green: 0.26, blue: 0.26))
+                    .cornerRadius(12)
+                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.white)
-                .foregroundColor(.black)
-                .cornerRadius(12)
+                .disabled(authManager.isLoading)
+            }
+        }
+    }
+
+    // MARK: - Google Logo（多色 G 图标）
+    private var googleLogo: some View {
+        // Google 官方多色 "G" 图标的 SwiftUI 实现
+        GeometryReader { geometry in
+            let size = min(geometry.size.width, geometry.size.height)
+            ZStack {
+                // 蓝色部分（右侧）
+                Path { path in
+                    path.move(to: CGPoint(x: size * 0.96, y: size * 0.5))
+                    path.addLine(to: CGPoint(x: size * 0.5, y: size * 0.5))
+                    path.addLine(to: CGPoint(x: size * 0.5, y: size * 0.68))
+                    path.addLine(to: CGPoint(x: size * 0.82, y: size * 0.68))
+                    path.addCurve(
+                        to: CGPoint(x: size * 0.5, y: size * 0.96),
+                        control1: CGPoint(x: size * 0.78, y: size * 0.84),
+                        control2: CGPoint(x: size * 0.66, y: size * 0.96)
+                    )
+                }
+                .fill(Color(red: 0.26, green: 0.52, blue: 0.96))
+
+                // 绿色部分（右下）
+                Path { path in
+                    path.move(to: CGPoint(x: size * 0.5, y: size * 0.96))
+                    path.addCurve(
+                        to: CGPoint(x: size * 0.04, y: size * 0.5),
+                        control1: CGPoint(x: size * 0.24, y: size * 0.96),
+                        control2: CGPoint(x: size * 0.04, y: size * 0.76)
+                    )
+                }
+                .stroke(Color(red: 0.20, green: 0.66, blue: 0.33), lineWidth: size * 0.18)
+
+                // 黄色部分（左下）
+                Path { path in
+                    path.move(to: CGPoint(x: size * 0.04, y: size * 0.5))
+                    path.addCurve(
+                        to: CGPoint(x: size * 0.26, y: size * 0.16),
+                        control1: CGPoint(x: size * 0.04, y: size * 0.34),
+                        control2: CGPoint(x: size * 0.12, y: size * 0.22)
+                    )
+                }
+                .stroke(Color(red: 0.98, green: 0.74, blue: 0.02), lineWidth: size * 0.18)
+
+                // 红色部分（左上）
+                Path { path in
+                    path.move(to: CGPoint(x: size * 0.26, y: size * 0.16))
+                    path.addCurve(
+                        to: CGPoint(x: size * 0.96, y: size * 0.5),
+                        control1: CGPoint(x: size * 0.46, y: size * 0.04),
+                        control2: CGPoint(x: size * 0.78, y: size * 0.14)
+                    )
+                }
+                .stroke(Color(red: 0.92, green: 0.26, blue: 0.21), lineWidth: size * 0.18)
             }
         }
     }

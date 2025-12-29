@@ -10,6 +10,10 @@ import Supabase
 import Combine
 import AuthenticationServices
 import CryptoKit
+import UIKit
+
+// Google Sign-In SDK - 通过 SPM 安装后取消注释
+import GoogleSignIn
 
 /// 认证管理器
 /// 负责处理所有认证相关的逻辑，包括注册、登录、找回密码等
@@ -321,28 +325,47 @@ final class AuthManager: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - ==================== 第三方登录（预留） ====================
+    // MARK: - ==================== 第三方登录 ====================
 
     /// Apple 登录
-    /// - TODO: 实现 Apple 登录流程
+    /// 使用 Sign in with Apple 获取 identity token，通过 Nonce 验证后交给 Supabase 认证
+    ///
+    /// 安全流程：
+    /// 1. 生成随机 raw nonce（32字节随机字符串）
+    /// 2. 计算 nonce 的 SHA256 哈希值
+    /// 3. 将 hashed nonce 发送给 Apple 进行签名
+    /// 4. Apple 返回包含 hashed nonce 的 identity token
+    /// 5. 将 identity token 和 raw nonce 发送给 Supabase
+    /// 6. Supabase 验证 token 中的 hashed nonce 是否与 raw nonce 的 SHA256 匹配
+    ///
+    /// 配置步骤：
+    /// 1. 在 Xcode 的 Signing & Capabilities 中添加 "Sign in with Apple"
+    /// 2. 在 Apple Developer Console 配置 App ID 启用 Sign in with Apple
+    /// 3. 在 Supabase Dashboard 启用 Apple provider
     func signInWithApple() async {
         isLoading = true
         errorMessage = nil
 
         do {
-            // 生成 nonce
-            let nonce = randomNonceString()
-            currentNonce = nonce
+            // 1. 生成随机 nonce（raw nonce）
+            // 这个 nonce 会被保存，稍后发送给 Supabase 进行验证
+            let rawNonce = randomNonceString()
+            currentNonce = rawNonce
 
-            // 创建 Apple ID 请求
+            // 2. 计算 nonce 的 SHA256 哈希值（hashed nonce）
+            // Apple 会将这个哈希值嵌入到返回的 identity token 中
+            let hashedNonce = sha256(rawNonce)
+
+            // 3. 创建 Apple ID 授权请求
             let request = ASAuthorizationAppleIDProvider().createRequest()
             request.requestedScopes = [.fullName, .email]
-            request.nonce = sha256(nonce)
+            request.nonce = hashedNonce  // 发送 hashed nonce 给 Apple
 
-            // 执行授权
+            // 4. 执行授权请求
             let controller = ASAuthorizationController(authorizationRequests: [request])
             controller.delegate = self
 
+            // 使用 continuation 将回调转换为 async/await
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                 self.appleSignInContinuation = continuation
                 controller.performRequests()
@@ -352,17 +375,70 @@ final class AuthManager: NSObject, ObservableObject {
         } catch {
             isLoading = false
             errorMessage = mapAuthError(error)
+            print("❌ Apple Sign-In error: \(error.localizedDescription)")
         }
     }
 
     /// Google 登录
-    /// - TODO: 实现 Google 登录流程
+    /// 使用 GoogleSignIn SDK 获取 OpenID Connect token，然后通过 Supabase 验证
+    ///
+    /// 配置步骤：
+    /// 1. 在 Google Cloud Console 创建 OAuth 2.0 客户端 ID（iOS 类型）
+    /// 2. 将 Client ID 填入 AppConfig.GoogleSignIn.clientId
+    /// 3. 在 Info.plist 添加 URL Scheme（反转的 Client ID）
+    /// 4. 在 Supabase Dashboard 启用 Google provider 并配置 Client ID/Secret
     func signInWithGoogle() async {
-        // TODO: 实现 Google 登录
-        // 1. 集成 Google Sign-In SDK
-        // 2. 获取 idToken
-        // 3. 调用 supabase.auth.signInWithIdToken(credentials: .init(provider: .google, idToken: idToken))
-        errorMessage = "Google 登录暂未实现"
+        // 检查是否已配置 Google Client ID
+        guard AppConfig.GoogleSignIn.isConfigured else {
+            errorMessage = "Google 登录未配置，请先设置 Client ID"
+            print("⚠️ Google Sign-In: 请在 AppConfig.GoogleSignIn.clientId 中填入你的 Client ID")
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            // 获取当前窗口的 rootViewController
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let rootViewController = windowScene.windows.first?.rootViewController else {
+                throw NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "无法获取根视图控制器"])
+            }
+
+            // 配置 Google Sign-In
+            let config = GIDConfiguration(clientID: AppConfig.GoogleSignIn.clientId)
+            GIDSignIn.sharedInstance.configuration = config
+
+            // 执行 Google 登录
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+
+            // 获取 ID Token（OpenID Connect token）
+            guard let idToken = result.user.idToken?.tokenString else {
+                throw NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "无法获取 Google ID Token"])
+            }
+
+            // 使用 Supabase 验证 Google token
+            let session = try await supabase.auth.signInWithIdToken(
+                credentials: .init(
+                    provider: .google,
+                    idToken: idToken
+                )
+            )
+
+            currentUser = session.user
+            isAuthenticated = true
+            print("✅ Google 登录成功: \(session.user.email ?? "unknown")")
+
+            isLoading = false
+        } catch {
+            isLoading = false
+            if (error as NSError).code == GIDSignInError.canceled.rawValue {
+                errorMessage = "用户取消了登录"
+            } else {
+                errorMessage = mapAuthError(error)
+            }
+            print("❌ Google Sign-In error: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - ==================== 其他方法 ====================
