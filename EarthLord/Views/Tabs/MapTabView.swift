@@ -11,6 +11,7 @@
 import SwiftUI
 import CoreLocation
 import Combine
+import Supabase
 
 /// 地图页面主视图
 struct MapTabView: View {
@@ -22,6 +23,12 @@ struct MapTabView: View {
 
     /// 领地管理器
     @ObservedObject private var territoryManager = TerritoryManager.shared
+
+    /// 认证管理器
+    @ObservedObject private var authManager = AuthManager.shared
+
+    /// 已加载的领地列表
+    @State private var territories: [Territory] = []
 
     /// 用户位置坐标
     @State private var userLocation: CLLocationCoordinate2D?
@@ -77,7 +84,9 @@ struct MapTabView: View {
                 pathUpdateVersion: locationManager.pathUpdateVersion,
                 isTracking: locationManager.isTracking,
                 isPathClosed: locationManager.isPathClosed,
-                showsUserLocation: true
+                showsUserLocation: true,
+                territories: territories,
+                currentUserId: authManager.currentUser?.id.uuidString
             )
             .ignoresSafeArea()
 
@@ -418,6 +427,11 @@ struct MapTabView: View {
             print("🗺️ [地图页面] 已授权，开始定位")
             locationManager.startUpdatingLocation()
         }
+
+        // 加载所有领地
+        Task {
+            await loadTerritories()
+        }
     }
 
     /// 居中到用户位置
@@ -497,6 +511,9 @@ struct MapTabView: View {
                 }
             }
 
+            // 刷新领地列表
+            await loadTerritories()
+
         } catch {
             print("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
 
@@ -514,6 +531,18 @@ struct MapTabView: View {
         }
 
         isUploading = false
+    }
+
+    /// 加载所有领地
+    private func loadTerritories() async {
+        do {
+            territories = try await territoryManager.loadAllTerritories()
+            TerritoryLogger.shared.log("加载了 \(territories.count) 个领地", type: .info)
+            print("🗺️ [地图页面] 加载了 \(territories.count) 个领地")
+        } catch {
+            TerritoryLogger.shared.log("加载领地失败: \(error.localizedDescription)", type: .error)
+            print("🗺️ [地图页面] 加载领地失败: \(error.localizedDescription)")
+        }
     }
 }
 

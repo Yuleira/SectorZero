@@ -692,6 +692,9 @@
         }
       }
     },
+    "领地登记成功！" : {
+
+    },
     "验证中..." : {
       "extractionState" : "manual",
       "localizations" : {
