@@ -19,6 +19,9 @@ struct Territory: Codable, Identifiable {
     let area: Double
     let pointCount: Int?
     let isActive: Bool?
+    let completedAt: String?      // 完成时间
+    let startedAt: String?        // 开始时间
+    let createdAt: String?        // 创建时间
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -28,6 +31,9 @@ struct Territory: Codable, Identifiable {
         case area
         case pointCount = "point_count"
         case isActive = "is_active"
+        case completedAt = "completed_at"
+        case startedAt = "started_at"
+        case createdAt = "created_at"
     }
 
     /// 将 path 转换为 CLLocationCoordinate2D 数组
@@ -36,5 +42,47 @@ struct Territory: Codable, Identifiable {
             guard let lat = point["lat"], let lon = point["lon"] else { return nil }
             return CLLocationCoordinate2D(latitude: lat, longitude: lon)
         }
+    }
+
+    /// 格式化面积显示
+    var formattedArea: String {
+        if area >= 1_000_000 {
+            return String(format: "%.2f km²", area / 1_000_000)
+        } else {
+            return String(format: "%.0f m²", area)
+        }
+    }
+
+    /// 显示名称（如果没有名称则显示默认值）
+    var displayName: String {
+        return name ?? "未命名领地"
+    }
+
+    /// 格式化完成时间
+    var formattedCompletedAt: String? {
+        guard let completedAt = completedAt else { return nil }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        // 尝试带毫秒解析
+        if let date = formatter.date(from: completedAt) {
+            return formatDate(date)
+        }
+
+        // 尝试不带毫秒解析
+        formatter.formatOptions = [.withInternetDateTime]
+        if let date = formatter.date(from: completedAt) {
+            return formatDate(date)
+        }
+
+        return nil
+    }
+
+    /// 格式化日期为本地显示
+    private func formatDate(_ date: Date) -> String {
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        displayFormatter.locale = Locale(identifier: "zh_CN")
+        return displayFormatter.string(from: date)
     }
 }
