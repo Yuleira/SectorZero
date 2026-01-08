@@ -64,17 +64,6 @@ final class LocationManager: NSObject, ObservableObject {
     /// 计算出的领地面积（平方米）
     @Published var calculatedArea: Double = 0
 
-    // MARK: - 碰撞检测属性
-
-    /// 当前碰撞检测结果
-    @Published var collisionResult: CollisionResult = .safe
-
-    /// 碰撞预警消息（显示在横幅中）
-    @Published var collisionWarning: String?
-
-    /// 是否因碰撞而停止圈地
-    @Published var isCollisionStopped: Bool = false
-
     // MARK: - 私有属性
 
     /// CoreLocation 定位管理器
@@ -201,8 +190,7 @@ final class LocationManager: NSObject, ObservableObject {
     // MARK: - 路径追踪方法
 
     /// 开始路径追踪
-    /// - Parameter currentUserId: 当前用户ID（用于碰撞检测排除自己的领地）
-    func startPathTracking(currentUserId: String? = nil) {
+    func startPathTracking() {
         guard isAuthorized else {
             print("📍 [路径追踪] ⚠️ 未授权，无法开始追踪")
             return
@@ -220,11 +208,6 @@ final class LocationManager: NSObject, ObservableObject {
         lastLocationTimestamp = nil
         lastLocationForSpeed = nil
 
-        // 重置碰撞检测状态
-        collisionResult = .safe
-        collisionWarning = nil
-        isCollisionStopped = false
-
         // 标记开始追踪
         isTracking = true
 
@@ -236,24 +219,6 @@ final class LocationManager: NSObject, ObservableObject {
         // 如果有当前位置，立即记录第一个点
         if let location = currentLocation {
             let coordinate = location.coordinate
-
-            // 检查起点是否在他人领地内
-            if let userId = currentUserId {
-                let startPointResult = TerritoryManager.shared.checkPointCollision(
-                    location: coordinate,
-                    currentUserId: userId
-                )
-                if startPointResult.hasCollision {
-                    // 起点在他人领地内，停止圈地
-                    collisionResult = startPointResult
-                    collisionWarning = startPointResult.message
-                    isCollisionStopped = true
-                    isTracking = false
-                    TerritoryLogger.shared.log("起点碰撞检测：在他人领地内，无法开始", type: .error)
-                    return
-                }
-            }
-
             pathCoordinates.append(coordinate)
             pathUpdateVersion += 1
             // 初始化速度检测的起始点
@@ -262,17 +227,11 @@ final class LocationManager: NSObject, ObservableObject {
             print("📍 [路径追踪] 记录起始点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
         }
 
-        // 保存用户ID用于后续碰撞检测
-        currentTrackingUserId = currentUserId
-
         // 启动定时器，每 2 秒检查一次是否需要记录新点
         pathUpdateTimer = Timer.scheduledTimer(withTimeInterval: pathUpdateInterval, repeats: true) { [weak self] _ in
             self?.recordPathPoint()
         }
     }
-
-    /// 当前用户ID（用于碰撞检测）
-    private var currentTrackingUserId: String?
 
     /// 停止路径追踪
     func stopPathTracking() {
@@ -299,12 +258,6 @@ final class LocationManager: NSObject, ObservableObject {
         isOverSpeed = false
         lastLocationTimestamp = nil
         lastLocationForSpeed = nil
-
-        // 重置碰撞检测状态
-        collisionResult = .safe
-        collisionWarning = nil
-        isCollisionStopped = false
-        currentTrackingUserId = nil
     }
 
     /// 清除路径
@@ -367,27 +320,7 @@ final class LocationManager: NSObject, ObservableObject {
         lastLocationForSpeed = location
         lastLocationTimestamp = Date()
 
-        // 5. 碰撞检测（实时检测路径是否穿越他人领地）
-        if let userId = currentTrackingUserId {
-            let result = TerritoryManager.shared.checkPathCollisionComprehensive(
-                path: pathCoordinates,
-                currentUserId: userId
-            )
-
-            // 更新碰撞检测结果
-            collisionResult = result
-            collisionWarning = result.message
-
-            // 如果发生碰撞（violation），停止圈地
-            if result.hasCollision {
-                isCollisionStopped = true
-                TerritoryLogger.shared.log("碰撞检测：\(result.message ?? "违规")", type: .error)
-                stopPathTracking()
-                return
-            }
-        }
-
-        // 6. 检测闭环
+        // 5. 检测闭环
         checkPathClosure()
     }
 
@@ -692,13 +625,6 @@ final class LocationManager: NSObject, ObservableObject {
     func clearSpeedWarning() {
         speedWarning = nil
         isOverSpeed = false
-    }
-
-    /// 清除碰撞警告
-    func clearCollisionWarning() {
-        collisionWarning = nil
-        collisionResult = .safe
-        isCollisionStopped = false
     }
 
     // MARK: - 私有方法
