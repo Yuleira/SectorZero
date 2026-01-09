@@ -25,6 +25,12 @@ struct POIListView: View {
     /// POI 列表数据
     @State private var pois: [ExplorationPOI] = MockExplorationData.pois
 
+    /// 搜索按钮按下状态
+    @State private var isSearchButtonPressed = false
+
+    /// 列表项是否已出现（用于错开动画）
+    @State private var itemsAppeared = false
+
     /// 模拟 GPS 坐标
     private let mockCoordinate = CLLocationCoordinate2D(latitude: 22.54, longitude: 114.06)
 
@@ -70,6 +76,12 @@ struct POIListView: View {
         }
         .navigationTitle("附近地点")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // 触发列表项错开出现动画
+            withAnimation(.easeOut(duration: 0.5)) {
+                itemsAppeared = true
+            }
+        }
     }
 
     // MARK: - 状态栏
@@ -128,6 +140,13 @@ struct POIListView: View {
                     .fill(isSearching ? ApocalypseTheme.textMuted : ApocalypseTheme.primary)
             )
         }
+        .scaleEffect(isSearchButtonPressed ? 0.96 : 1.0)
+        .animation(.easeInOut(duration: 0.1), value: isSearchButtonPressed)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isSearchButtonPressed = true }
+                .onEnded { _ in isSearchButtonPressed = false }
+        )
         .disabled(isSearching)
     }
 
@@ -181,11 +200,17 @@ struct POIListView: View {
                 if filteredPOIs.isEmpty {
                     emptyView
                 } else {
-                    ForEach(filteredPOIs) { poi in
+                    ForEach(Array(filteredPOIs.enumerated()), id: \.element.id) { index, poi in
                         NavigationLink(destination: POIDetailView(poi: poi)) {
                             poiCard(poi)
                         }
                         .buttonStyle(PlainButtonStyle())
+                        .opacity(itemsAppeared ? 1 : 0)
+                        .offset(y: itemsAppeared ? 0 : 20)
+                        .animation(
+                            .easeOut(duration: 0.4).delay(Double(index) * 0.1),
+                            value: itemsAppeared
+                        )
                     }
                 }
             }

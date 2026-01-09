@@ -24,6 +24,9 @@ struct BackpackView: View {
     /// 背包物品列表
     @State private var items: [InventoryItem] = MockExplorationData.inventoryItems
 
+    /// 动画用的容量百分比
+    @State private var animatedCapacityPercentage: Double = 0
+
     // MARK: - 常量
 
     /// 背包最大容量
@@ -109,6 +112,12 @@ struct BackpackView: View {
         }
         .navigationTitle("背包")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // 容量进度条动画
+            withAnimation(.easeOut(duration: 0.8)) {
+                animatedCapacityPercentage = capacityPercentage
+            }
+        }
     }
 
     // MARK: - 容量状态卡
@@ -142,10 +151,11 @@ struct BackpackView: View {
                         .fill(ApocalypseTheme.background)
                         .frame(height: 8)
 
-                    // 进度
+                    // 进度（带动画）
                     RoundedRectangle(cornerRadius: 4)
                         .fill(capacityColor)
-                        .frame(width: geometry.size.width * min(capacityPercentage, 1.0), height: 8)
+                        .frame(width: geometry.size.width * min(animatedCapacityPercentage, 1.0), height: 8)
+                        .animation(.easeOut(duration: 0.5), value: animatedCapacityPercentage)
                 }
             }
             .frame(height: 8)
@@ -262,16 +272,22 @@ struct BackpackView: View {
             LazyVStack(spacing: 10) {
                 if filteredItems.isEmpty {
                     emptyView
+                        .transition(.opacity)
                 } else {
                     ForEach(filteredItems) { item in
                         if let definition = MockExplorationData.getItemDefinition(by: item.itemId) {
                             itemCard(item: item, definition: definition)
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .trailing)),
+                                    removal: .opacity.combined(with: .move(edge: .leading))
+                                ))
                         }
                     }
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 100) // 避开 TabBar
+            .animation(.easeInOut(duration: 0.3), value: selectedCategory)
         }
     }
 

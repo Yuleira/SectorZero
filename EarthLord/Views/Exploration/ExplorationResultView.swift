@@ -31,6 +31,12 @@ struct ExplorationResultView: View {
     @State private var showContent = false
     @State private var showItems = false
 
+    /// 数字动画进度 (0-1)
+    @State private var numberAnimationProgress: Double = 0
+
+    /// 对勾弹跳动画
+    @State private var checkmarkScale: [Bool] = []
+
     // MARK: - 计算属性
 
     /// 探索时长（秒）
@@ -75,11 +81,31 @@ struct ExplorationResultView: View {
             }
         }
         .onAppear {
+            // 初始化对勾动画状态
+            checkmarkScale = Array(repeating: false, count: result.itemsCollected.count)
+
             withAnimation(.easeOut(duration: 0.6)) {
                 showContent = true
             }
-            withAnimation(.easeOut(duration: 0.6).delay(0.3)) {
+
+            // 数字跳动动画
+            withAnimation(.easeOut(duration: 1.0).delay(0.3)) {
+                numberAnimationProgress = 1.0
+            }
+
+            withAnimation(.easeOut(duration: 0.6).delay(0.5)) {
                 showItems = true
+            }
+
+            // 对勾弹跳动画（每个间隔0.2秒）
+            for index in 0..<result.itemsCollected.count {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8 + Double(index) * 0.2) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.5)) {
+                        if index < checkmarkScale.count {
+                            checkmarkScale[index] = true
+                        }
+                    }
+                }
             }
         }
     }
@@ -160,7 +186,8 @@ struct ExplorationResultView: View {
                     title: "行走距离",
                     thisTime: formatDistance(result.distanceWalked),
                     total: formatDistance(stats.totalDistance),
-                    rank: stats.distanceRank
+                    rank: stats.distanceRank,
+                    value: result.distanceWalked
                 )
 
                 Divider()
@@ -172,7 +199,8 @@ struct ExplorationResultView: View {
                     title: "探索面积",
                     thisTime: formatArea(result.areaExplored),
                     total: formatArea(stats.totalArea),
-                    rank: stats.areaRank
+                    rank: stats.areaRank,
+                    value: result.areaExplored
                 )
 
                 Divider()
@@ -207,9 +235,9 @@ struct ExplorationResultView: View {
     }
 
     /// 单行统计数据
-    private func statRow(icon: String, title: String, thisTime: String, total: String, rank: Int) -> some View {
+    private func statRow(icon: String, title: String, thisTime: String, total: String, rank: Int, value: Double) -> some View {
         VStack(spacing: 8) {
-            // 第一行：图标 + 标题 + 本次数据
+            // 第一行：图标 + 标题 + 本次数据（带数字动画）
             HStack {
                 Image(systemName: icon)
                     .font(.system(size: 14))
@@ -222,9 +250,11 @@ struct ExplorationResultView: View {
 
                 Spacer()
 
-                Text(thisTime)
+                // 数字动画：从0增长到目标值
+                Text(formatAnimatedValue(value * numberAnimationProgress, isDistance: icon == "figure.walk"))
                     .font(.system(size: 16, weight: .semibold, design: .monospaced))
                     .foregroundColor(ApocalypseTheme.textPrimary)
+                    .contentTransition(.numericText())
             }
 
             // 第二行：累计 + 排名
@@ -238,15 +268,25 @@ struct ExplorationResultView: View {
 
                 Spacer()
 
-                // 排名
+                // 排名（带缩放动画）
                 HStack(spacing: 2) {
                     Text("#")
                         .font(.system(size: 12, weight: .medium))
-                    Text("\(rank)")
+                    Text("\(Int(Double(rank) * numberAnimationProgress))")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
                 }
                 .foregroundColor(ApocalypseTheme.success)
+                .scaleEffect(numberAnimationProgress > 0.9 ? 1.0 : 0.8)
             }
+        }
+    }
+
+    /// 格式化动画数值
+    private func formatAnimatedValue(_ value: Double, isDistance: Bool) -> String {
+        if isDistance {
+            return formatDistance(value)
+        } else {
+            return formatArea(value)
         }
     }
 
@@ -335,15 +375,17 @@ struct ExplorationResultView: View {
                 .font(.system(size: 14, weight: .semibold, design: .monospaced))
                 .foregroundColor(ApocalypseTheme.primary)
 
-            // 对勾
+            // 对勾（带弹跳动画）
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 18))
                 .foregroundColor(ApocalypseTheme.success)
+                .scaleEffect(index < checkmarkScale.count && checkmarkScale[index] ? 1.0 : 0.0)
+                .animation(.spring(response: 0.4, dampingFraction: 0.5), value: checkmarkScale)
         }
         .padding(.vertical, 4)
         .opacity(showItems ? 1 : 0)
         .offset(x: showItems ? 0 : 20)
-        .animation(.easeOut(duration: 0.3).delay(Double(index) * 0.1), value: showItems)
+        .animation(.easeOut(duration: 0.3).delay(Double(index) * 0.2), value: showItems)
     }
 
     // MARK: - 确认按钮
