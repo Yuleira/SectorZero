@@ -196,6 +196,7 @@ final class LanguageManager: ObservableObject {
             // 导航
             "地图": ["en": "Map"],
             "领地": ["en": "Territory"],
+            "资源": ["en": "Resources"],
             "个人": ["en": "Profile"],
             "更多": ["en": "More"],
 
@@ -277,6 +278,9 @@ final class LanguageManager: ObservableObject {
             "开始圈地": ["en": "Start Claiming"],
             "停止圈地": ["en": "Stop Claiming"],
             "圈地成功！领地已标记": ["en": "Claim successful! Territory marked"],
+            "定位": ["en": "Location"],
+            "探索": ["en": "Explore"],
+            "探索中...": ["en": "Exploring..."],
 
             // 测试模块
             "开发测试": ["en": "Developer Tests"],
@@ -291,6 +295,16 @@ final class LanguageManager: ObservableObject {
             "开始圈地追踪后，日志将在此显示": ["en": "Logs will appear here after starting territory tracking"],
             "清空日志": ["en": "Clear Logs"],
             "导出日志": ["en": "Export Logs"],
+
+            // 资源相关
+            "资源分段": ["en": "Resource Segments"],
+            "背包": ["en": "Backpack"],
+            "已购": ["en": "Purchased"],
+            "交易": ["en": "Trade"],
+            "领地资源": ["en": "Territory Resources"],
+            "POI列表": ["en": "POI List"],
+            "交易市场": ["en": "Trading Market"],
+            "功能开发中": ["en": "Feature in Development"],
 
             // 其他
             "地球新主": ["en": "Earth Lord"],

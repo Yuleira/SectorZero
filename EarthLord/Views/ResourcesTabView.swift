@@ -23,13 +23,13 @@ enum ResourceSegment: Int, CaseIterable {
         case .poi:
             return "POI"
         case .backpack:
-            return "背包"
+            return "背包".localized
         case .purchased:
-            return "已购"
+            return "已购".localized
         case .territory:
-            return "领地"
+            return "领地".localized
         case .trade:
-            return "交易"
+            return "交易".localized
         }
     }
 }
@@ -64,7 +64,7 @@ struct ResourcesTabView: View {
                     contentView
                 }
             }
-            .navigationTitle("资源")
+            .navigationTitle("资源".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -78,7 +78,7 @@ struct ResourcesTabView: View {
 
     /// 分段选择器
     private var segmentPicker: some View {
-        Picker("资源分段", selection: $selectedSegment) {
+        Picker("资源分段".localized, selection: $selectedSegment) {
             ForEach(ResourceSegment.allCases, id: \.self) { segment in
                 Text(segment.title)
                     .tag(segment)
@@ -92,7 +92,7 @@ struct ResourcesTabView: View {
     /// 交易开关
     private var tradeToggle: some View {
         HStack(spacing: 6) {
-            Text("交易")
+            Text("交易".localized)
                 .font(.system(size: 13))
                 .foregroundColor(ApocalypseTheme.textSecondary)
 
@@ -110,19 +110,19 @@ struct ResourcesTabView: View {
     private var contentView: some View {
         switch selectedSegment {
         case .poi:
-            placeholderView(title: "POI列表", icon: "mappin.circle.fill")
+            placeholderView(title: "POI列表".localized, icon: "mappin.circle.fill")
 
         case .backpack:
-            placeholderView(title: "背包", icon: "bag.fill")
+            placeholderView(title: "背包".localized, icon: "bag.fill")
 
         case .purchased:
-            placeholderView(title: "已购", icon: "cart.fill")
+            placeholderView(title: "已购".localized, icon: "cart.fill")
 
         case .territory:
-            placeholderView(title: "领地资源", icon: "flag.fill")
+            placeholderView(title: "领地资源".localized, icon: "flag.fill")
 
         case .trade:
-            placeholderView(title: "交易市场", icon: "arrow.left.arrow.right")
+            placeholderView(title: "交易市场".localized, icon: "arrow.left.arrow.right")
         }
     }
 
@@ -139,7 +139,7 @@ struct ResourcesTabView: View {
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(ApocalypseTheme.textSecondary)
 
-            Text("功能开发中")
+            Text("功能开发中".localized)
                 .font(.system(size: 14))
                 .foregroundColor(ApocalypseTheme.textMuted)
 
