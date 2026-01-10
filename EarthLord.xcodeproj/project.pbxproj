@@ -134,7 +134,7 @@
 			path = Exploration;
 			sourceTree = "<group>";
 		};
-		E6E50D912F12898D0096D2BB /* Managers  */ = {
+		E6E50D912F12898D0096D2BB /* Managers */ = {
 			isa = PBXGroup;
 			children = (
 				E6E50D8D2F12898D0096D2BB /* AuthManager.swift */,
@@ -142,7 +142,7 @@
 				E6E50D8F2F12898D0096D2BB /* LocationManager.swift */,
 				E6E50D902F12898D0096D2BB /* TerritoryManager.swift */,
 			);
-			path = "Managers ";
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		E6E50D952F12898D0096D2BB /* Map */ = {
@@ -213,7 +213,7 @@
 				E6E50D872F12898D0096D2BB /* Auth */,
 				E6E50D8A2F12898D0096D2BB /* Config */,
 				E6E50D8C2F12898D0096D2BB /* Exploration */,
-				E6E50D912F12898D0096D2BB /* Managers  */,
+				E6E50D912F12898D0096D2BB /* Managers */,
 				E6E50D952F12898D0096D2BB /* Map */,
 				E6E50D992F12898D0096D2BB /* Tabs */,
 				E6E50D9F2F12898D0096D2BB /* Territory */,
