@@ -47,6 +47,12 @@ final class ExplorationManager: ObservableObject {
     /// 最新探索结果
     @Published var latestResult: ExplorationResult?
 
+    /// 当前速度（米/秒）
+    @Published private(set) var currentSpeed: Double = 0
+
+    /// 速度警告消息
+    @Published private(set) var speedWarning: String?
+
     // MARK: - 私有属性
 
     private let locationManager = LocationManager.shared
@@ -56,6 +62,12 @@ final class ExplorationManager: ObservableObject {
     private var lastValidLocation: CLLocation?
     private var lastLocationTimestamp: Date?
     private var cancellables = Set<AnyCancellable>()
+
+    /// 超速警告开始时间
+    private var speedWarningStartTime: Date?
+
+    /// 速度检测定时器
+    private var speedCheckTimer: Timer?
 
     // MARK: - 配置常量
 
@@ -67,11 +79,16 @@ final class ExplorationManager: ObservableObject {
     private let minTimeInterval: TimeInterval = 1.0
     /// 采点间隔（秒）
     private let sampleInterval: TimeInterval = 3.0
+    /// 最大允许速度（米/秒）- 30km/h = 8.33m/s
+    private let maxAllowedSpeed: Double = 8.33
+    /// 超速容忍时间（秒）
+    private let speedWarningTimeout: TimeInterval = 10.0
 
     // MARK: - 初始化
 
     private init() {
-        print("🔍 [探索管理器] 初始化")
+        print("🔍 [探索管理器] 初始化完成")
+        print("🔍 [探索管理器] 配置：最大速度=\(String(format: "%.1f", maxAllowedSpeed))m/s (\(String(format: "%.0f", maxAllowedSpeed * 3.6))km/h)")
     }
 
     // MARK: - 公共方法
@@ -79,10 +96,11 @@ final class ExplorationManager: ObservableObject {
     /// 开始探索
     func startExploration() {
         guard canStartExploration() else {
+            print("🔍 [探索] ❌ 无法开始探索")
             return
         }
 
-        print("🔍 [探索] 开始探索")
+        print("🔍 [探索] ✅ 开始探索")
 
         // 重置状态
         resetExplorationData()
@@ -94,6 +112,7 @@ final class ExplorationManager: ObservableObject {
 
         // 确保定位服务运行
         if !locationManager.isUpdatingLocation {
+            print("🔍 [探索] 启动定位服务")
             locationManager.startUpdatingLocation()
         }
 
@@ -102,16 +121,21 @@ final class ExplorationManager: ObservableObject {
 
         // 启动采点定时器
         startSamplingTimer()
+
+        // 启动速度检测定时器
+        startSpeedCheckTimer()
+
+        print("🔍 [探索] 所有定时器已启动")
     }
 
     /// 结束探索
     func stopExploration() async -> ExplorationResult? {
         guard isExploring else {
-            print("🔍 [探索] 当前未在探索状态")
+            print("🔍 [探索] ⚠️ 当前未在探索状态，无法结束")
             return nil
         }
 
-        print("🔍 [探索] 结束探索，开始计算奖励...")
+        print("🔍 [探索] 🏁 结束探索，开始计算奖励...")
 
         state = .processing
         isExploring = false
@@ -122,16 +146,24 @@ final class ExplorationManager: ObservableObject {
         let endTime = Date()
         let duration = startTime.map { endTime.timeIntervalSince($0) } ?? 0
 
+        print("🔍 [探索] 探索数据 - 距离: \(String(format: "%.1f", currentDistance))m，时长: \(Int(duration))秒，采点: \(trackPoints.count)个")
+
         // 计算奖励等级
         let tier = RewardTier.from(distance: currentDistance)
+        print("🔍 [探索] 奖励等级: \(tier.displayName)")
 
         // 生成奖励物品
         var collectedItems: [CollectedItem] = []
         if tier != .none {
+            print("🔍 [探索] 开始生成奖励物品...")
             collectedItems = await RewardGenerator.shared.generateRewards(tier: tier)
+            print("🔍 [探索] 生成了 \(collectedItems.count) 个物品")
+        } else {
+            print("🔍 [探索] 未达到奖励门槛，不生成物品")
         }
 
         // 保存探索记录到数据库
+        print("🔍 [探索] 保存探索记录到数据库...")
         let sessionId = await saveExplorationSession(
             startTime: startTime ?? endTime,
             endTime: endTime,
@@ -143,11 +175,13 @@ final class ExplorationManager: ObservableObject {
 
         // 将物品保存到背包
         if let sessionId = sessionId, !collectedItems.isEmpty {
+            print("🔍 [探索] 将物品保存到背包...")
             await InventoryManager.shared.addItems(
                 collectedItems,
                 sourceType: "exploration",
                 sourceSessionId: sessionId
             )
+            print("🔍 [探索] 物品已保存到背包")
         }
 
         // 构建结果
@@ -172,7 +206,7 @@ final class ExplorationManager: ObservableObject {
         latestResult = result
         state = .completed
 
-        print("🔍 [探索] 探索完成，距离: \(String(format: "%.1f", currentDistance))m，等级: \(tier.displayName)，物品: \(collectedItems.count)个")
+        print("🔍 [探索] ✅ 探索完成 - 距离: \(String(format: "%.1f", currentDistance))m，等级: \(tier.displayName)，物品: \(collectedItems.count)个，经验: \(result.experienceGained)")
 
         return result
     }
@@ -181,12 +215,55 @@ final class ExplorationManager: ObservableObject {
     func cancelExploration() {
         guard isExploring else { return }
 
-        print("🔍 [探索] 取消探索")
+        print("🔍 [探索] ❌ 取消探索（不保存记录）")
 
         stopTimers()
         resetExplorationData()
         state = .idle
         isExploring = false
+    }
+
+    /// 因超速停止探索
+    func stopExplorationDueToSpeeding() async {
+        guard isExploring else { return }
+
+        print("🔍 [探索] 🚫 因超速停止探索")
+
+        state = .processing
+        isExploring = false
+
+        // 停止计时器
+        stopTimers()
+
+        // 设置失败结果
+        let endTime = Date()
+        let duration = startTime.map { endTime.timeIntervalSince($0) } ?? 0
+
+        let stats = ExplorationStats(
+            totalDistance: currentDistance,
+            duration: duration,
+            pointsVerified: trackPoints.count,
+            distanceRank: "失败"
+        )
+
+        let result = ExplorationResult(
+            isSuccess: false,
+            message: "探索失败：移动速度超过30km/h，可能使用了交通工具",
+            itemsCollected: [],
+            experienceGained: 0,
+            distanceWalked: currentDistance,
+            stats: stats,
+            startTime: startTime ?? endTime,
+            endTime: endTime
+        )
+
+        latestResult = result
+        state = .failed("速度过快")
+
+        print("🔍 [探索] ❌ 探索失败 - 原因：超速")
+
+        // 清理数据
+        resetExplorationData()
     }
 
     // MARK: - 私有方法
@@ -218,11 +295,15 @@ final class ExplorationManager: ObservableObject {
     private func resetExplorationData() {
         currentDistance = 0
         currentDuration = 0
+        currentSpeed = 0
         trackPoints.removeAll()
         startTime = nil
         lastValidLocation = nil
         lastLocationTimestamp = nil
         latestResult = nil
+        speedWarning = nil
+        speedWarningStartTime = nil
+        print("🔍 [探索] 探索数据已重置")
     }
 
     /// 启动时长计时器
@@ -244,20 +325,105 @@ final class ExplorationManager: ObservableObject {
         }
     }
 
+    /// 启动速度检测定时器
+    private func startSpeedCheckTimer() {
+        // 每2秒检测一次速度
+        speedCheckTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.checkSpeed()
+            }
+        }
+    }
+
+    /// 检测速度
+    private func checkSpeed() {
+        guard isExploring else { return }
+
+        // 从 locationManager 获取当前速度（CLLocation 提供的速度，单位是 m/s）
+        guard let location = locationManager.userLocation else {
+            return
+        }
+
+        // 创建 CLLocation 对象获取速度
+        let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+
+        // 使用 CLLocationManager 的实时速度
+        // 注意：我们需要从 LocationManager 获取最新的 CLLocation 对象
+        // 这里我们使用两点间距离和时间差来计算速度
+        if let lastLocation = lastValidLocation, let lastTime = lastLocationTimestamp {
+            let timeInterval = Date().timeIntervalSince(lastTime)
+            if timeInterval > 0 {
+                let distance = clLocation.distance(from: lastLocation)
+                let speed = distance / timeInterval  // 米/秒
+                currentSpeed = speed
+
+                let speedKmh = speed * 3.6  // 转换为 km/h
+
+                print("🔍 [速度检测] 当前速度: \(String(format: "%.1f", speedKmh))km/h (\(String(format: "%.2f", speed))m/s)")
+
+                // 检查是否超速
+                if speed > maxAllowedSpeed {
+                    handleSpeeding(speed: speed)
+                } else {
+                    // 速度正常，清除警告
+                    if speedWarning != nil {
+                        print("🔍 [速度检测] ✅ 速度已恢复正常")
+                        speedWarning = nil
+                        speedWarningStartTime = nil
+                    }
+                }
+            }
+        }
+    }
+
+    /// 处理超速
+    private func handleSpeeding(speed: Double) {
+        let speedKmh = speed * 3.6
+
+        if speedWarningStartTime == nil {
+            // 第一次超速，开始警告
+            speedWarningStartTime = Date()
+            speedWarning = String(format: "⚠️ 速度过快！当前: %.0fkm/h，限制: 30km/h", speedKmh)
+            print("🔍 [速度检测] ⚠️ 超速警告：当前速度 \(String(format: "%.1f", speedKmh))km/h，开始倒计时")
+        } else {
+            // 持续超速，检查是否超过容忍时间
+            let warningDuration = Date().timeIntervalSince(speedWarningStartTime!)
+
+            if warningDuration >= speedWarningTimeout {
+                // 超过10秒仍然超速，停止探索
+                print("🔍 [速度检测] 🚫 超速超过\(Int(speedWarningTimeout))秒，停止探索")
+                Task {
+                    await stopExplorationDueToSpeeding()
+                }
+            } else {
+                // 更新警告消息，显示剩余时间
+                let remainingTime = Int(speedWarningTimeout - warningDuration)
+                speedWarning = String(format: "⚠️ 速度过快！%.0fkm/h > 30km/h，%d秒后停止", speedKmh, remainingTime)
+                print("🔍 [速度检测] ⚠️ 持续超速 \(String(format: "%.1f", warningDuration))秒，剩余 \(remainingTime) 秒")
+            }
+        }
+    }
+
     /// 停止计时器
     private func stopTimers() {
         durationTimer?.invalidate()
         durationTimer = nil
         samplingTimer?.invalidate()
         samplingTimer = nil
+        speedCheckTimer?.invalidate()
+        speedCheckTimer = nil
+        print("🔍 [探索] 所有定时器已停止")
     }
 
     /// 采集当前位置
     private func sampleCurrentLocation() {
-        guard isExploring else { return }
+        guard isExploring else {
+            print("🔍 [采点] ⚠️ 未在探索状态，跳过采点")
+            return
+        }
 
         guard let coordinate = locationManager.userLocation else {
-            print("🔍 [探索] 当前位置为空，跳过采点")
+            print("🔍 [采点] ⚠️ 当前位置为空，跳过采点")
             return
         }
 
@@ -265,8 +431,11 @@ final class ExplorationManager: ObservableObject {
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         let now = Date()
 
+        print("🔍 [采点] 尝试采集位置 - 坐标: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 精度: \(String(format: "%.1f", location.horizontalAccuracy))m")
+
         // 位置过滤
         if !validateLocation(location, timestamp: now) {
+            print("🔍 [采点] ❌ 位置验证失败，跳过")
             return
         }
 
@@ -274,6 +443,9 @@ final class ExplorationManager: ObservableObject {
         var distanceIncrement: Double = 0
         if let last = lastValidLocation {
             distanceIncrement = location.distance(from: last)
+            print("🔍 [采点] 距离增量: \(String(format: "%.2f", distanceIncrement))m")
+        } else {
+            print("🔍 [采点] 这是第一个有效点")
         }
 
         // 记录轨迹点
@@ -291,7 +463,7 @@ final class ExplorationManager: ObservableObject {
         lastValidLocation = location
         lastLocationTimestamp = now
 
-        print("🔍 [探索] 采点 #\(trackPoints.count)，距离增加: \(String(format: "%.1f", distanceIncrement))m，总计: \(String(format: "%.1f", currentDistance))m")
+        print("🔍 [采点] ✅ 采点成功 #\(trackPoints.count) - 增加: \(String(format: "%.1f", distanceIncrement))m，总距离: \(String(format: "%.1f", currentDistance))m")
     }
 
     /// 位置有效性验证
