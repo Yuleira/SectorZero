@@ -53,6 +53,12 @@ final class LocationManager: NSObject, ObservableObject {
     /// 是否超速
     @Published var isOverSpeed = false
 
+    /// 当前速度（km/h）- 来自 GPS 硬件
+    @Published var currentSpeed: Double = 0
+
+    /// 累计行走距离（米）
+    @Published var totalDistance: Double = 0
+
     // MARK: - 验证状态属性
 
     /// 领地验证是否通过
@@ -208,6 +214,9 @@ final class LocationManager: NSObject, ObservableObject {
         lastLocationTimestamp = nil
         lastLocationForSpeed = nil
 
+        // 重置累计距离
+        totalDistance = 0
+
         // 标记开始追踪
         isTracking = true
 
@@ -258,6 +267,9 @@ final class LocationManager: NSObject, ObservableObject {
         isOverSpeed = false
         lastLocationTimestamp = nil
         lastLocationForSpeed = nil
+
+        // 重置累计距离
+        totalDistance = 0
     }
 
     /// 清除路径
@@ -571,26 +583,27 @@ final class LocationManager: NSObject, ObservableObject {
     /// - Parameter newLocation: 新位置
     /// - Returns: true 表示速度正常，false 表示超速
     private func validateMovementSpeed(newLocation: CLLocation) -> Bool {
-        // 首次采点，无法计算速度
-        guard let lastLocation = lastLocationForSpeed,
-              let lastTimestamp = lastLocationTimestamp else {
-            return true
+        var speedKMH: Double = 0
+
+        // 优先使用 GPS 硬件提供的速度（更准确）
+        if newLocation.speed >= 0 {
+            speedKMH = newLocation.speed * 3.6  // m/s 转 km/h
+            print("📍 [速度检测] GPS 速度: \(String(format: "%.1f", speedKMH)) km/h")
+        } else {
+            // GPS 速度无效时，回退到位置差计算
+            guard let lastLocation = lastLocationForSpeed,
+                  let lastTimestamp = lastLocationTimestamp else {
+                return true  // 首次采点，无法计算速度
+            }
+
+            let distance = newLocation.distance(from: lastLocation)
+            let timeDelta = Date().timeIntervalSince(lastTimestamp)
+
+            guard timeDelta > 0 else { return true }
+
+            speedKMH = (distance / timeDelta) * 3.6
+            print("📍 [速度检测] 计算速度: \(String(format: "%.1f", speedKMH)) km/h")
         }
-
-        // 计算距离（米）
-        let distance = newLocation.distance(from: lastLocation)
-
-        // 计算时间差（秒）
-        let timeDelta = Date().timeIntervalSince(lastTimestamp)
-
-        // 避免除零
-        guard timeDelta > 0 else { return true }
-
-        // 计算速度（km/h）
-        let speedMS = distance / timeDelta  // 米/秒
-        let speedKMH = speedMS * 3.6        // 转换为 km/h
-
-        print("📍 [速度检测] 速度: \(String(format: "%.1f", speedKMH)) km/h")
 
         // 超过暂停阈值（30 km/h）
         if speedKMH > speedStopThreshold {
@@ -603,7 +616,6 @@ final class LocationManager: NSObject, ObservableObject {
         }
 
         // 达到警告阈值（15-30 km/h）但未超过暂停阈值
-        // 显示警告，但仍然继续记录
         if speedKMH >= speedWarningThreshold {
             speedWarning = "移动过快（\(String(format: "%.0f", speedKMH)) km/h），请步行"
             isOverSpeed = true
@@ -673,14 +685,73 @@ extension LocationManager: CLLocationManagerDelegate {
         userLocation = coordinate
         locationError = nil
 
+        // 更新当前速度（来自 GPS 硬件，单位 m/s）
+        // speed < 0 表示速度无效
+        if location.speed >= 0 {
+            currentSpeed = location.speed * 3.6  // 转换为 km/h
+        }
+
+        // 计算累计距离（如果正在追踪）
+        if isTracking, let previousLocation = currentLocation {
+            let distance = location.distance(from: previousLocation)
+            // 只累计有效距离（过滤 GPS 漂移）
+            if distance >= 1.0 && distance <= 100.0 {
+                totalDistance += distance
+            }
+        }
+
         // 保存当前位置（Timer 采点需要用）
         currentLocation = location
 
-        print("📍 [定位管理器] 位置更新: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
+        // 实时速度检测（追踪模式下）
+        if isTracking {
+            checkRealtimeSpeed(location: location)
+        }
+
+        print("📍 [定位管理器] 位置更新: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 速度: \(String(format: "%.1f", currentSpeed)) km/h")
 
         // 追踪时或调试模式下记录位置更新日志
         if isTracking || TerritoryLogger.shared.isDebugMode {
-            TerritoryLogger.shared.log("GPS: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))", type: .info)
+            TerritoryLogger.shared.log("GPS: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 速度: \(String(format: "%.1f", currentSpeed)) km/h", type: .info)
+        }
+    }
+
+    /// 实时速度检测
+    /// - Parameter location: 当前位置
+    private func checkRealtimeSpeed(location: CLLocation) {
+        // 优先使用 GPS 硬件速度
+        var speedKMH: Double = 0
+
+        if location.speed >= 0 {
+            speedKMH = location.speed * 3.6
+        } else if let lastLocation = lastLocationForSpeed,
+                  let lastTimestamp = lastLocationTimestamp {
+            // GPS 速度无效时，回退到位置差计算
+            let distance = location.distance(from: lastLocation)
+            let timeDelta = Date().timeIntervalSince(lastTimestamp)
+            if timeDelta > 0 {
+                speedKMH = (distance / timeDelta) * 3.6
+            }
+        }
+
+        // 超过暂停阈值（30 km/h）
+        if speedKMH > speedStopThreshold {
+            speedWarning = "速度过快（\(String(format: "%.0f", speedKMH)) km/h），追踪已暂停"
+            isOverSpeed = true
+            print("📍 [速度检测] ❌ 严重超速！自动停止追踪")
+            TerritoryLogger.shared.log("超速 \(String(format: "%.1f", speedKMH)) km/h，已停止追踪", type: .error)
+            stopPathTracking()
+            return
+        }
+
+        // 达到警告阈值（15-30 km/h）
+        if speedKMH >= speedWarningThreshold {
+            speedWarning = "移动过快（\(String(format: "%.0f", speedKMH)) km/h），请步行"
+            isOverSpeed = true
+        } else if isOverSpeed {
+            // 速度恢复正常，清除警告
+            speedWarning = nil
+            isOverSpeed = false
         }
     }
 
