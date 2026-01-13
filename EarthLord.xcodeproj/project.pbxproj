@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3092E094A5E6F8B9D7A0348F /* POIProximityPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42A0E4E280EB6DC87CDCE04 /* POIProximityPopup.swift */; };
+		44ACA1E4B2F68AAF641B3C3E /* POISearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D07D29FC143CD40F1E2317 /* POISearchManager.swift */; };
 		E605D1002F030AA3003D9861 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E605D0FF2F030AA3003D9861 /* GoogleSignIn */; };
 		E605D1022F030AA3003D9861 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E605D1012F030AA3003D9861 /* GoogleSignInSwift */; };
 		E60C1BC52EFEABE3005E0B24 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = E60C1BC42EFEABE3005E0B24 /* Supabase */; };
@@ -46,9 +48,13 @@
 		E6E50DD82F1298930096D2BB /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DD72F1298930096D2BB /* Item.swift */; };
 		E6E50DDA2F1298D60096D2BB /* ExplorationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DD92F1298D60096D2BB /* ExplorationModels.swift */; };
 		E6E50DDC2F1299070096D2BB /* MockExplorationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DDB2F1299070096D2BB /* MockExplorationData.swift */; };
+		FA99693DB6A11AED4CE78DEC /* ScavengeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C4C15132FF6CD03A3F9D9A /* ScavengeResultView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00D07D29FC143CD40F1E2317 /* POISearchManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = POISearchManager.swift; path = EarthLord/Managers/POISearchManager.swift; sourceTree = "<group>"; };
+		39C4C15132FF6CD03A3F9D9A /* ScavengeResultView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ScavengeResultView.swift; path = EarthLord/Views/Exploration/ScavengeResultView.swift; sourceTree = "<group>"; };
+		B42A0E4E280EB6DC87CDCE04 /* POIProximityPopup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = POIProximityPopup.swift; path = EarthLord/Views/Exploration/POIProximityPopup.swift; sourceTree = "<group>"; };
 		E62484F42F152D31001B6ABC /* ExplorationReward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationReward.swift; sourceTree = "<group>"; };
 		E62484F62F152D3B001B6ABC /* InventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryItem.swift; sourceTree = "<group>"; };
 		E62484F82F152D4D001B6ABC /* ExplorationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationManager.swift; sourceTree = "<group>"; };
@@ -93,6 +99,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E6C38AA32F12E0A6001005E9 /* Exploration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Exploration;
 			sourceTree = "<group>";
 		};
@@ -112,12 +120,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		96F6F30739E32D8DC94FE30C /* EarthLord */ = {
+			isa = PBXGroup;
+			children = (
+				E002AC6F301C36C1D1022BFF /* Managers */,
+				BF972DB9EE6D5D68A04DF4FA /* Views */,
+			);
+			name = EarthLord;
+			sourceTree = "<group>";
+		};
+		BF972DB9EE6D5D68A04DF4FA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D1DAC85E6E0ACCBA47B72491 /* Exploration */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D1DAC85E6E0ACCBA47B72491 /* Exploration */ = {
+			isa = PBXGroup;
+			children = (
+				B42A0E4E280EB6DC87CDCE04 /* POIProximityPopup.swift */,
+				39C4C15132FF6CD03A3F9D9A /* ScavengeResultView.swift */,
+			);
+			name = Exploration;
+			sourceTree = "<group>";
+		};
+		E002AC6F301C36C1D1022BFF /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				00D07D29FC143CD40F1E2317 /* POISearchManager.swift */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
 		E62B8A5D2EFABFFF00FFC7A0 = {
 			isa = PBXGroup;
 			children = (
 				E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
+				96F6F30739E32D8DC94FE30C /* EarthLord */,
 			);
 			sourceTree = "<group>";
 		};
@@ -372,6 +415,9 @@
 				E6E50DD12F12898D0096D2BB /* AuthView.swift in Sources */,
 				E6E50DDA2F1298D60096D2BB /* ExplorationModels.swift in Sources */,
 				E62484F52F152D31001B6ABC /* ExplorationReward.swift in Sources */,
+				44ACA1E4B2F68AAF641B3C3E /* POISearchManager.swift in Sources */,
+				3092E094A5E6F8B9D7A0348F /* POIProximityPopup.swift in Sources */,
+				FA99693DB6A11AED4CE78DEC /* ScavengeResultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -117,7 +117,8 @@ struct MapTabView: View {
                 isPathClosed: locationManager.isPathClosed,
                 showsUserLocation: true,
                 territories: territories,
-                currentUserId: authManager.currentUser?.id.uuidString
+                currentUserId: authManager.currentUser?.id.uuidString,
+                nearbyPOIs: explorationManager.nearbyPOIs
             )
             .ignoresSafeArea()
 
@@ -199,6 +200,39 @@ struct MapTabView: View {
             // 加载指示器（首次定位时显示）
             if !hasLocatedUser && locationManager.isAuthorized {
                 loadingOverlay
+            }
+
+            // POI接近弹窗
+            if explorationManager.showPOIPopup, let poi = explorationManager.currentPOI {
+                VStack {
+                    Spacer()
+                    POIProximityPopup(
+                        poi: poi,
+                        distance: explorationManager.distanceToPOI(poi),
+                        onScavenge: {
+                            Task {
+                                await explorationManager.scavengePOI(poi)
+                            }
+                        },
+                        onDismiss: {
+                            explorationManager.dismissPOIPopup()
+                        }
+                    )
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: explorationManager.showPOIPopup)
+            }
+
+            // 搜刮结果视图
+            if explorationManager.showScavengeResult, let result = explorationManager.latestScavengeResult {
+                ScavengeResultView(
+                    result: result,
+                    onDismiss: {
+                        explorationManager.dismissScavengeResult()
+                    }
+                )
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 0.3), value: explorationManager.showScavengeResult)
             }
         }
         .onChange(of: locationManager.speedWarning) { oldValue, newValue in

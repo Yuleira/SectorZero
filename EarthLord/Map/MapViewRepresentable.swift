@@ -44,6 +44,9 @@ struct MapViewRepresentable: UIViewRepresentable {
     /// 当前用户 ID（用于区分自己和他人的领地）
     var currentUserId: String?
 
+    /// 附近的POI列表
+    var nearbyPOIs: [NearbyPOI] = []
+
     // MARK: - UIViewRepresentable
 
     /// 创建 MKMapView
@@ -92,6 +95,9 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         // 更新领地显示
         drawTerritories(on: mapView)
+
+        // 更新POI标记
+        updatePOIAnnotations(on: mapView)
     }
 
     /// 更新轨迹路径
@@ -166,6 +172,27 @@ struct MapViewRepresentable: UIViewRepresentable {
         }
 
         print("🗺️ [地图视图] 已绘制 \(territories.count) 个领地")
+    }
+
+    /// 更新POI标记
+    private func updatePOIAnnotations(on mapView: MKMapView) {
+        // 移除旧的POI标记
+        let existingPOIAnnotations = mapView.annotations.filter { $0 is POIAnnotation }
+        mapView.removeAnnotations(existingPOIAnnotations)
+
+        // 没有POI则返回
+        guard !nearbyPOIs.isEmpty else { return }
+
+        // 添加POI标记
+        for poi in nearbyPOIs {
+            // 坐标转换
+            let convertedCoordinate = CoordinateConverter.wgs84ToGcj02(poi.coordinate)
+
+            let annotation = POIAnnotation(poi: poi, coordinate: convertedCoordinate)
+            mapView.addAnnotation(annotation)
+        }
+
+        print("🗺️ [地图视图] 已添加 \(nearbyPOIs.count) 个POI标记")
     }
 
     /// 创建 Coordinator
@@ -331,6 +358,77 @@ struct MapViewRepresentable: UIViewRepresentable {
 
             return MKOverlayRenderer(overlay: overlay)
         }
+
+        /// 标注视图回调（为POI创建自定义标注视图）
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            // 忽略用户位置标注
+            guard !(annotation is MKUserLocation) else { return nil }
+
+            // 处理POI标注
+            if let poiAnnotation = annotation as? POIAnnotation {
+                let identifier = "POIAnnotation"
+                var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+
+                if annotationView == nil {
+                    annotationView = MKMarkerAnnotationView(annotation: poiAnnotation, reuseIdentifier: identifier)
+                    annotationView?.canShowCallout = true
+                } else {
+                    annotationView?.annotation = poiAnnotation
+                }
+
+                // 设置标记样式
+                let poi = poiAnnotation.poi
+                annotationView?.glyphImage = UIImage(systemName: poi.type.icon)
+                annotationView?.markerTintColor = poiMarkerColor(for: poi)
+
+                // 已搜刮的POI显示为灰色
+                if poi.isScavenged {
+                    annotationView?.markerTintColor = .gray
+                    annotationView?.alpha = 0.6
+                } else {
+                    annotationView?.alpha = 1.0
+                }
+
+                return annotationView
+            }
+
+            return nil
+        }
+
+        /// POI标记颜色
+        private func poiMarkerColor(for poi: NearbyPOI) -> UIColor {
+            switch poi.type {
+            case .store, .supermarket, .convenience:
+                return .systemBlue
+            case .hospital:
+                return .systemRed
+            case .pharmacy:
+                return .systemGreen
+            case .gasStation:
+                return .systemOrange
+            case .restaurant:
+                return .systemPurple
+            case .cafe:
+                return .brown
+            }
+        }
+    }
+}
+
+// MARK: - POI标注类
+
+/// POI标注
+class POIAnnotation: NSObject, MKAnnotation {
+    let poi: NearbyPOI
+    let coordinate: CLLocationCoordinate2D
+
+    var title: String? { poi.name }
+    var subtitle: String? { poi.type.rawValue }
+
+    init(poi: NearbyPOI, coordinate: CLLocationCoordinate2D) {
+        self.poi = poi
+        self.coordinate = coordinate
+        super.init()
     }
 }
 
@@ -345,6 +443,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         isTracking: false,
         isPathClosed: false,
         territories: [],
-        currentUserId: nil
+        currentUserId: nil,
+        nearbyPOIs: []
     )
 }

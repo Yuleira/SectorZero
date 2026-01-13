@@ -3,7 +3,7 @@
 //  EarthLord
 //
 //  探索管理器
-//  负责管理探索流程、GPS追踪、距离计算
+//  负责管理探索流程、GPS追踪、距离计算、POI搜刮
 //
 
 import Foundation
@@ -18,10 +18,16 @@ struct ExplorationTrackPoint {
     let accuracy: Double
 }
 
+/// 搜刮结果
+struct ScavengeResult {
+    let poi: NearbyPOI
+    let items: [CollectedItem]
+}
+
 /// 探索管理器
-/// 负责管理探索流程、GPS追踪、距离计算
+/// 负责管理探索流程、GPS追踪、距离计算、POI搜刮
 @MainActor
-final class ExplorationManager: ObservableObject {
+final class ExplorationManager: NSObject, ObservableObject {
 
     // MARK: - 单例
 
@@ -53,6 +59,26 @@ final class ExplorationManager: ObservableObject {
     /// 速度警告消息
     @Published private(set) var speedWarning: String?
 
+    // MARK: - POI 相关属性
+
+    /// 附近POI列表
+    @Published private(set) var nearbyPOIs: [NearbyPOI] = []
+
+    /// 是否显示POI弹窗
+    @Published var showPOIPopup = false
+
+    /// 当前接近的POI
+    @Published var currentPOI: NearbyPOI?
+
+    /// 是否正在搜索POI
+    @Published private(set) var isSearchingPOIs = false
+
+    /// 最新搜刮结果
+    @Published var latestScavengeResult: ScavengeResult?
+
+    /// 是否显示搜刮结果
+    @Published var showScavengeResult = false
+
     // MARK: - 私有属性
 
     private let locationManager = LocationManager.shared
@@ -68,6 +94,17 @@ final class ExplorationManager: ObservableObject {
 
     /// 速度检测定时器
     private var speedCheckTimer: Timer?
+
+    // MARK: - POI 私有属性
+
+    /// 地理围栏管理器
+    private let geofenceManager = CLLocationManager()
+
+    /// POI接近检测定时器
+    private var poiProximityTimer: Timer?
+
+    /// POI触发范围（米）
+    private let poiTriggerRadius: CLLocationDistance = 50
 
     // MARK: - 配置常量
 
@@ -86,7 +123,8 @@ final class ExplorationManager: ObservableObject {
 
     // MARK: - 初始化
 
-    private init() {
+    private override init() {
+        super.init()
         print("🔍 [探索管理器] 初始化完成")
         print("🔍 [探索管理器] 配置：最大速度=\(String(format: "%.1f", maxAllowedSpeed))m/s (\(String(format: "%.0f", maxAllowedSpeed * 3.6))km/h)")
     }
@@ -125,6 +163,11 @@ final class ExplorationManager: ObservableObject {
         // 启动速度检测定时器
         startSpeedCheckTimer()
 
+        // 搜索附近POI
+        Task {
+            await searchAndSetupPOIs()
+        }
+
         print("🔍 [探索] 所有定时器已启动")
     }
 
@@ -142,6 +185,9 @@ final class ExplorationManager: ObservableObject {
 
         // 停止计时器
         stopTimers()
+
+        // 清理POI和围栏
+        cleanupPOIs()
 
         let endTime = Date()
         let duration = startTime.map { endTime.timeIntervalSince($0) } ?? 0
@@ -303,6 +349,12 @@ final class ExplorationManager: ObservableObject {
         latestResult = nil
         speedWarning = nil
         speedWarningStartTime = nil
+        // 重置POI相关数据
+        nearbyPOIs.removeAll()
+        showPOIPopup = false
+        currentPOI = nil
+        latestScavengeResult = nil
+        showScavengeResult = false
         print("🔍 [探索] 探索数据已重置")
     }
 
@@ -558,5 +610,214 @@ final class ExplorationManager: ObservableObject {
         }
 
         return Int(Double(baseExp) * tierMultiplier)
+    }
+
+    // MARK: - POI 搜索与管理
+
+    /// 搜索并设置附近POI
+    private func searchAndSetupPOIs() async {
+        guard let userLocation = locationManager.userLocation else {
+            print("🏪 [POI] 无法获取用户位置，跳过POI搜索")
+            return
+        }
+
+        isSearchingPOIs = true
+        print("🏪 [POI] 开始搜索附近POI...")
+
+        // 搜索附近POI
+        let pois = await POISearchManager.shared.searchNearbyPOIs(center: userLocation)
+        nearbyPOIs = pois
+
+        print("🏪 [POI] 找到 \(pois.count) 个POI")
+
+        // 启动POI接近检测定时器
+        startPOIProximityTimer()
+
+        isSearchingPOIs = false
+    }
+
+    /// 启动POI接近检测定时器
+    private func startPOIProximityTimer() {
+        poiProximityTimer?.invalidate()
+        poiProximityTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor [weak self] in
+                self?.checkPOIProximity()
+            }
+        }
+        print("🏪 [POI] 接近检测定时器已启动")
+    }
+
+    /// 检测POI接近
+    private func checkPOIProximity() {
+        guard isExploring else { return }
+        guard !showPOIPopup else { return }  // 已经在显示弹窗
+        guard let userLocation = locationManager.userLocation else { return }
+
+        let userCLLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+
+        // 检查每个未搜刮的POI
+        for poi in nearbyPOIs where !poi.isScavenged {
+            let poiLocation = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
+            let distance = userCLLocation.distance(from: poiLocation)
+
+            if distance <= poiTriggerRadius {
+                // 进入POI范围
+                print("🏪 [POI] 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米）")
+                triggerPOIPopup(poi: poi)
+                return
+            }
+        }
+    }
+
+    /// 触发POI弹窗
+    private func triggerPOIPopup(poi: NearbyPOI) {
+        currentPOI = poi
+        showPOIPopup = true
+        print("🏪 [POI] 显示搜刮提示：\(poi.name)")
+    }
+
+    /// 清理POI和围栏
+    private func cleanupPOIs() {
+        // 停止定时器
+        poiProximityTimer?.invalidate()
+        poiProximityTimer = nil
+
+        // 清空POI列表
+        nearbyPOIs.removeAll()
+        currentPOI = nil
+        showPOIPopup = false
+
+        print("🏪 [POI] POI数据已清理")
+    }
+
+    // MARK: - POI 搜刮
+
+    /// 执行搜刮
+    /// - Parameter poi: 要搜刮的POI
+    func scavengePOI(_ poi: NearbyPOI) async {
+        print("🏪 [搜刮] 开始搜刮：\(poi.name)")
+
+        // 生成随机物品（1-3件）
+        let itemCount = Int.random(in: 1...3)
+        var collectedItems: [CollectedItem] = []
+
+        // 确保物品定义已加载
+        await RewardGenerator.shared.preloadItemDefinitions()
+
+        // 从物品池随机选择
+        for _ in 0..<itemCount {
+            // 随机稀有度（偏向普通）
+            let rarityRandom = Double.random(in: 0..<1)
+            let rarity: ItemRarity
+            switch rarityRandom {
+            case 0..<0.70: rarity = .common
+            case 0.70..<0.95: rarity = .rare
+            default: rarity = .epic
+            }
+
+            // 随机品质
+            let qualityRandom = Double.random(in: 0..<1)
+            let quality: ItemQuality
+            switch qualityRandom {
+            case 0..<0.05: quality = .pristine
+            case 0.05..<0.30: quality = .good
+            case 0.30..<0.70: quality = .worn
+            case 0.70..<0.95: quality = .damaged
+            default: quality = .ruined
+            }
+
+            // 随机数量（1-3个）
+            let quantity = Int.random(in: 1...3)
+
+            // 创建物品（使用随机物品定义）
+            let definition = randomItemDefinition(rarity: rarity)
+            let item = CollectedItem(
+                definition: definition,
+                quality: quality,
+                foundDate: Date(),
+                quantity: quantity
+            )
+            collectedItems.append(item)
+
+            print("🏪 [搜刮] 获得：\(definition.name) x\(quantity) [\(rarity.displayName)] [\(quality.rawValue)]")
+        }
+
+        // 将物品存入背包
+        await InventoryManager.shared.addItems(
+            collectedItems,
+            sourceType: "scavenge",
+            sourceSessionId: nil
+        )
+
+        // 标记POI为已搜刮
+        if let index = nearbyPOIs.firstIndex(where: { $0.id == poi.id }) {
+            nearbyPOIs[index].isScavenged = true
+        }
+
+        // 设置搜刮结果
+        latestScavengeResult = ScavengeResult(poi: poi, items: collectedItems)
+
+        // 关闭接近弹窗，显示结果
+        showPOIPopup = false
+        showScavengeResult = true
+
+        print("🏪 [搜刮] 完成，获得 \(collectedItems.count) 种物品")
+    }
+
+    /// 关闭POI弹窗（稍后再说）
+    func dismissPOIPopup() {
+        showPOIPopup = false
+        currentPOI = nil
+        print("🏪 [POI] 用户选择稍后再说")
+    }
+
+    /// 关闭搜刮结果
+    func dismissScavengeResult() {
+        showScavengeResult = false
+        latestScavengeResult = nil
+    }
+
+    /// 随机物品定义
+    private func randomItemDefinition(rarity: ItemRarity) -> ItemDefinition {
+        // 根据稀有度返回不同类型的物品
+        switch rarity {
+        case .common:
+            let items = [
+                ItemDefinition(id: "water_bottle", name: "纯净水", description: "一瓶还算干净的水", category: .water, icon: "drop.fill", rarity: .common),
+                ItemDefinition(id: "canned_beans", name: "罐头豆子", description: "高蛋白食物", category: .food, icon: "takeoutbag.and.cup.and.straw.fill", rarity: .common),
+                ItemDefinition(id: "bandage", name: "绷带", description: "简单的止血工具", category: .medical, icon: "bandage.fill", rarity: .common),
+                ItemDefinition(id: "scrap_metal", name: "废金属", description: "可用于制造", category: .material, icon: "gearshape.fill", rarity: .common),
+                ItemDefinition(id: "rope", name: "绳索", description: "多用途工具", category: .tool, icon: "line.diagonal", rarity: .common),
+                ItemDefinition(id: "matches", name: "火柴", description: "生火必备", category: .tool, icon: "flame.fill", rarity: .common),
+                ItemDefinition(id: "cloth", name: "布料", description: "可以缝补衣物", category: .material, icon: "tshirt.fill", rarity: .common)
+            ]
+            return items.randomElement()!
+        case .rare:
+            let items = [
+                ItemDefinition(id: "first_aid_kit", name: "急救包", description: "包含多种医疗用品", category: .medical, icon: "cross.case.fill", rarity: .rare),
+                ItemDefinition(id: "flashlight", name: "手电筒", description: "黑暗中的光明", category: .tool, icon: "flashlight.on.fill", rarity: .rare),
+                ItemDefinition(id: "canned_meat", name: "肉罐头", description: "珍贵的蛋白质来源", category: .food, icon: "fork.knife", rarity: .rare),
+                ItemDefinition(id: "painkillers", name: "止痛药", description: "缓解疼痛", category: .medical, icon: "pills.fill", rarity: .rare),
+                ItemDefinition(id: "batteries", name: "电池", description: "电子设备的能源", category: .material, icon: "battery.100", rarity: .rare)
+            ]
+            return items.randomElement()!
+        case .epic:
+            let items = [
+                ItemDefinition(id: "antibiotics", name: "抗生素", description: "珍贵的药物", category: .medical, icon: "pills.fill", rarity: .epic),
+                ItemDefinition(id: "radio", name: "对讲机", description: "远距离通讯设备", category: .tool, icon: "antenna.radiowaves.left.and.right", rarity: .epic),
+                ItemDefinition(id: "solar_charger", name: "太阳能充电器", description: "可再生能源", category: .tool, icon: "sun.max.fill", rarity: .epic),
+                ItemDefinition(id: "military_ration", name: "军用口粮", description: "高热量应急食品", category: .food, icon: "bag.fill", rarity: .epic)
+            ]
+            return items.randomElement()!
+        }
+    }
+
+    /// 计算到POI的距离
+    func distanceToPOI(_ poi: NearbyPOI) -> Double {
+        guard let userLocation = locationManager.userLocation else { return 0 }
+        let userCLLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+        let poiLocation = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
+        return userCLLocation.distance(from: poiLocation)
     }
 }
