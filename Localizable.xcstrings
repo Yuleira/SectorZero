@@ -85,12 +85,34 @@
         }
       }
     },
+    "便利店" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convenience Store"
+          }
+        }
+      }
+    },
     "关闭" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close"
+          }
+        }
+      }
+    },
+    "其他" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
           }
         }
       }
@@ -155,6 +177,17 @@
         }
       }
     },
+    "加油站" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gas Station"
+          }
+        }
+      }
+    },
     "加载中..." : {
       "localizations" : {
         "en" : {
@@ -165,17 +198,8 @@
         }
       }
     },
-    "加油站" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gas Station"
-          }
-        }
-      }
-    },
     "医院" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -215,7 +239,19 @@
         }
       }
     },
+    "史诗" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Epic"
+          }
+        }
+      }
+    },
     "咖啡店" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -226,6 +262,7 @@
       }
     },
     "商店" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -266,6 +303,7 @@
       }
     },
     "完美" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -275,12 +313,35 @@
         }
       }
     },
+    "对讲机" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walkie-Talkie"
+          }
+        }
+      }
+    },
     "工具" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tool"
+          }
+        }
+      }
+    },
+    "废金属" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrap Metal"
           }
         }
       }
@@ -291,6 +352,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Forgot password?"
+          }
+        }
+      }
+    },
+    "急救包" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Aid Kit"
           }
         }
       }
@@ -335,6 +407,17 @@
         }
       }
     },
+    "手电筒" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flashlight"
+          }
+        }
+      }
+    },
     "找回密码" : {
       "localizations" : {
         "en" : {
@@ -346,6 +429,7 @@
       }
     },
     "抗生素" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -356,6 +440,7 @@
       }
     },
     "报废" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -436,6 +521,7 @@
       }
     },
     "普通" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -466,6 +552,7 @@
       }
     },
     "材料" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -485,22 +572,34 @@
         }
       }
     },
-    "水" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Water"
-          }
-        }
-      }
-    },
     "此操作不可撤销！" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "This action cannot be undone!"
+          }
+        }
+      }
+    },
+    "武器" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weapon"
+          }
+        }
+      }
+    },
+    "水" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Water"
           }
         }
       }
@@ -535,26 +634,6 @@
         }
       }
     },
-    "破损" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Damaged"
-          }
-        }
-      }
-    },
-    "稀有" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rare"
-          }
-        }
-      }
-    },
     "登录凭证和认证信息" : {
       "localizations" : {
         "en" : {
@@ -571,6 +650,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sign in to view and manage your territories"
+          }
+        }
+      }
+    },
+    "破损" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damaged"
           }
         }
       }
@@ -615,6 +705,17 @@
         }
       }
     },
+    "稀有" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rare"
+          }
+        }
+      }
+    },
     "稍后再说" : {
       "localizations" : {
         "en" : {
@@ -646,6 +747,7 @@
       }
     },
     "纯净水" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -656,6 +758,7 @@
       }
     },
     "绳索" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -666,6 +769,7 @@
       }
     },
     "绷带" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -675,7 +779,19 @@
         }
       }
     },
+    "罐头豆子" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canned Beans"
+          }
+        }
+      }
+    },
     "肉罐头" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -695,7 +811,19 @@
         }
       }
     },
+    "良好" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good"
+          }
+        }
+      }
+    },
     "药品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -706,6 +834,7 @@
       }
     },
     "药店" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -731,16 +860,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Experience Gained"
-          }
-        }
-      }
-    },
-    "良好" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good"
           }
         }
       }
@@ -821,6 +940,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter 6-digit verification code"
+          }
+        }
+      }
+    },
+    "超市" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supermarket"
           }
         }
       }
@@ -916,6 +1046,7 @@
       }
     },
     "陈旧" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -926,6 +1057,7 @@
       }
     },
     "领地" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -951,6 +1083,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Territory registered successfully!"
+          }
+        }
+      }
+    },
+    "食物" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food"
+          }
+        }
+      }
+    },
+    "餐厅" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurant"
           }
         }
       }
@@ -981,126 +1135,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verification code sent to %@"
-          }
-        }
-      }
-    },
-    "食物" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Food"
-          }
-        }
-      }
-    },
-    "餐厅" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restaurant"
-          }
-        }
-      }
-    },
-    "史诗" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Epic"
-          }
-        }
-      }
-    },
-    "超市" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supermarket"
-          }
-        }
-      }
-    },
-    "便利店" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Convenience Store"
-          }
-        }
-      }
-    },
-    "废金属" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scrap Metal"
-          }
-        }
-      }
-    },
-    "急救包" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "First Aid Kit"
-          }
-        }
-      }
-    },
-    "手电筒" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flashlight"
-          }
-        }
-      }
-    },
-    "对讲机" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Walkie-Talkie"
-          }
-        }
-      }
-    },
-    "罐头豆子" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Canned Beans"
-          }
-        }
-      }
-    },
-    "武器" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weapon"
-          }
-        }
-      }
-    },
-    "其他" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Other"
           }
         }
       }

@@ -192,12 +192,30 @@ struct POIListView: View {
         }
     }
 
-    /// 加载模拟数据
-    private func loadMockData() {
-        pois = []
-        // 可以在这里加载一些模拟数据进行测试
-        // pois = MockPOIData.samples
-    }
+    /// 加载模拟数据 (手动造假数据版)
+        private func loadMockData() {
+            // 1. 先清空旧数据
+            pois = []
+            
+            // 2. 手动创建几个测试数据 (覆盖各种类型)
+            let sample1 = POI(id: "1", poi_type: "商店", name: "废弃超市", latitude: 0, longitude: 0)
+            let sample2 = POI(id: "2", poi_type: "医院", name: "仁爱医院", latitude: 0, longitude: 0)
+            let sample3 = POI(id: "3", poi_type: "加油站", name: "壳牌加油站", latitude: 0, longitude: 0)
+            let sample4 = POI(id: "4", poi_type: "餐厅", name: "麦当劳遗址", latitude: 0, longitude: 0)
+            let sample5 = POI(id: "5", poi_type: "公园", name: "中央公园", latitude: 0, longitude: 0)
+            
+            // 3. 还有一个英文类型的，用来测试你的图标逻辑是否兼容
+            let sample6 = POI(id: "6", poi_type: "Hospital", name: "St. Mary Hospital", latitude: 0, longitude: 0)
+
+            // 4. 把它们装进数组
+            pois = [sample1, sample2, sample3, sample4, sample5, sample6]
+            
+            // 5. 打印一下，看看控制台有没有输出
+            print("✅ 数据加载成功，共 \(pois.count) 个 POI")
+            
+            // 6. 关掉加载动画
+            isLoading = false
+        }
 }
 
 // MARK: - POI行视图
@@ -239,15 +257,27 @@ struct POIRowView: View {
     }
 
     private func iconForType(_ type: String) -> String {
-        switch type {
-        case "商店": return "cart.fill"
-        case "医院": return "cross.case.fill"
-        case "加油站": return "fuelpump.fill"
-        case "餐厅": return "fork.knife"
-        case "公园": return "tree.fill"
-        default: return "mappin.circle.fill"
+            switch type {
+            // 商店类
+            case "商店", "Store", "Shop", "Supermarket":
+                return "cart.fill"
+            // 医疗类
+            case "医院", "Hospital", "Pharmacy", "Clinic":
+                return "cross.case.fill"
+            // 能源类
+            case "加油站", "Gas Station", "Fuel":
+                return "fuelpump.fill"
+            // 饮食类
+            case "餐厅", "Restaurant", "Cafe", "Food":
+                return "fork.knife"
+            // 自然类
+            case "公园", "Park", "Garden":
+                return "tree.fill"
+            // 默认
+            default:
+                return "mappin.circle.fill"
+            }
         }
-    }
 }
 
 // MARK: - 预览
