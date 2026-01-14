@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @StateObject private var languageManager = LanguageManager.shared
+    @ObservedObject private var authManager = AuthManager.shared
     @State private var selectedTab = 0
 
     var body: some View {
@@ -50,6 +51,20 @@ struct MainTabView: View {
         }
         .tint(ApocalypseTheme.primary)
         .id(languageManager.refreshID)
+        .onAppear {
+            // 用户登录后启动位置追踪
+            if authManager.isAuthenticated {
+                PlayerPresenceManager.shared.startPresenceTracking()
+            }
+        }
+        .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
+            // 监听登录状态变化
+            if isAuthenticated {
+                PlayerPresenceManager.shared.startPresenceTracking()
+            } else {
+                PlayerPresenceManager.shared.stopPresenceTracking()
+            }
+        }
     }
 }
 

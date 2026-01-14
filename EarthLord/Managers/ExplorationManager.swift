@@ -106,6 +106,9 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// POI触发范围（米）
     private let poiTriggerRadius: CLLocationDistance = 50
 
+    /// 当前密度等级（决定POI显示数量）
+    private var currentDensityLevel: DensityLevel = .alone
+
     // MARK: - 配置常量
 
     /// 最小精度要求（米）
@@ -163,8 +166,16 @@ final class ExplorationManager: NSObject, ObservableObject {
         // 启动速度检测定时器
         startSpeedCheckTimer()
 
-        // 搜索附近POI
+        // 上报位置并查询附近玩家密度，然后搜索POI
         Task {
+            // 1. 上报当前位置
+            await PlayerPresenceManager.shared.reportCurrentLocation()
+
+            // 2. 查询附近玩家数量，确定密度等级
+            currentDensityLevel = await PlayerPresenceManager.shared.fetchNearbyPlayerCount()
+            print("🔍 [探索] 当前密度等级: \(currentDensityLevel.localizedName)，最多显示 \(currentDensityLevel.maxPOICount) 个POI")
+
+            // 3. 根据密度搜索并设置POI
             await searchAndSetupPOIs()
         }
 
@@ -638,11 +649,15 @@ final class ExplorationManager: NSObject, ObservableObject {
         print("🏪 [POI] 用户位置: (\(String(format: "%.6f", location.latitude)), \(String(format: "%.6f", location.longitude)))")
 
         // 搜索附近POI
-        let pois = await POISearchManager.shared.searchNearbyPOIs(center: location)
-        nearbyPOIs = pois
+        let allPOIs = await POISearchManager.shared.searchNearbyPOIs(center: location)
 
-        print("🏪 [POI] ✅ 找到 \(pois.count) 个POI")
-        for poi in pois.prefix(5) {
+        // 根据密度等级限制POI数量
+        let maxCount = currentDensityLevel.maxPOICount
+        let limitedPOIs = Array(allPOIs.prefix(maxCount))
+        nearbyPOIs = limitedPOIs
+
+        print("🏪 [POI] ✅ 找到 \(allPOIs.count) 个POI，根据密度等级(\(currentDensityLevel.localizedName))显示 \(limitedPOIs.count) 个")
+        for poi in limitedPOIs {
             print("🏪 [POI]   - \(poi.name) (\(poi.type.rawValue))")
         }
 
