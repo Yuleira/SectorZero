@@ -724,54 +724,63 @@ final class ExplorationManager: NSObject, ObservableObject {
 
     // MARK: - POI 搜刮
 
-    /// 执行搜刮
+    /// 执行搜刮（使用 AI 生成物品）
     /// - Parameter poi: 要搜刮的POI
     func scavengePOI(_ poi: NearbyPOI) async {
-        print("🏪 [搜刮] 开始搜刮：\(poi.name)")
+        print("🏪 [搜刮] 开始搜刮：\(poi.name) (危险等级: \(poi.dangerLevel))")
 
-        // 生成随机物品（1-3件）
-        let itemCount = Int.random(in: 1...3)
+        // 生成物品数量（1-3件，高危地点1可能更多）
+        let baseCount = Int.random(in: 1...3)
+        let bonusCount = poi.dangerLevel >= 4 ? Int.random(in: 0...1) : 0
+        let itemCount = baseCount + bonusCount
+
+        // 尝试使用 AI 生成物品
+        let aiItems = await AIItemGenerator.shared.generateItems(for: poi, count: itemCount)
+
+        // 如果 AI 失败，使用降级方案
+        let generatedItems: [AIGeneratedItem]
+        let isAIGenerated: Bool
+
+        if let items = aiItems {
+            generatedItems = items
+            isAIGenerated = true
+            print("🏪 [搜刮] 使用 AI 生成的物品")
+        } else {
+            generatedItems = AIItemGenerator.shared.generateFallbackItems(for: poi, count: itemCount)
+            isAIGenerated = false
+            print("🏪 [搜刮] 使用降级方案生成物品")
+        }
+
+        // 转换为 CollectedItem
         var collectedItems: [CollectedItem] = []
 
-        // 确保物品定义已加载
-        await RewardGenerator.shared.preloadItemDefinitions()
-
-        // 从物品池随机选择
-        for _ in 0..<itemCount {
-            // 随机稀有度（偏向普通）
-            let rarityRandom = Double.random(in: 0..<1)
-            let rarity: ItemRarity
-            switch rarityRandom {
-            case 0..<0.70: rarity = .common
-            case 0.70..<0.95: rarity = .rare
-            default: rarity = .epic
-            }
-
+        for aiItem in generatedItems {
             // 随机品质
-            let qualityRandom = Double.random(in: 0..<1)
-            let quality: ItemQuality
-            switch qualityRandom {
-            case 0..<0.05: quality = .pristine
-            case 0.05..<0.30: quality = .good
-            case 0.30..<0.70: quality = .worn
-            case 0.70..<0.95: quality = .damaged
-            default: quality = .ruined
-            }
+            let quality = randomQuality()
 
-            // 随机数量（1-3个）
-            let quantity = Int.random(in: 1...3)
+            // 创建基础物品定义
+            let definition = ItemDefinition(
+                id: "ai_\(UUID().uuidString.prefix(8))",
+                name: aiItem.name,
+                description: aiItem.story,
+                category: aiItem.itemCategory,
+                icon: getIconForCategory(aiItem.itemCategory),
+                rarity: aiItem.itemRarity
+            )
 
-            // 创建物品（使用随机物品定义）
-            let definition = randomItemDefinition(rarity: rarity)
+            // 创建收集物品（带 AI 信息）
             let item = CollectedItem(
                 definition: definition,
                 quality: quality,
                 foundDate: Date(),
-                quantity: quantity
+                quantity: 1,
+                aiName: aiItem.name,
+                aiStory: aiItem.story,
+                isAIGenerated: isAIGenerated
             )
             collectedItems.append(item)
 
-            print("🏪 [搜刮] 获得：\(definition.name) x\(quantity) [\(rarity.displayName)] [\(quality.rawValue)]")
+            print("🏪 [搜刮] 获得：\(aiItem.name) [\(aiItem.rarity)] [\(quality.rawValue)]")
         }
 
         // 将物品存入背包
@@ -793,7 +802,32 @@ final class ExplorationManager: NSObject, ObservableObject {
         showPOIPopup = false
         showScavengeResult = true
 
-        print("🏪 [搜刮] 完成，获得 \(collectedItems.count) 种物品")
+        print("🏪 [搜刮] 完成，获得 \(collectedItems.count) 个物品 (AI生成: \(isAIGenerated))")
+    }
+
+    /// 随机生成品质
+    private func randomQuality() -> ItemQuality {
+        let random = Double.random(in: 0..<1)
+        switch random {
+        case 0..<0.05: return .pristine
+        case 0.05..<0.30: return .good
+        case 0.30..<0.70: return .worn
+        case 0.70..<0.95: return .damaged
+        default: return .ruined
+        }
+    }
+
+    /// 根据物品分类获取图标
+    private func getIconForCategory(_ category: ItemCategory) -> String {
+        switch category {
+        case .water: return "drop.fill"
+        case .food: return "fork.knife"
+        case .medical: return "cross.case.fill"
+        case .material: return "gearshape.fill"
+        case .tool: return "wrench.and.screwdriver.fill"
+        case .weapon: return "shield.fill"
+        case .other: return "shippingbox.fill"
+        }
     }
 
     /// 关闭POI弹窗（稍后再说）
@@ -809,7 +843,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         latestScavengeResult = nil
     }
 
-    /// 随机物品定义
+    /// 随机物品定义（用于探索奖励等非 AI 场景）
     private func randomItemDefinition(rarity: ItemRarity) -> ItemDefinition {
         // 根据稀有度返回不同类型的物品
         switch rarity {
@@ -822,6 +856,15 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "rope", name: NSLocalizedString("绳索", comment: "物品名称"), description: NSLocalizedString("多用途工具", comment: "物品描述"), category: .tool, icon: "line.diagonal", rarity: .common),
                 ItemDefinition(id: "matches", name: NSLocalizedString("火柴", comment: "物品名称"), description: NSLocalizedString("生火必备", comment: "物品描述"), category: .tool, icon: "flame.fill", rarity: .common),
                 ItemDefinition(id: "cloth", name: NSLocalizedString("布料", comment: "物品名称"), description: NSLocalizedString("可以缝补衣物", comment: "物品描述"), category: .material, icon: "tshirt.fill", rarity: .common)
+            ]
+            return items.randomElement()!
+        case .uncommon:
+            let items = [
+                ItemDefinition(id: "energy_drink", name: NSLocalizedString("能量饮料", comment: "物品名称"), description: NSLocalizedString("提神醒脑的饮品", comment: "物品描述"), category: .food, icon: "bolt.fill", rarity: .uncommon),
+                ItemDefinition(id: "multi_tool", name: NSLocalizedString("多功能工具", comment: "物品名称"), description: NSLocalizedString("集成多种工具的便携装置", comment: "物品描述"), category: .tool, icon: "wrench.and.screwdriver.fill", rarity: .uncommon),
+                ItemDefinition(id: "med_kit_small", name: NSLocalizedString("小型急救包", comment: "物品名称"), description: NSLocalizedString("基本的医疗用品", comment: "物品描述"), category: .medical, icon: "cross.case.fill", rarity: .uncommon),
+                ItemDefinition(id: "canned_fruit", name: NSLocalizedString("水果罐头", comment: "物品名称"), description: NSLocalizedString("补充维生素的好选择", comment: "物品描述"), category: .food, icon: "leaf.fill", rarity: .uncommon),
+                ItemDefinition(id: "duct_tape", name: NSLocalizedString("万能胶带", comment: "物品名称"), description: NSLocalizedString("修复一切的神器", comment: "物品描述"), category: .material, icon: "rectangle.fill", rarity: .uncommon)
             ]
             return items.randomElement()!
         case .rare:
@@ -839,6 +882,14 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "radio", name: NSLocalizedString("对讲机", comment: "物品名称"), description: NSLocalizedString("远距离通讯设备", comment: "物品描述"), category: .tool, icon: "antenna.radiowaves.left.and.right", rarity: .epic),
                 ItemDefinition(id: "solar_charger", name: NSLocalizedString("太阳能充电器", comment: "物品名称"), description: NSLocalizedString("可再生能源", comment: "物品描述"), category: .tool, icon: "sun.max.fill", rarity: .epic),
                 ItemDefinition(id: "military_ration", name: NSLocalizedString("军用口粮", comment: "物品名称"), description: NSLocalizedString("高热量应急食品", comment: "物品描述"), category: .food, icon: "bag.fill", rarity: .epic)
+            ]
+            return items.randomElement()!
+        case .legendary:
+            let items = [
+                ItemDefinition(id: "hazmat_suit", name: NSLocalizedString("防护服", comment: "物品名称"), description: NSLocalizedString("全身防护装备", comment: "物品描述"), category: .tool, icon: "figure.dress.line.vertical.figure", rarity: .legendary),
+                ItemDefinition(id: "night_vision", name: NSLocalizedString("夜视仪", comment: "物品名称"), description: NSLocalizedString("在黑暗中看清一切", comment: "物品描述"), category: .tool, icon: "eye.fill", rarity: .legendary),
+                ItemDefinition(id: "surgical_kit", name: NSLocalizedString("手术套件", comment: "物品名称"), description: NSLocalizedString("专业医疗设备", comment: "物品描述"), category: .medical, icon: "scissors", rarity: .legendary),
+                ItemDefinition(id: "water_purifier", name: NSLocalizedString("净水器", comment: "物品名称"), description: NSLocalizedString("将任何水变成饮用水", comment: "物品描述"), category: .tool, icon: "drop.triangle.fill", rarity: .legendary)
             ]
             return items.randomElement()!
         }

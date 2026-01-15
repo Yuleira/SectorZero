@@ -18,6 +18,11 @@ struct NearbyPOI: Identifiable, Equatable {
     let coordinate: CLLocationCoordinate2D
     var isScavenged: Bool = false
 
+    /// 危险等级（1-5），由 POI 类型决定
+    var dangerLevel: Int {
+        return type.dangerLevel
+    }
+
     static func == (lhs: NearbyPOI, rhs: NearbyPOI) -> Bool {
         lhs.id == rhs.id
     }
@@ -100,6 +105,23 @@ enum POIType: String, CaseIterable {
         case .cafe: return .cafe
         case .supermarket: return nil  // 没有直接对应的category
         case .convenience: return nil
+        }
+    }
+
+    /// 危险等级（1-5），决定搜刮物品的稀有度分布
+    /// 危险越高，收益越大
+    var dangerLevel: Int {
+        switch self {
+        case .convenience, .cafe:
+            return 1  // 低危：便利店、咖啡店
+        case .restaurant, .store:
+            return 2  // 低危：餐厅、商店
+        case .supermarket, .gasStation:
+            return 3  // 中危：超市、加油站
+        case .pharmacy:
+            return 4  // 高危：药店
+        case .hospital:
+            return 5  // 极危：医院
         }
     }
 }
