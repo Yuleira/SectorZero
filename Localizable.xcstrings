@@ -56,17 +56,6 @@
     "×%lld" : {
 
     },
-    "⚠️ 立即搜刮" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scavenge Now"
-          }
-        }
-      }
-    },
     "⚠️ 速度过快！%.0fkm/h > 30km/h，%d秒后停止" : {
       "comment" : "速度警告",
       "localizations" : {
@@ -606,7 +595,7 @@
       }
     },
     "圈地追踪" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -977,8 +966,7 @@
         }
       }
     },
-    "无法display地图" : {
-      "extractionState" : "stale",
+    "无法显示地图" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -987,9 +975,6 @@
           }
         }
       }
-    },
-    "无法显示地图" : {
-
     },
     "无法获取 Apple 登录凭证" : {
       "comment" : "错误",
@@ -1428,7 +1413,14 @@
       }
     },
     "立即搜刮" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scavenge Now"
+          }
+        }
+      }
     },
     "简单的止血工具" : {
       "comment" : "物品描述",
