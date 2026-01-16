@@ -501,6 +501,28 @@ final class AuthManager: NSObject, ObservableObject {
             print("❌ Sign out error: \(error.localizedDescription)")
         }
     }
+    
+    /// 强制退出登录（用于UI导航）
+    /// 立即重置认证状态，不依赖网络请求
+    @MainActor
+    func forceSignOut() {
+        print("🔐 [AuthManager] Force sign out called")
+        print("🔐 [AuthManager] Current isAuthenticated: \(isAuthenticated)")
+        
+        handleSessionExpired()
+        
+        print("🔐 [AuthManager] After handleSessionExpired, isAuthenticated: \(isAuthenticated)")
+        
+        // 同时尝试清除 Supabase 会话（异步，不等待结果）
+        Task {
+            do {
+                try await supabase.auth.signOut()
+                print("🔐 [AuthManager] Background signOut succeeded")
+            } catch {
+                print("🔐 [AuthManager] Background signOut failed: \(error.localizedDescription)")
+            }
+        }
+    }
 
     /// 检查当前会话
     /// - Note: 用于应用启动时检查用户是否已登录

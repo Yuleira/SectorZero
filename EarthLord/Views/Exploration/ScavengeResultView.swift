@@ -190,8 +190,8 @@ struct ScavengeResultView: View {
                 // 物品信息
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
-                        // 使用 displayName（优先 AI 名称）
-                        Text(item.displayName)
+                        // 使用 displayName（优先 AI 名称）并支持本地化
+                        Text(LocalizedStringKey(item.displayName))
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(ApocalypseTheme.textPrimary)
                             .lineLimit(1)
@@ -210,14 +210,14 @@ struct ScavengeResultView: View {
 
                     // 品质和分类
                     HStack(spacing: 8) {
-                        Text(item.quality.rawValue)
+                        Text(item.quality.displayName)
                             .font(.system(size: 12))
                             .foregroundColor(item.quality.color)
 
                         Text("·")
                             .foregroundColor(ApocalypseTheme.textMuted)
 
-                        Text(item.definition.category.rawValue)
+                        Text(item.definition.category.displayName)
                             .font(.system(size: 12))
                             .foregroundColor(ApocalypseTheme.textMuted)
 
@@ -289,7 +289,12 @@ struct ScavengeResultView: View {
 
     /// 确认按钮
     private var confirmButton: some View {
-        Button(action: onDismiss) {
+        Button {
+            Task {
+                await InventoryManager.shared.loadItems()
+                onDismiss()
+            }
+        } label: {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark")
                     .font(.system(size: 14, weight: .semibold))

@@ -98,20 +98,49 @@ struct TerritoryTabView: View {
 
     /// 未登录视图
     private var notLoggedInView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
             Image(systemName: "person.crop.circle.badge.questionmark")
                 .font(.system(size: 60))
                 .foregroundColor(ApocalypseTheme.textMuted)
 
-            Text("请先登录")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(ApocalypseTheme.textPrimary)
+            VStack(spacing: 12) {
+                Text(NSLocalizedString("请先登录", comment: "Please log in first"))
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(ApocalypseTheme.textPrimary)
 
-            Text("登录后即可查看和管理你的领地")
-                .font(.subheadline)
-                .foregroundColor(ApocalypseTheme.textSecondary)
-                .multilineTextAlignment(.center)
+                Text(NSLocalizedString("登录后即可查看和管理你的领地", comment: "Log in to view and manage your territories"))
+                    .font(.subheadline)
+                    .foregroundColor(ApocalypseTheme.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            // 登录按钮
+            Button {
+                print("🏴 [TerritoryTabView] Go to Login button tapped")
+                // 强制触发认证状态检查和重置
+                // 这会确保 ContentView 正确切换到 AuthView
+                Task { @MainActor in
+                    print("🏴 [TerritoryTabView] Calling forceSignOut()")
+                    // 重置认证状态，强制显示登录界面
+                    authManager.forceSignOut()
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "person.badge.plus")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text(NSLocalizedString("前往登录", comment: "Go to Login"))
+                        .font(.system(size: 16, weight: .semibold))
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(ApocalypseTheme.primary)
+                )
+            }
+            .padding(.horizontal, 40)
         }
         .padding()
     }

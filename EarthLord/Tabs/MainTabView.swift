@@ -42,12 +42,6 @@ struct MainTabView: View {
                 }
                 .tag(3)
 
-            MoreTabView()
-                .tabItem {
-                    Image(systemName: "ellipsis")
-                    Text("更多".localized)
-                }
-                .tag(4)
         }
         .tint(ApocalypseTheme.primary)
         .id(languageManager.refreshID)

@@ -484,6 +484,17 @@
         }
       }
     },
+    "全部" : {
+      "comment" : "All categories",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
     "关闭" : {
       "localizations" : {
         "en" : {
@@ -559,6 +570,7 @@
       }
     },
     "删除失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -569,6 +581,7 @@
       }
     },
     "删除账户后，以下数据将被永久删除：" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -594,6 +607,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Go to the map to start claiming territory!"
+          }
+        }
+      }
+    },
+    "前往登录" : {
+      "comment" : "Go to Login",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to Login"
           }
         }
       }
@@ -714,6 +738,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compressed Biscuits"
+          }
+        }
+      }
+    },
+    "去探索收集物资吧" : {
+      "comment" : "Empty backpack subtitle",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go explore and collect supplies"
           }
         }
       }
@@ -1195,6 +1230,7 @@
       }
     },
     "您的个人资料信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1215,6 +1251,7 @@
       }
     },
     "所有游戏进度和数据" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1343,10 +1380,8 @@
         }
       }
     },
-    "搜索POI" : {
-
-    },
     "搜索物品..." : {
+      "comment" : "Search items placeholder",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1603,6 +1638,7 @@
       }
     },
     "此操作不可撤销！" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1641,6 +1677,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Canned Fruit"
+          }
+        }
+      }
+    },
+    "没有找到相关物品" : {
+      "comment" : "No search results title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Items Found"
           }
         }
       }
@@ -1861,6 +1908,7 @@
       }
     },
     "登录凭证和认证信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1871,6 +1919,7 @@
       }
     },
     "登录后即可查看和管理你的领地" : {
+      "comment" : "Log in to view and manage your territories",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1903,6 +1952,7 @@
       }
     },
     "确定" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1934,6 +1984,7 @@
       }
     },
     "确认删除账户" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2139,11 +2190,23 @@
       }
     },
     "背包" : {
+      "comment" : "Backpack navigation title",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inventory"
+          }
+        }
+      }
+    },
+    "背包空空如也" : {
+      "comment" : "Empty backpack title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backpack is Empty"
           }
         }
       }
@@ -2386,6 +2449,17 @@
         }
       }
     },
+    "试试其他关键词或清除筛选条件" : {
+      "comment" : "No search results subtitle",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try other keywords or clear filters"
+          }
+        }
+      }
+    },
     "该邮箱已注册" : {
       "comment" : "认证错误",
       "localizations" : {
@@ -2398,6 +2472,7 @@
       }
     },
     "请先登录" : {
+      "comment" : "Please log in first",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2432,6 +2507,7 @@
       }
     },
     "请输入「%@」以确认操作：" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2442,6 +2518,7 @@
       }
     },
     "请输入%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

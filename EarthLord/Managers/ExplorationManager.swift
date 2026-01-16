@@ -717,10 +717,10 @@ final class ExplorationManager: NSObject, ObservableObject {
             }
 
             if distance <= poiTriggerRadius {
-                // 进入POI范围
-                print("🏪 [POI] ✅ 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米），触发弹窗")
-                triggerPOIPopup(poi: poi)
-                return
+                        // 进入POI范围
+                        print("🏪 [POI] ✅ 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米），触发弹窗")
+                        triggerPOIPopup(poi: poi)
+                        return
             }
         }
     }

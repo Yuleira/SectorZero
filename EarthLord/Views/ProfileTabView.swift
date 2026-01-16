@@ -14,11 +14,19 @@ struct ProfileTabView: View {
     /// 认证管理器（使用 @ObservedObject 确保状态响应）
     @ObservedObject private var authManager = AuthManager.shared
 
+    /// 语言管理器（用于显示当前语言）
+    @StateObject private var languageManager = LanguageManager.shared
+
     /// 是否显示退出确认弹窗
     @State private var showLogoutAlert = false
 
     /// 是否正在退出
     @State private var isLoggingOut = false
+
+    /// 删除账户弹窗控制
+    @State private var showDeleteAccountSheet = false
+    @State private var showDeleteError = false
+    @State private var deleteErrorMessage = ""
 
     var body: some View {
         NavigationStack {
@@ -57,6 +65,20 @@ struct ProfileTabView: View {
                     }
                 }
 
+                // MARK: - App 设置
+                Section("应用设置".localized) {
+                    NavigationLink {
+                        LanguageSettingsView()
+                    } label: {
+                        HStack {
+                            Label("语言".localized, systemImage: "globe")
+                            Spacer()
+                            Text(languageManager.currentLanguage.displayName)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+
                 // MARK: - 退出登录
                 Section {
                     Button(role: .destructive) {
@@ -73,8 +95,24 @@ struct ProfileTabView: View {
                     }
                     .disabled(isLoggingOut)
                 }
+
+                Section {
+                    Button(role: .destructive) {
+                        showDeleteAccountSheet = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("删除账户".localized)
+                            Spacer()
+                        }
+                    }
+                } footer: {
+                    Text("删除账户后，您的所有数据将被永久删除且无法恢复。".localized)
+                        .foregroundColor(.secondary)
+                }
             }
             .navigationTitle("个人".localized)
+            .id(languageManager.refreshID)
             .alert("确认退出".localized, isPresented: $showLogoutAlert) {
                 Button("取消".localized, role: .cancel) { }
                 Button("退出".localized, role: .destructive) {
@@ -82,6 +120,20 @@ struct ProfileTabView: View {
                 }
             } message: {
                 Text("确定要退出登录吗？退出后需要重新登录。".localized)
+            }
+            .sheet(isPresented: $showDeleteAccountSheet) {
+                DeleteAccountConfirmView(
+                    isPresented: $showDeleteAccountSheet,
+                    onError: { error in
+                        deleteErrorMessage = error
+                        showDeleteError = true
+                    }
+                )
+            }
+            .alert("删除失败".localized, isPresented: $showDeleteError) {
+                Button("确定".localized, role: .cancel) { }
+            } message: {
+                Text(deleteErrorMessage)
             }
         }
     }
@@ -188,6 +240,161 @@ struct ProfileTabView: View {
     }
 }
 
+// MARK: - 删除账户确认视图
+struct DeleteAccountConfirmView: View {
+    @Binding var isPresented: Bool
+    var onError: (String) -> Void
+
+    @StateObject private var authManager = AuthManager.shared
+    @State private var confirmText = ""
+    @FocusState private var isTextFieldFocused: Bool
+
+    private let requiredText = "删除"
+
+    private var canDelete: Bool {
+        confirmText == requiredText
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.red)
+                    .padding(.top, 40)
+
+                Text("确认删除账户".localized)
+                    .font(.title2)
+                    .fontWeight(.bold)
+
+                VStack(spacing: 12) {
+                    Text("此操作不可撤销！".localized)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.red)
+
+                    Text("删除账户后，以下数据将被永久删除：".localized)
+                        .foregroundColor(.secondary)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("您的个人资料信息".localized, systemImage: "person.crop.circle")
+                        Label("所有游戏进度和数据".localized, systemImage: "gamecontroller")
+                        Label("登录凭证和认证信息".localized, systemImage: "key")
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                }
+                .padding(.horizontal)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("请输入「\(requiredText)」以确认操作：".localized)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    TextField("请输入\(requiredText)".localized, text: $confirmText)
+                        .textFieldStyle(.roundedBorder)
+                        .focused($isTextFieldFocused)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
+
+                VStack(spacing: 12) {
+                    Button {
+                        Task {
+                            do {
+                                try await authManager.deleteAccount()
+                                isPresented = false
+                            } catch {
+                                onError(authManager.errorMessage ?? "删除账户失败，请稍后重试".localized)
+                                isPresented = false
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            if authManager.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .padding(.trailing, 8)
+                            }
+                            Text("确认删除".localized)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(canDelete ? Color.red : Color.gray)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                    }
+                    .disabled(!canDelete || authManager.isLoading)
+
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Text("取消".localized)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .foregroundColor(.primary)
+                            .cornerRadius(12)
+                    }
+                    .disabled(authManager.isLoading)
+                }
+                .padding(.horizontal, 32)
+                .padding(.bottom, 32)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .onAppear {
+                print("📱 [删除账户] 显示删除确认页面")
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}
+
+// MARK: - 语言设置视图
+struct LanguageSettingsView: View {
+    @StateObject private var languageManager = LanguageManager.shared
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(AppLanguage.allCases) { language in
+                    Button {
+                        languageManager.setLanguage(language)
+                    } label: {
+                        HStack {
+                            Text(language.displayName)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            if languageManager.currentLanguage == language {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                }
+            } footer: {
+                Text("切换语言后界面将立即更新".localized)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .navigationTitle("语言设置".localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .id(languageManager.refreshID)
+    }
+}
 #Preview {
     ProfileTabView()
 }

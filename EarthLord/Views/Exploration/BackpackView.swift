@@ -76,7 +76,7 @@ struct BackpackView: View {
                 contentView
             }
         }
-        .navigationTitle("背包")
+        .navigationTitle(NSLocalizedString("背包", comment: "Backpack navigation title"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             loadBackpackItems()
@@ -90,7 +90,7 @@ struct BackpackView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(ApocalypseTheme.textMuted)
 
-            TextField("搜索物品...", text: $searchText)
+            TextField(NSLocalizedString("搜索物品...", comment: "Search items placeholder"), text: $searchText)
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
             if !searchText.isEmpty {
@@ -111,11 +111,11 @@ struct BackpackView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 // 全部按钮
-                categoryButton(category: nil, title: "全部")
+                categoryButton(category: nil, title: NSLocalizedString("全部", comment: "All categories"))
 
                 // 各分类按钮
                 ForEach(ItemCategory.allCases, id: \.self) { category in
-                    categoryButton(category: category, title: category.rawValue)
+                    categoryButton(category: category, title: category.displayName)
                 }
             }
         }
@@ -156,8 +156,8 @@ struct BackpackView: View {
     private var emptyStateView: some View {
         EmptyStateView(
             icon: "bag.fill",
-            title: "背包空空如也",
-            subtitle: "去探索收集物资吧",
+            title: NSLocalizedString("背包空空如也", comment: "Empty backpack title"),
+            subtitle: NSLocalizedString("去探索收集物资吧", comment: "Empty backpack subtitle"),
             buttonTitle: nil,
             action: nil
         )
@@ -167,8 +167,8 @@ struct BackpackView: View {
     private var noSearchResultsView: some View {
         EmptyStateView(
             icon: "magnifyingglass",
-            title: "没有找到相关物品",
-            subtitle: "试试其他关键词或清除筛选条件",
+            title: NSLocalizedString("没有找到相关物品", comment: "No search results title"),
+            subtitle: NSLocalizedString("试试其他关键词或清除筛选条件", comment: "No search results subtitle"),
             buttonTitle: nil,
             action: nil
         )
@@ -226,7 +226,7 @@ struct ItemRowView: View {
             // 物品信息
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
-                    Text(item.definition.name)
+                    Text(LocalizedStringKey(item.displayName))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(ApocalypseTheme.textPrimary)
 
@@ -240,7 +240,7 @@ struct ItemRowView: View {
                         .cornerRadius(4)
 
                     // 品质标签
-                    Text(item.quality.rawValue)
+                    Text(item.quality.displayName)
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(item.quality.color)
                         .padding(.horizontal, 6)
@@ -249,7 +249,7 @@ struct ItemRowView: View {
                         .cornerRadius(4)
                 }
 
-                Text(item.definition.category.rawValue)
+                Text(item.definition.category.displayName)
                     .font(.system(size: 13))
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }

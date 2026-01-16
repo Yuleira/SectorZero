@@ -10,6 +10,17 @@ enum ItemQuality: String, Codable, CaseIterable {
     case damaged = "破损"
     case ruined = "报废"
 
+    /// 本地化显示名称
+    var displayName: String {
+        switch self {
+        case .pristine: return NSLocalizedString("完美", comment: "Quality: Pristine")
+        case .good: return NSLocalizedString("良好", comment: "Quality: Good")
+        case .worn: return NSLocalizedString("陈旧", comment: "Quality: Worn")
+        case .damaged: return NSLocalizedString("破损", comment: "Quality: Damaged")
+        case .ruined: return NSLocalizedString("报废", comment: "Quality: Ruined")
+        }
+    }
+
     var color: Color {
         switch self {
         case .pristine: return .purple
@@ -80,6 +91,19 @@ enum ItemCategory: String, Codable, CaseIterable {
     case tool = "工具"
     case weapon = "武器"
     case other = "其他"
+
+    /// 本地化显示名称
+    var displayName: String {
+        switch self {
+        case .water: return NSLocalizedString("水", comment: "Category: Water")
+        case .food: return NSLocalizedString("食物", comment: "Category: Food")
+        case .medical: return NSLocalizedString("药品", comment: "Category: Medical")
+        case .material: return NSLocalizedString("材料", comment: "Category: Material")
+        case .tool: return NSLocalizedString("工具", comment: "Category: Tool")
+        case .weapon: return NSLocalizedString("武器", comment: "Category: Weapon")
+        case .other: return NSLocalizedString("其他", comment: "Category: Other")
+        }
+    }
 }
 
 // MARK: - 物品定义
