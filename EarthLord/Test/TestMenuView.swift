@@ -40,6 +40,18 @@ struct TestMenuView: View {
                             .foregroundColor(ApocalypseTheme.primary)
                     }
                 }
+                
+                // AI 物品生成测试
+                NavigationLink {
+                    AIDebugView()
+                } label: {
+                    Label {
+                        Text("AI 物品生成测试".localized)
+                    } icon: {
+                        Image(systemName: "cpu.fill")
+                            .foregroundColor(.blue)
+                    }
+                }
             } header: {
                 Text("测试模块".localized)
             } footer: {

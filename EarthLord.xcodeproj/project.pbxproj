@@ -19,6 +19,7 @@
 		E62484F92F152D4D001B6ABC /* ExplorationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484F82F152D4D001B6ABC /* ExplorationManager.swift */; };
 		E62484FB2F152D59001B6ABC /* InventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484FA2F152D59001B6ABC /* InventoryManager.swift */; };
 		E62484FD2F152D66001B6ABC /* RewardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484FC2F152D66001B6ABC /* RewardGenerator.swift */; };
+		E68C12DB2F1A5983008967AA /* AIDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C12DA2F1A5983008967AA /* AIDebugView.swift */; };
 		E6A8F0522F12C378002EE1DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */; };
 		E6C38A9F2F12E046001005E9 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C38A9E2F12E046001005E9 /* EmptyStateView.swift */; };
 		E6E50DB52F12898D0096D2BB /* ProfileTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DAB2F12898D0096D2BB /* ProfileTabView.swift */; };
@@ -64,6 +65,7 @@
 		E62484FA2F152D59001B6ABC /* InventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryManager.swift; sourceTree = "<group>"; };
 		E62484FC2F152D66001B6ABC /* RewardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardGenerator.swift; sourceTree = "<group>"; };
 		E632AFC02F12BECD0098D5EC /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E68C12DA2F1A5983008967AA /* AIDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDebugView.swift; sourceTree = "<group>"; };
 		E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		E6C38A9E2F12E046001005E9 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		E6E50D862F12898D0096D2BB /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
@@ -103,8 +105,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E6C38AA32F12E0A6001005E9 /* Exploration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Exploration;
 			sourceTree = "<group>";
 		};
@@ -238,6 +238,7 @@
 		E6E50DA32F12898D0096D2BB /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				E68C12DA2F1A5983008967AA /* AIDebugView.swift */,
 				E6E50DA02F12898D0096D2BB /* SupabaseTestView.swift */,
 				E6E50DA12F12898D0096D2BB /* TestMenuView.swift */,
 				E6E50DA22F12898D0096D2BB /* TestView.swift */,
@@ -412,6 +413,7 @@
 				E6E50DC82F12898D0096D2BB /* MainTabView.swift in Sources */,
 				E6E50DC92F12898D0096D2BB /* EarthLordApp.swift in Sources */,
 				E62484FD2F152D66001B6ABC /* RewardGenerator.swift in Sources */,
+				E68C12DB2F1A5983008967AA /* AIDebugView.swift in Sources */,
 				E6E50DCA2F12898D0096D2BB /* MapTabView.swift in Sources */,
 				E6E50DCB2F12898D0096D2BB /* SupabaseTestView.swift in Sources */,
 				E6C38A9F2F12E046001005E9 /* EmptyStateView.swift in Sources */,

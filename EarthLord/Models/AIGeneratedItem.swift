@@ -25,14 +25,16 @@ struct AIGeneratedItem: Codable {
     let story: String
 
     /// 转换为 ItemCategory 枚举
+    /// 支持英文和中文类别名称，大小写不敏感
     var itemCategory: ItemCategory {
-        switch category {
-        case "医疗": return .medical
-        case "食物": return .food
-        case "工具": return .tool
-        case "武器": return .weapon
-        case "材料": return .material
-        case "水": return .water
+        let normalized = category.lowercased().trimmingCharacters(in: .whitespaces)
+        switch normalized {
+        case "medical", "医疗": return .medical
+        case "food", "食物": return .food
+        case "tool", "工具": return .tool
+        case "weapon", "武器": return .weapon
+        case "material", "材料": return .material
+        case "water", "水": return .water
         default: return .other
         }
     }

@@ -18,8 +18,8 @@ const SYSTEM_PROMPT = `你是一个末日生存游戏的物品生成器。游戏
 
 根据玩家搜刮的地点，生成符合场景的物品列表。每个物品包含：
 - name: 独特的物品名称（15字以内），可以暗示前主人身份或物品来历
-- category: 物品分类（医疗/食物/工具/武器/材料/水/其他）
-- rarity: 稀有度（common/uncommon/rare/epic/legendary）
+- category: 物品分类（必须是以下英文之一：medical/food/tool/weapon/material/water/other）
+- rarity: 稀有度（必须是以下英文之一：common/uncommon/rare/epic/legendary）
 - story: 背景故事（50-100字），营造末日氛围，有画面感
 
 生成规则：
@@ -28,11 +28,12 @@ const SYSTEM_PROMPT = `你是一个末日生存游戏的物品生成器。游戏
 3. 故事要简短但有画面感，让玩家能想象出末日前的场景
 4. 稀有度越高，名称越独特，故事越精彩
 5. 可以有黑色幽默，但不要太血腥
+6. category 和 rarity 必须用英文，name 和 story 用中文
 
 风格：末日生存，略带黑色幽默，偶尔温情
 
 只返回 JSON 数组格式，不要其他任何内容。示例：
-[{"name":"物品名","category":"分类","rarity":"稀有度","story":"故事"}]`;
+[{"name":"生锈的手术刀","category":"medical","rarity":"uncommon","story":"刀刃上的血迹早已干涸..."}]`;
 
 // Rarity weights based on danger level
 function getRarityWeights(dangerLevel: number): Record<string, number> {
@@ -126,9 +127,44 @@ ${rarityDistribution}
             jsonContent = jsonContent.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
         }
 
-        const items = JSON.parse(jsonContent);
+        let items = JSON.parse(jsonContent);
 
-        console.log(`[generate-ai-item] Successfully generated ${items.length} items`);
+        // Validate and normalize items
+        if (!Array.isArray(items)) {
+            throw new Error("AI response is not an array");
+        }
+
+        if (items.length === 0) {
+            throw new Error("AI returned empty array");
+        }
+
+        // Validate and normalize each item
+        const validCategories = ["medical", "food", "tool", "weapon", "material", "water", "other"];
+        const validRarities = ["common", "uncommon", "rare", "epic", "legendary"];
+
+        items = items.map((item, index) => {
+            // Normalize category (case-insensitive)
+            const category = item.category?.toLowerCase()?.trim() || "other";
+            const normalizedCategory = validCategories.includes(category) ? category : "other";
+
+            // Normalize rarity (case-insensitive)
+            const rarity = item.rarity?.toLowerCase()?.trim() || "common";
+            const normalizedRarity = validRarities.includes(rarity) ? rarity : "common";
+
+            // Validate required fields
+            if (!item.name || !item.story) {
+                console.warn(`[generate-ai-item] Item ${index} missing required fields, using defaults`);
+            }
+
+            return {
+                name: item.name || "未知物品",
+                category: normalizedCategory,
+                rarity: normalizedRarity,
+                story: item.story || "一个神秘的物品"
+            };
+        });
+
+        console.log(`[generate-ai-item] Successfully generated and validated ${items.length} items`);
 
         return new Response(
             JSON.stringify({ success: true, items }),

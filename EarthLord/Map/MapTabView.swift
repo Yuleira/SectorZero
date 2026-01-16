@@ -182,6 +182,30 @@ struct MapTabView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 100)  // 避开 TabBar
+                
+                // 🐛 调试按钮：手动触发POI搜索（测试用）
+                #if DEBUG
+                Button {
+                    Task {
+                        await explorationManager.manualSearchPOIs()
+                    }
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: "magnifyingglass.circle.fill")
+                            .font(.system(size: 16))
+                        Text("搜索POI")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(Color.purple.opacity(0.8))
+                    )
+                }
+                .padding(.bottom, 16)
+                #endif
             }
             .animation(.spring(response: 0.3), value: explorationManager.isExploring)
 

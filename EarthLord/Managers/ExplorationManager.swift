@@ -104,7 +104,8 @@ final class ExplorationManager: NSObject, ObservableObject {
     private var poiProximityTimer: Timer?
 
     /// POI触发范围（米）
-    private let poiTriggerRadius: CLLocationDistance = 50
+    /// 注意：设置为100米以便测试，生产环境可以调整为更小的值
+    private let poiTriggerRadius: CLLocationDistance = 100
 
     /// 当前密度等级（决定POI显示数量）
     private var currentDensityLevel: DensityLevel = .alone
@@ -625,6 +626,13 @@ final class ExplorationManager: NSObject, ObservableObject {
 
     // MARK: - POI 搜索与管理
 
+    /// 手动触发POI搜索（用于测试）
+    /// 无需开始探索即可搜索附近POI
+    public func manualSearchPOIs() async {
+        print("🏪 [POI] 手动触发POI搜索...")
+        await searchAndSetupPOIs()
+    }
+
     /// 搜索并设置附近POI
     private func searchAndSetupPOIs() async {
         isSearchingPOIs = true
@@ -657,8 +665,11 @@ final class ExplorationManager: NSObject, ObservableObject {
         nearbyPOIs = limitedPOIs
 
         print("🏪 [POI] ✅ 找到 \(allPOIs.count) 个POI，根据密度等级(\(currentDensityLevel.localizedName))显示 \(limitedPOIs.count) 个")
-        for poi in limitedPOIs {
-            print("🏪 [POI]   - \(poi.name) (\(poi.type.rawValue))")
+        for (index, poi) in limitedPOIs.enumerated() {
+            let poiLocation = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
+            let userCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+            let distance = userCLLocation.distance(from: poiLocation)
+            print("🏪 [POI]   #\(index + 1) \(poi.name) (\(poi.type.rawValue)) - 距离: \(String(format: "%.1f", distance))米")
         }
 
         // 启动POI接近检测定时器
@@ -676,14 +687,22 @@ final class ExplorationManager: NSObject, ObservableObject {
                 self?.checkPOIProximity()
             }
         }
-        print("🏪 [POI] 接近检测定时器已启动")
+        print("🏪 [POI] ✅ 接近检测定时器已启动 (每2秒检测一次，触发范围: \(poiTriggerRadius)米)")
+        print("🏪 [POI] 当前共有 \(nearbyPOIs.count) 个POI待检测")
     }
 
     /// 检测POI接近
     private func checkPOIProximity() {
-        guard isExploring else { return }
-        guard !showPOIPopup else { return }  // 已经在显示弹窗
-        guard let userLocation = locationManager.userLocation else { return }
+        // 修复：不再强制要求 isExploring，即使未探索也可以触发POI弹窗
+        guard !showPOIPopup else {
+            // 已经在显示弹窗，不重复触发
+            return
+        }
+        
+        guard let userLocation = locationManager.userLocation else {
+            print("🏪 [POI] 检测跳过：无用户位置")
+            return
+        }
 
         let userCLLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
 
@@ -692,9 +711,14 @@ final class ExplorationManager: NSObject, ObservableObject {
             let poiLocation = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
             let distance = userCLLocation.distance(from: poiLocation)
 
+            // 调试日志：显示所有POI的距离
+            if distance <= poiTriggerRadius * 2 {
+                print("🏪 [POI] 距离检测：\(poi.name) - \(String(format: "%.1f", distance))米 (触发范围: \(poiTriggerRadius)米)")
+            }
+
             if distance <= poiTriggerRadius {
                 // 进入POI范围
-                print("🏪 [POI] 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米）")
+                print("🏪 [POI] ✅ 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米），触发弹窗")
                 triggerPOIPopup(poi: poi)
                 return
             }
@@ -705,7 +729,8 @@ final class ExplorationManager: NSObject, ObservableObject {
     private func triggerPOIPopup(poi: NearbyPOI) {
         currentPOI = poi
         showPOIPopup = true
-        print("🏪 [POI] 显示搜刮提示：\(poi.name)")
+        print("🏪 [POI] ✅ 触发弹窗：\(poi.name)")
+        print("🏪 [POI] 弹窗状态 - showPOIPopup: \(showPOIPopup), currentPOI: \(poi.name)")
     }
 
     /// 清理POI和围栏

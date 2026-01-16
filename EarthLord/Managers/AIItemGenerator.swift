@@ -22,9 +22,6 @@ final class AIItemGenerator {
 
     /// 请求超时时间（秒）
     private let requestTimeout: TimeInterval = 10.0
-    
-    /// Edge Function URL (已替换为你真实的 Project ID)
-    private let functionURL = "https://zkcjvhdhartrrekzjtjg.supabase.co/functions/v1/generate-ai-item"
 
     // MARK: - 初始化
 
@@ -54,12 +51,14 @@ final class AIItemGenerator {
         )
 
         do {
-            // 调用 Edge Function
-            let response: GenerateItemResponse = try await supabase.functions
-                .invoke(
-                    "generate-ai-item",
-                    options: .init(body: request)
-                )
+            // 调用 Edge Function，带超时控制
+            let response: GenerateItemResponse = try await withTimeout(seconds: requestTimeout) {
+                try await supabase.functions
+                    .invoke(
+                        "generate-ai-item",
+                        options: .init(body: request)
+                    )
+            }
 
             if response.success, let items = response.items {
                 print("🤖 [AI物品生成器] ✅ 成功生成 \(items.count) 个物品")
@@ -75,6 +74,44 @@ final class AIItemGenerator {
         } catch {
             print("🤖 [AI物品生成器] ❌ 请求失败: \(error.localizedDescription)")
             return nil
+        }
+    }
+    
+    /// 带超时的异步操作包装器
+    /// - Parameters:
+    ///   - seconds: 超时时间（秒）
+    ///   - operation: 要执行的异步操作
+    /// - Returns: 操作结果
+    /// - Throws: 超时或操作本身的错误
+    private func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            // 添加实际操作任务
+            group.addTask {
+                try await operation()
+            }
+            
+            // 添加超时任务
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                throw TimeoutError()
+            }
+            
+            // 返回第一个完成的任务结果
+            guard let result = try await group.next() else {
+                throw TimeoutError()
+            }
+            
+            // 取消其他任务
+            group.cancelAll()
+            
+            return result
+        }
+    }
+    
+    /// 超时错误
+    private struct TimeoutError: LocalizedError {
+        var errorDescription: String? {
+            return NSLocalizedString("请求超时", comment: "网络请求超时错误")
         }
     }
 
