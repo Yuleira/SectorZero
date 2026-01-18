@@ -754,7 +754,7 @@ final class ExplorationManager: NSObject, ObservableObject {
     func scavengePOI(_ poi: NearbyPOI) async {
         print("🏪 [搜刮] 开始搜刮：\(poi.name) (危险等级: \(poi.dangerLevel))")
 
-        // 生成物品数量（1-3件，高危地点1可能更多）
+        // 生成物品数量（1-3件，高危地点可能更多）
         let baseCount = Int.random(in: 1...3)
         let bonusCount = poi.dangerLevel >= 4 ? Int.random(in: 0...1) : 0
         let itemCount = baseCount + bonusCount
@@ -783,9 +783,12 @@ final class ExplorationManager: NSObject, ObservableObject {
             // 随机品质
             let quality = randomQuality()
 
+            // 使用基于分类的有效物品定义 ID（确保存在于数据库中）
+            let definitionId = getDefinitionIdForCategory(aiItem.itemCategory)
+
             // 创建基础物品定义
             let definition = ItemDefinition(
-                id: "ai_\(UUID().uuidString.prefix(8))",
+                id: definitionId,
                 name: aiItem.name,
                 description: aiItem.story,
                 category: aiItem.itemCategory,
@@ -805,15 +808,17 @@ final class ExplorationManager: NSObject, ObservableObject {
             )
             collectedItems.append(item)
 
-            print("🏪 [搜刮] 获得：\(aiItem.name) [\(aiItem.rarity)] [\(quality.rawValue)]")
+            print("🏪 [搜刮] 获得：\(aiItem.name) [\(aiItem.rarity)] [\(quality.rawValue)] (定义ID: \(definitionId))")
         }
 
         // 将物品存入背包
+        print("🏪 [搜刮] 正在保存 \(collectedItems.count) 个物品到背包...")
         await InventoryManager.shared.addItems(
             collectedItems,
             sourceType: "scavenge",
             sourceSessionId: nil
         )
+        print("🏪 [搜刮] 物品保存完成")
 
         // 标记POI为已搜刮
         if let index = nearbyPOIs.firstIndex(where: { $0.id == poi.id }) {
@@ -839,6 +844,20 @@ final class ExplorationManager: NSObject, ObservableObject {
         case 0.30..<0.70: return .worn
         case 0.70..<0.95: return .damaged
         default: return .ruined
+        }
+    }
+
+    /// 根据物品分类获取有效的数据库物品定义 ID
+    /// 这些 ID 必须存在于 item_definitions 表中
+    private func getDefinitionIdForCategory(_ category: ItemCategory) -> String {
+        switch category {
+        case .water: return "water_bottle"
+        case .food: return "canned_beans"
+        case .medical: return "bandage"
+        case .material: return "scrap_metal"
+        case .tool: return "rope"
+        case .weapon: return "scrap_metal"
+        case .other: return "scrap_metal"
         }
     }
 

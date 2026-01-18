@@ -41,7 +41,16 @@ enum POIType: String, CaseIterable {
 
     /// 本地化显示名称（供 UI 使用）
     var localizedName: String {
-        NSLocalizedString(rawValue, comment: "POI类型")
+        switch self {
+        case .store: return "poi_type_store".localized
+        case .hospital: return "poi_type_hospital".localized
+        case .pharmacy: return "poi_type_pharmacy".localized
+        case .gasStation: return "poi_type_gas_station".localized
+        case .restaurant: return "poi_type_restaurant".localized
+        case .cafe: return "poi_type_cafe".localized
+        case .supermarket: return "poi_type_supermarket".localized
+        case .convenience: return "poi_type_convenience".localized
+        }
     }
 
     /// SF Symbol 图标
