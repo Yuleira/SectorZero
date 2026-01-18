@@ -111,7 +111,7 @@ final class AIItemGenerator {
     /// 超时错误
     private struct TimeoutError: LocalizedError {
         var errorDescription: String? {
-            return NSLocalizedString("请求超时", comment: "网络请求超时错误")
+            return NSLocalizedString("error_request_timeout", comment: "Network request timeout")
         }
     }
 
@@ -218,55 +218,55 @@ final class AIItemGenerator {
 
     private func getMedicalFallback(rarity: String) -> (String, String) {
         let items: [(String, String)] = [
-            (NSLocalizedString("急救绷带", comment: "Fallback item"), NSLocalizedString("一卷还算干净的绷带，上面沾着些许血迹。", comment: "Fallback story")),
-            (NSLocalizedString("止痛药片", comment: "Fallback item"), NSLocalizedString("瓶子上的标签已经模糊，但里面的药片看起来还能用。", comment: "Fallback story")),
-            (NSLocalizedString("消毒酒精", comment: "Fallback item"), NSLocalizedString("半瓶医用酒精，在这个世界里价值连城。", comment: "Fallback story")),
-            (NSLocalizedString("医用纱布", comment: "Fallback item"), NSLocalizedString("无菌包装的纱布，是幸存者的必需品。", comment: "Fallback story")),
-            (NSLocalizedString("退烧药", comment: "Fallback item"), NSLocalizedString("发烧在末日里可能意味着死亡，这些药很珍贵。", comment: "Fallback story"))
+            (NSLocalizedString("item_first_aid_bandage", comment: "Item name"), NSLocalizedString("item_first_aid_bandage_story", comment: "Item story")),
+            (NSLocalizedString("item_painkillers", comment: "Item name"), NSLocalizedString("item_painkillers_story", comment: "Item story")),
+            (NSLocalizedString("item_rubbing_alcohol", comment: "Item name"), NSLocalizedString("item_rubbing_alcohol_story", comment: "Item story")),
+            (NSLocalizedString("item_medical_gauze", comment: "Item name"), NSLocalizedString("item_medical_gauze_story", comment: "Item story")),
+            (NSLocalizedString("item_fever_medicine", comment: "Item name"), NSLocalizedString("item_fever_medicine_story", comment: "Item story"))
         ]
         return items.randomElement()!
     }
 
     private func getFoodFallback(rarity: String) -> (String, String) {
         let items: [(String, String)] = [
-            (NSLocalizedString("罐头食品", comment: "Fallback item"), NSLocalizedString("铁皮罐头上的标签早已脱落，但闻起来应该还能吃。", comment: "Fallback story")),
-            (NSLocalizedString("能量棒", comment: "Fallback item"), NSLocalizedString("虽然过期了，但在末日里没人会在意保质期。", comment: "Fallback story")),
-            (NSLocalizedString("矿泉水", comment: "Fallback item"), NSLocalizedString("干净的饮用水，这可能是你今天最幸运的发现。", comment: "Fallback story")),
-            (NSLocalizedString("压缩饼干", comment: "Fallback item"), NSLocalizedString("军用压缩饼干，能提供足够的热量撑过一天。", comment: "Fallback story")),
-            (NSLocalizedString("速溶咖啡", comment: "Fallback item"), NSLocalizedString("一小包速溶咖啡，能让你在漫长的夜里保持清醒。", comment: "Fallback story"))
+            (NSLocalizedString("item_canned_food", comment: "Item name"), NSLocalizedString("item_canned_food_story", comment: "Item story")),
+            (NSLocalizedString("item_energy_bar", comment: "Item name"), NSLocalizedString("item_energy_bar_story", comment: "Item story")),
+            (NSLocalizedString("item_bottled_water", comment: "Item name"), NSLocalizedString("item_bottled_water_story", comment: "Item story")),
+            (NSLocalizedString("item_hardtack", comment: "Item name"), NSLocalizedString("item_hardtack_story", comment: "Item story")),
+            (NSLocalizedString("item_instant_coffee", comment: "Item name"), NSLocalizedString("item_instant_coffee_story", comment: "Item story"))
         ]
         return items.randomElement()!
     }
 
     private func getToolFallback(rarity: String) -> (String, String) {
         let items: [(String, String)] = [
-            (NSLocalizedString("手电筒", comment: "Fallback item"), NSLocalizedString("电池还有电，在黑暗中这就是希望。", comment: "Fallback story")),
-            (NSLocalizedString("打火机", comment: "Fallback item"), NSLocalizedString("一个还能用的打火机，生火从未如此重要。", comment: "Fallback story")),
-            (NSLocalizedString("瑞士军刀", comment: "Fallback item"), NSLocalizedString("多功能工具，在末日生存中不可或缺。", comment: "Fallback story")),
-            (NSLocalizedString("绳索", comment: "Fallback item"), NSLocalizedString("一卷结实的尼龙绳，用途无穷。", comment: "Fallback story")),
-            (NSLocalizedString("望远镜", comment: "Fallback item"), NSLocalizedString("能让你提前发现危险，或者找到下一个避难所。", comment: "Fallback story"))
+            (NSLocalizedString("item_flashlight", comment: "Item name"), NSLocalizedString("item_flashlight_story", comment: "Item story")),
+            (NSLocalizedString("item_lighter", comment: "Item name"), NSLocalizedString("item_lighter_story", comment: "Item story")),
+            (NSLocalizedString("item_swiss_army_knife", comment: "Item name"), NSLocalizedString("item_swiss_army_knife_story", comment: "Item story")),
+            (NSLocalizedString("item_rope", comment: "Item name"), NSLocalizedString("item_rope_story", comment: "Item story")),
+            (NSLocalizedString("item_binoculars", comment: "Item name"), NSLocalizedString("item_binoculars_story", comment: "Item story"))
         ]
         return items.randomElement()!
     }
 
     private func getMaterialFallback(rarity: String) -> (String, String) {
         let items: [(String, String)] = [
-            (NSLocalizedString("废金属", comment: "Fallback item"), NSLocalizedString("可以用来加固防御或制作简易武器。", comment: "Fallback story")),
-            (NSLocalizedString("电池", comment: "Fallback item"), NSLocalizedString("还有电的电池，在这个世界里是硬通货。", comment: "Fallback story")),
-            (NSLocalizedString("布料", comment: "Fallback item"), NSLocalizedString("可以用来缝补衣服或制作绷带。", comment: "Fallback story")),
-            (NSLocalizedString("螺丝钉", comment: "Fallback item"), NSLocalizedString("一把各种规格的螺丝钉，修理东西时很有用。", comment: "Fallback story")),
-            (NSLocalizedString("胶带", comment: "Fallback item"), NSLocalizedString("万能胶带，在末日里能解决一半的问题。", comment: "Fallback story"))
+            (NSLocalizedString("item_scrap_metal", comment: "Item name"), NSLocalizedString("item_scrap_metal_story", comment: "Item story")),
+            (NSLocalizedString("item_battery", comment: "Item name"), NSLocalizedString("item_battery_story", comment: "Item story")),
+            (NSLocalizedString("item_fabric", comment: "Item name"), NSLocalizedString("item_fabric_story", comment: "Item story")),
+            (NSLocalizedString("item_screws", comment: "Item name"), NSLocalizedString("item_screws_story", comment: "Item story")),
+            (NSLocalizedString("item_duct_tape", comment: "Item name"), NSLocalizedString("item_duct_tape_story", comment: "Item story"))
         ]
         return items.randomElement()!
     }
 
     private func getOtherFallback(rarity: String) -> (String, String) {
         let items: [(String, String)] = [
-            (NSLocalizedString("旧杂志", comment: "Fallback item"), NSLocalizedString("记录着末日前的世界，现在只能用来生火。", comment: "Fallback story")),
-            (NSLocalizedString("钥匙串", comment: "Fallback item"), NSLocalizedString("不知道能开什么锁，但也许有一天会用到。", comment: "Fallback story")),
-            (NSLocalizedString("塑料袋", comment: "Fallback item"), NSLocalizedString("防水又轻便，收集物资时很有用。", comment: "Fallback story")),
-            (NSLocalizedString("蜡烛", comment: "Fallback item"), NSLocalizedString("在没有电的夜晚，这是唯一的光源。", comment: "Fallback story")),
-            (NSLocalizedString("笔记本", comment: "Fallback item"), NSLocalizedString("空白的笔记本，也许可以记录这段艰难的旅程。", comment: "Fallback story"))
+            (NSLocalizedString("item_old_magazine", comment: "Item name"), NSLocalizedString("item_old_magazine_story", comment: "Item story")),
+            (NSLocalizedString("item_keychain", comment: "Item name"), NSLocalizedString("item_keychain_story", comment: "Item story")),
+            (NSLocalizedString("item_plastic_bag", comment: "Item name"), NSLocalizedString("item_plastic_bag_story", comment: "Item story")),
+            (NSLocalizedString("item_candle", comment: "Item name"), NSLocalizedString("item_candle_story", comment: "Item story")),
+            (NSLocalizedString("item_notebook", comment: "Item name"), NSLocalizedString("item_notebook_story", comment: "Item story"))
         ]
         return items.randomElement()!
     }

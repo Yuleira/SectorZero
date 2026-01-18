@@ -21,17 +21,6 @@
         }
       }
     },
-    "%d 种" : {
-      "comment" : "Item count",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d types"
-          }
-        }
-      }
-    },
     "%lld" : {
 
     },
@@ -97,17 +86,6 @@
     },
     "AI 物品生成测试" : {
 
-    },
-    "AI 生成" : {
-      "comment" : "AI Generated badge",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI Generated"
-          }
-        }
-      }
     },
     "AI 生成器调试" : {
 
@@ -193,6 +171,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "敬请期待"
+          }
+        }
+      }
+    },
+    "common_collapse" : {
+      "comment" : "Collapse button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapse"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收起"
+          }
+        }
+      }
+    },
+    "common_confirm" : {
+      "comment" : "Confirm button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认"
           }
         }
       }
@@ -379,6 +391,23 @@
         }
       }
     },
+    "error_request_timeout" : {
+      "comment" : "Network request timeout error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request timed out"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求超时"
+          }
+        }
+      }
+    },
     "filter_all" : {
       "comment" : "All",
       "localizations" : {
@@ -392,6 +421,958 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全部"
+          }
+        }
+      }
+    },
+    "item_battery" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电池"
+          }
+        }
+      }
+    },
+    "item_battery_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A battery that still has charge - hard currency in this world."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还有电的电池，在这个世界里是硬通货。"
+          }
+        }
+      }
+    },
+    "item_binoculars" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Binoculars"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "望远镜"
+          }
+        }
+      }
+    },
+    "item_binoculars_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helps you spot danger early, or find the next shelter."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "能让你提前发现危险，或者找到下一个避难所。"
+          }
+        }
+      }
+    },
+    "item_bottled_water" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottled Water"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矿泉水"
+          }
+        }
+      }
+    },
+    "item_bottled_water_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clean drinking water - probably the luckiest find today."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "干净的饮用水，这可能是你今天最幸运的发现。"
+          }
+        }
+      }
+    },
+    "item_candle" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Candle"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "蜡烛"
+          }
+        }
+      }
+    },
+    "item_candle_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The only light source on nights without electricity."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在没有电的夜晚，这是唯一的光源。"
+          }
+        }
+      }
+    },
+    "item_canned_food" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canned Food"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "罐头食品"
+          }
+        }
+      }
+    },
+    "item_canned_food_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The label has long fallen off, but it smells edible."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "铁皮罐头上的标签早已脱落，但闻起来应该还能吃。"
+          }
+        }
+      }
+    },
+    "item_duct_tape" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duct Tape"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "胶带"
+          }
+        }
+      }
+    },
+    "item_duct_tape_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All-purpose tape - solves half the problems in the apocalypse."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "万能胶带，在末日里能解决一半的问题。"
+          }
+        }
+      }
+    },
+    "item_energy_bar" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energy Bar"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "能量棒"
+          }
+        }
+      }
+    },
+    "item_energy_bar_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expired, but nobody cares about expiration dates in the apocalypse."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "虽然过期了，但在末日里没人会在意保质期。"
+          }
+        }
+      }
+    },
+    "item_fabric" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fabric"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "布料"
+          }
+        }
+      }
+    },
+    "item_fabric_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can be used to patch clothes or make bandages."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以用来缝补衣服或制作绷带。"
+          }
+        }
+      }
+    },
+    "item_fever_medicine" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fever Medicine"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退烧药"
+          }
+        }
+      }
+    },
+    "item_fever_medicine_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A fever in the apocalypse could mean death - these are precious."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发烧在末日里可能意味着死亡，这些药很珍贵。"
+          }
+        }
+      }
+    },
+    "item_first_aid_bandage" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Aid Bandage"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "急救绷带"
+          }
+        }
+      }
+    },
+    "item_first_aid_bandage_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A fairly clean roll of bandage with some bloodstains."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一卷还算干净的绷带，上面沾着些许血迹。"
+          }
+        }
+      }
+    },
+    "item_flashlight" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flashlight"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手电筒"
+          }
+        }
+      }
+    },
+    "item_flashlight_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The battery still works - this is hope in the darkness."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电池还有电，在黑暗中这就是希望。"
+          }
+        }
+      }
+    },
+    "item_hardtack" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hardtack"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "压缩饼干"
+          }
+        }
+      }
+    },
+    "item_hardtack_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Military-grade hardtack - enough calories to last a day."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "军用压缩饼干，能提供足够的热量撑过一天。"
+          }
+        }
+      }
+    },
+    "item_instant_coffee" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instant Coffee"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "速溶咖啡"
+          }
+        }
+      }
+    },
+    "item_instant_coffee_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A small packet of instant coffee to keep you awake through long nights."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一小包速溶咖啡，能让你在漫长的夜里保持清醒。"
+          }
+        }
+      }
+    },
+    "item_keychain" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keychain"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "钥匙串"
+          }
+        }
+      }
+    },
+    "item_keychain_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No idea what it opens, but maybe useful someday."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不知道能开什么锁，但也许有一天会用到。"
+          }
+        }
+      }
+    },
+    "item_lighter" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lighter"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打火机"
+          }
+        }
+      }
+    },
+    "item_lighter_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A working lighter - fire has never been more important."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一个还能用的打火机，生火从未如此重要。"
+          }
+        }
+      }
+    },
+    "item_medical_gauze" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medical Gauze"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "医用纱布"
+          }
+        }
+      }
+    },
+    "item_medical_gauze_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sterile-packaged gauze - a survivor's essential."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无菌包装的纱布，是幸存者的必需品。"
+          }
+        }
+      }
+    },
+    "item_notebook" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notebook"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "笔记本"
+          }
+        }
+      }
+    },
+    "item_notebook_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A blank notebook - perhaps to document this difficult journey."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空白的笔记本，也许可以记录这段艰难的旅程。"
+          }
+        }
+      }
+    },
+    "item_old_magazine" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Old Magazine"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旧杂志"
+          }
+        }
+      }
+    },
+    "item_old_magazine_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records the world before the apocalypse - now only good for kindling."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "记录着末日前的世界，现在只能用来生火。"
+          }
+        }
+      }
+    },
+    "item_painkillers" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Painkillers"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "止痛药片"
+          }
+        }
+      }
+    },
+    "item_painkillers_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The label is faded, but the pills inside look usable."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "瓶子上的标签已经模糊，但里面的药片看起来还能用。"
+          }
+        }
+      }
+    },
+    "item_plastic_bag" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plastic Bag"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "塑料袋"
+          }
+        }
+      }
+    },
+    "item_plastic_bag_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waterproof and lightweight - useful for collecting supplies."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "防水又轻便，收集物资时很有用。"
+          }
+        }
+      }
+    },
+    "item_rope" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rope"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绳索"
+          }
+        }
+      }
+    },
+    "item_rope_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A sturdy nylon rope - endless uses."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一卷结实的尼龙绳，用途无穷。"
+          }
+        }
+      }
+    },
+    "item_rubbing_alcohol" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rubbing Alcohol"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消毒酒精"
+          }
+        }
+      }
+    },
+    "item_rubbing_alcohol_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Half a bottle of rubbing alcohol - priceless in this world."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半瓶医用酒精，在这个世界里价值连城。"
+          }
+        }
+      }
+    },
+    "item_scrap_metal" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrap Metal"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "废金属"
+          }
+        }
+      }
+    },
+    "item_scrap_metal_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can be used to reinforce defenses or craft makeshift weapons."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以用来加固防御或制作简易武器。"
+          }
+        }
+      }
+    },
+    "item_screws" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screws"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "螺丝钉"
+          }
+        }
+      }
+    },
+    "item_screws_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assorted screws - very useful for repairs."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一把各种规格的螺丝钉，修理东西时很有用。"
+          }
+        }
+      }
+    },
+    "item_swiss_army_knife" : {
+      "comment" : "Item name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swiss Army Knife"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "瑞士军刀"
+          }
+        }
+      }
+    },
+    "item_swiss_army_knife_story" : {
+      "comment" : "Item story",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A multi-tool - indispensable for apocalypse survival."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多功能工具，在末日生存中不可或缺。"
+          }
+        }
+      }
+    },
+    "scavenge_ai_generated" : {
+      "comment" : "AI Generated badge",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Generated"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 生成"
+          }
+        }
+      }
+    },
+    "scavenge_danger_level_format" : {
+      "comment" : "Danger level format",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Danger Level %d"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "危险等级 %d"
+          }
+        }
+      }
+    },
+    "scavenge_item_count_format" : {
+      "comment" : "Item count format",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d types"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d 种"
+          }
+        }
+      }
+    },
+    "scavenge_items_obtained" : {
+      "comment" : "Items obtained header",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items Obtained"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获得物品"
+          }
+        }
+      }
+    },
+    "scavenge_story" : {
+      "comment" : "Story button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Story"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "故事"
+          }
+        }
+      }
+    },
+    "scavenge_success_title" : {
+      "comment" : "Scavenge success title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scavenge Successful!"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜刮成功！"
           }
         }
       }
@@ -956,61 +1937,6 @@
     "x%lld" : {
 
     },
-    "一个还能用的打火机，生火从未如此重要。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A working lighter. Making fire has never been more important."
-          }
-        }
-      }
-    },
-    "一卷结实的尼龙绳，用途无穷。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A roll of sturdy nylon rope with endless uses."
-          }
-        }
-      }
-    },
-    "一卷还算干净的绷带，上面沾着些许血迹。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A reasonably clean roll of bandage, stained with some blood."
-          }
-        }
-      }
-    },
-    "一小包速溶咖啡，能让你在漫长的夜里保持清醒。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A small packet of instant coffee to keep you awake through long nights."
-          }
-        }
-      }
-    },
-    "一把各种规格的螺丝钉，修理东西时很有用。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A handful of various screws, useful for repairs."
-          }
-        }
-      }
-    },
     "一瓶还算干净的水" : {
       "comment" : "物品描述",
       "localizations" : {
@@ -1033,17 +1959,6 @@
         }
       }
     },
-    "万能胶带，在末日里能解决一半的问题。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duct tape can solve half the problems in the apocalypse."
-          }
-        }
-      }
-    },
     "上传失败: %@" : {
       "comment" : "错误",
       "localizations" : {
@@ -1051,17 +1966,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upload failed: %@"
-          }
-        }
-      }
-    },
-    "不知道能开什么锁，但也许有一天会用到。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Don't know what it unlocks, but maybe it'll be useful someday."
           }
         }
       }
@@ -1193,17 +2097,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other"
-          }
-        }
-      }
-    },
-    "军用压缩饼干，能提供足够的热量撑过一天。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Military compressed biscuits, enough calories to last a day."
           }
         }
       }
@@ -1363,17 +2256,6 @@
         }
       }
     },
-    "医用纱布" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Medical Gauze"
-          }
-        }
-      }
-    },
     "医院" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1381,17 +2263,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hospital"
-          }
-        }
-      }
-    },
-    "半瓶医用酒精，在这个世界里价值连城。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Half a bottle of medical alcohol, priceless in this world."
           }
         }
       }
@@ -1407,28 +2278,6 @@
         }
       }
     },
-    "危险等级 %d" : {
-      "comment" : "Danger level",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Danger Level %d"
-          }
-        }
-      }
-    },
-    "压缩饼干" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compressed Biscuits"
-          }
-        }
-      }
-    },
     "去探索收集物资吧" : {
       "comment" : "Empty backpack subtitle",
       "localizations" : {
@@ -1436,17 +2285,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Go explore and collect supplies"
-          }
-        }
-      }
-    },
-    "发烧在末日里可能意味着死亡，这些药很珍贵。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fever could mean death in the apocalypse. These medicines are precious."
           }
         }
       }
@@ -1479,28 +2317,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
-          }
-        }
-      }
-    },
-    "可以用来加固防御或制作简易武器。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Can be used to reinforce defenses or make simple weapons."
-          }
-        }
-      }
-    },
-    "可以用来缝补衣服或制作绷带。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Can be used to mend clothes or make bandages."
           }
         }
       }
@@ -1603,17 +2419,6 @@
         }
       }
     },
-    "在没有电的夜晚，这是唯一的光源。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In powerless nights, this is the only light source."
-          }
-        }
-      }
-    },
     "在黑暗中看清一切" : {
       "comment" : "物品描述",
       "localizations" : {
@@ -1657,17 +2462,6 @@
         }
       }
     },
-    "塑料袋" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plastic Bag"
-          }
-        }
-      }
-    },
     "多功能工具" : {
       "comment" : "物品名称",
       "localizations" : {
@@ -1675,17 +2469,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Multi-tool"
-          }
-        }
-      }
-    },
-    "多功能工具，在末日生存中不可或缺。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A multi-tool, indispensable for apocalypse survival."
           }
         }
       }
@@ -1832,39 +2615,6 @@
         }
       }
     },
-    "布料" : {
-      "comment" : "Fallback item\n物品名称",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cloth"
-          }
-        }
-      }
-    },
-    "干净的饮用水，这可能是你今天最幸运的发现。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clean drinking water. This might be your luckiest find today."
-          }
-        }
-      }
-    },
-    "废金属" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scrap Metal"
-          }
-        }
-      }
-    },
     "开始圈地追踪" : {
       "comment" : "日志",
       "localizations" : {
@@ -1893,17 +2643,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "First Aid Kit"
-          }
-        }
-      }
-    },
-    "急救绷带" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "First Aid Bandage"
           }
         }
       }
@@ -1958,28 +2697,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Surgical Kit"
-          }
-        }
-      }
-    },
-    "手电筒" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flashlight"
-          }
-        }
-      }
-    },
-    "打火机" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lighter"
           }
         }
       }
@@ -2059,18 +2776,6 @@
         }
       }
     },
-    "搜刮成功！" : {
-      "comment" : "Scavenge success title",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scavenge Successful!"
-          }
-        }
-      }
-    },
     "搜索物品..." : {
       "comment" : "Search items placeholder",
       "localizations" : {
@@ -2104,34 +2809,12 @@
         }
       }
     },
-    "收起" : {
-      "comment" : "Collapse",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Collapse"
-          }
-        }
-      }
-    },
     "收集物品" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Collected Items"
-          }
-        }
-      }
-    },
-    "故事" : {
-      "comment" : "Story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Story"
           }
         }
       }
@@ -2202,28 +2885,6 @@
         }
       }
     },
-    "无菌包装的纱布，是幸存者的必需品。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sterile-packed gauze, essential for survivors."
-          }
-        }
-      }
-    },
-    "旧杂志" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Old Magazine"
-          }
-        }
-      }
-    },
     "时长" : {
       "localizations" : {
         "en" : {
@@ -2267,17 +2928,6 @@
         }
       }
     },
-    "望远镜" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Binoculars"
-          }
-        }
-      }
-    },
     "未登录，请先登录" : {
       "comment" : "错误",
       "localizations" : {
@@ -2302,17 +2952,6 @@
     },
     "止痛药" : {
       "comment" : "物品名称",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Painkillers"
-          }
-        }
-      }
-    },
-    "止痛药片" : {
-      "comment" : "Fallback item",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2425,17 +3064,6 @@
         }
       }
     },
-    "消毒酒精" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disinfectant Alcohol"
-          }
-        }
-      }
-    },
     "火柴" : {
       "comment" : "物品名称",
       "localizations" : {
@@ -2502,28 +3130,6 @@
         }
       }
     },
-    "瑞士军刀" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Swiss Army Knife"
-          }
-        }
-      }
-    },
-    "瓶子上的标签已经模糊，但里面的药片看起来还能用。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The label on the bottle is faded, but the pills inside still look usable."
-          }
-        }
-      }
-    },
     "生成的物品" : {
 
     },
@@ -2581,28 +3187,6 @@
         }
       }
     },
-    "电池" : {
-      "comment" : "Fallback item\n物品名称",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Batteries"
-          }
-        }
-      }
-    },
-    "电池还有电，在黑暗中这就是希望。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The battery still works. In the dark, this is hope."
-          }
-        }
-      }
-    },
     "登录凭证和认证信息" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2626,17 +3210,6 @@
         }
       }
     },
-    "矿泉水" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mineral Water"
-          }
-        }
-      }
-    },
     "破损" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2655,17 +3228,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
-          }
-        }
-      }
-    },
-    "确认" : {
-      "comment" : "Confirm button",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirm"
           }
         }
       }
@@ -2736,17 +3298,6 @@
         }
       }
     },
-    "空白的笔记本，也许可以记录这段艰难的旅程。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A blank notebook, perhaps to record this difficult journey."
-          }
-        }
-      }
-    },
     "立即搜刮" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2754,17 +3305,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scavenge Now"
-          }
-        }
-      }
-    },
-    "笔记本" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notebook"
           }
         }
       }
@@ -2801,17 +3341,6 @@
         }
       }
     },
-    "绳索" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rope"
-          }
-        }
-      }
-    },
     "绷带" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2841,17 +3370,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Canned Beans"
-          }
-        }
-      }
-    },
-    "罐头食品" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Canned Food"
           }
         }
       }
@@ -2907,39 +3425,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Backpack is Empty"
-          }
-        }
-      }
-    },
-    "胶带" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duct Tape"
-          }
-        }
-      }
-    },
-    "能让你提前发现危险，或者找到下一个避难所。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lets you spot danger ahead, or find the next shelter."
-          }
-        }
-      }
-    },
-    "能量棒" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energy Bar"
           }
         }
       }
@@ -3010,56 +3495,12 @@
         }
       }
     },
-    "获得物品" : {
-      "comment" : "Items obtained",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Items Obtained"
-          }
-        }
-      }
-    },
     "获得经验" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Experience Gained"
-          }
-        }
-      }
-    },
-    "虽然过期了，但在末日里没人会在意保质期。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expired, but no one cares about expiration dates in the apocalypse."
-          }
-        }
-      }
-    },
-    "蜡烛" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Candle"
-          }
-        }
-      }
-    },
-    "螺丝钉" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Screws"
           }
         }
       }
@@ -3092,17 +3533,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A good choice for vitamins"
-          }
-        }
-      }
-    },
-    "记录着末日前的世界，现在只能用来生火。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Records of the pre-apocalypse world, now only good for kindling."
           }
         }
       }
@@ -3193,9 +3623,6 @@
           }
         }
       }
-    },
-    "请求超时" : {
-      "comment" : "网络请求超时错误"
     },
     "请设置一个安全的密码以完成注册" : {
       "localizations" : {
@@ -3433,17 +3860,6 @@
         }
       }
     },
-    "还有电的电池，在这个世界里是硬通货。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Working batteries are hard currency in this world."
-          }
-        }
-      }
-    },
     "这里是分支宇宙的测试页" : {
       "localizations" : {
         "en" : {
@@ -3472,17 +3888,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sign out failed, local session cleared"
-          }
-        }
-      }
-    },
-    "退烧药" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fever Reducer"
           }
         }
       }
@@ -3540,17 +3945,6 @@
         }
       }
     },
-    "速溶咖啡" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Instant Coffee"
-          }
-        }
-      }
-    },
     "邮箱或密码错误" : {
       "comment" : "认证错误",
       "localizations" : {
@@ -3583,28 +3977,6 @@
         }
       }
     },
-    "钥匙串" : {
-      "comment" : "Fallback item",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keychain"
-          }
-        }
-      }
-    },
-    "铁皮罐头上的标签早已脱落，但闻起来应该还能吃。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The label on the tin has long fallen off, but it should still be edible."
-          }
-        }
-      }
-    },
     "闭环成功！距起点 %.1fm" : {
       "comment" : "日志",
       "localizations" : {
@@ -3623,17 +3995,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hazmat Suit"
-          }
-        }
-      }
-    },
-    "防水又轻便，收集物资时很有用。" : {
-      "comment" : "Fallback story",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waterproof and lightweight, useful for collecting supplies."
           }
         }
       }
