@@ -85,6 +85,7 @@
     },
     "auth_go_to_login" : {
       "comment" : "Go to Login",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -102,6 +103,7 @@
     },
     "auth_login_required" : {
       "comment" : "Please log in first",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -119,6 +121,7 @@
     },
     "backpack_empty_subtitle" : {
       "comment" : "Empty backpack subtitle",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -136,6 +139,7 @@
     },
     "backpack_empty_title" : {
       "comment" : "Empty backpack title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -153,6 +157,7 @@
     },
     "backpack_no_results_subtitle" : {
       "comment" : "No search results subtitle",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -170,6 +175,7 @@
     },
     "backpack_no_results_title" : {
       "comment" : "No search results title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -187,6 +193,7 @@
     },
     "backpack_search_placeholder" : {
       "comment" : "Search placeholder",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -204,6 +211,7 @@
     },
     "backpack_title" : {
       "comment" : "Backpack title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -221,6 +229,7 @@
     },
     "category_food" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -238,6 +247,7 @@
     },
     "category_material" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -255,6 +265,7 @@
     },
     "category_medical" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -272,6 +283,7 @@
     },
     "category_other" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -289,6 +301,7 @@
     },
     "category_tool" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -306,6 +319,7 @@
     },
     "category_water" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -323,6 +337,7 @@
     },
     "category_weapon" : {
       "comment" : "Item category",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -374,6 +389,7 @@
     },
     "common_collapse" : {
       "comment" : "Collapse",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -408,6 +424,7 @@
     },
     "common_confirm" : {
       "comment" : "Confirm button",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -457,25 +474,9 @@
         }
       }
     },
-    "common_loading" : {
-      "comment" : "Loading...",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading..."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "加载中..."
-          }
-        }
-      }
-    },
     "common_later" : {
       "comment" : "Later button",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -487,6 +488,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "稍后再说"
+          }
+        }
+      }
+    },
+    "common_loading" : {
+      "comment" : "Loading...",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加载中..."
           }
         }
       }
@@ -509,7 +528,6 @@
       }
     },
     "density_alone" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -520,7 +538,6 @@
       }
     },
     "density_alone_desc" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -531,7 +548,6 @@
       }
     },
     "density_high" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -542,7 +558,6 @@
       }
     },
     "density_high_desc" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -553,7 +568,6 @@
       }
     },
     "density_low" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -564,7 +578,6 @@
       }
     },
     "density_low_desc" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -575,7 +588,6 @@
       }
     },
     "density_medium" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -586,7 +598,6 @@
       }
     },
     "density_medium_desc" : {
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -598,6 +609,7 @@
     },
     "distance_meters_format" : {
       "comment" : "Distance in meters format",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -613,25 +625,9 @@
         }
       }
     },
-    "error_request_timeout" : {
-      "comment" : "Network request timeout",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Request timed out"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请求超时"
-          }
-        }
-      }
-    },
     "error_load_backpack" : {
       "comment" : "Error loading backpack",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -649,6 +645,7 @@
     },
     "error_remove_item" : {
       "comment" : "Error removing item",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -660,6 +657,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移除物品失败: %@"
+          }
+        }
+      }
+    },
+    "error_request_timeout" : {
+      "comment" : "Network request timeout",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request timed out"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求超时"
           }
         }
       }
@@ -694,6 +708,78 @@
     },
     "ID: %@..." : {
 
+    },
+    "item_antibiotics" : {
+      "comment" : "Item name",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antibiotics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抗生素"
+          }
+        }
+      }
+    },
+    "item_antibiotics_desc" : {
+      "comment" : "Item description",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precious medicine"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "珍贵的药物"
+          }
+        }
+      }
+    },
+    "item_bandage" : {
+      "comment" : "Item name",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bandage"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绷带"
+          }
+        }
+      }
+    },
+    "item_bandage_desc" : {
+      "comment" : "Item description",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simple wound dressing"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "简单的止血工具"
+          }
+        }
+      }
     },
     "item_battery" : {
       "comment" : "Item name",
@@ -827,6 +913,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在没有电的夜晚，这是唯一的光源。"
+          }
+        }
+      }
+    },
+    "item_canned_beans" : {
+      "comment" : "Item name",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canned Beans"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "罐头豆子"
+          }
+        }
+      }
+    },
+    "item_canned_beans_desc" : {
+      "comment" : "Item description",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High protein food"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高蛋白食物"
           }
         }
       }
@@ -1031,6 +1153,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一卷还算干净的绷带，上面沾着些许血迹。"
+          }
+        }
+      }
+    },
+    "item_first_aid_kit" : {
+      "comment" : "Item name",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Aid Kit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "急救包"
+          }
+        }
+      }
+    },
+    "item_first_aid_kit_desc" : {
+      "comment" : "Item description",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contains various medical supplies"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "包含多种医疗用品"
           }
         }
       }
@@ -1392,6 +1550,24 @@
         }
       }
     },
+    "item_rope_desc" : {
+      "comment" : "Item description",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versatile survival tool"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "多用途生存工具"
+          }
+        }
+      }
+    },
     "item_rope_story" : {
       "comment" : "Item story",
       "localizations" : {
@@ -1456,6 +1632,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "废金属"
+          }
+        }
+      }
+    },
+    "item_scrap_metal_desc" : {
+      "comment" : "Item description",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Useful for crafting and repairs"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用于制作和修理"
           }
         }
       }
@@ -1547,6 +1741,7 @@
     },
     "item_water_bottle" : {
       "comment" : "Item name",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1564,6 +1759,7 @@
     },
     "item_water_bottle_desc" : {
       "comment" : "Item description",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1579,215 +1775,12 @@
         }
       }
     },
-    "item_canned_beans" : {
-      "comment" : "Item name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Canned Beans"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "罐头豆子"
-          }
-        }
-      }
-    },
-    "item_canned_beans_desc" : {
-      "comment" : "Item description",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "High protein food"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "高蛋白食物"
-          }
-        }
-      }
-    },
-    "item_bandage" : {
-      "comment" : "Item name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bandage"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "绷带"
-          }
-        }
-      }
-    },
-    "item_bandage_desc" : {
-      "comment" : "Item description",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simple wound dressing"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "简单的止血工具"
-          }
-        }
-      }
-    },
-    "item_first_aid_kit" : {
-      "comment" : "Item name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "First Aid Kit"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "急救包"
-          }
-        }
-      }
-    },
-    "item_first_aid_kit_desc" : {
-      "comment" : "Item description",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contains various medical supplies"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "包含多种医疗用品"
-          }
-        }
-      }
-    },
-    "item_antibiotics" : {
-      "comment" : "Item name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Antibiotics"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "抗生素"
-          }
-        }
-      }
-    },
-    "item_antibiotics_desc" : {
-      "comment" : "Item description",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Precious medicine"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "珍贵的药物"
-          }
-        }
-      }
-    },
-    "item_scrap_metal" : {
-      "comment" : "Item name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scrap Metal"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "废金属"
-          }
-        }
-      }
-    },
-    "item_scrap_metal_desc" : {
-      "comment" : "Item description",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Useful for crafting and repairs"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "可用于制作和修理"
-          }
-        }
-      }
-    },
-    "item_rope" : {
-      "comment" : "Item name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rope"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "绳索"
-          }
-        }
-      }
-    },
-    "item_rope_desc" : {
-      "comment" : "Item description",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versatile survival tool"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "多用途生存工具"
-          }
-        }
-      }
-    },
     "Key" : {
       "extractionState" : "manual"
     },
     "poi_discovery_title" : {
       "comment" : "POI discovery popup title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1890,6 +1883,7 @@
     },
     "poi_scavenge_available" : {
       "comment" : "POI can be scavenged",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1907,6 +1901,7 @@
     },
     "poi_scavenge_now" : {
       "comment" : "Scavenge now button",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1941,6 +1936,7 @@
     },
     "poi_type_cafe" : {
       "comment" : "Cafe",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1958,6 +1954,7 @@
     },
     "poi_type_convenience" : {
       "comment" : "Convenience Store",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2026,6 +2023,7 @@
     },
     "poi_type_pharmacy" : {
       "comment" : "Pharmacy",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2077,6 +2075,7 @@
     },
     "poi_type_supermarket" : {
       "comment" : "Supermarket",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2094,6 +2093,7 @@
     },
     "quality_damaged" : {
       "comment" : "Item quality",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2111,6 +2111,7 @@
     },
     "quality_good" : {
       "comment" : "Item quality",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2128,6 +2129,7 @@
     },
     "quality_pristine" : {
       "comment" : "Item quality",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2145,6 +2147,7 @@
     },
     "quality_ruined" : {
       "comment" : "Item quality",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2162,6 +2165,7 @@
     },
     "quality_worn" : {
       "comment" : "Item quality",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2179,6 +2183,7 @@
     },
     "rarity_common" : {
       "comment" : "Item rarity",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2196,6 +2201,7 @@
     },
     "rarity_epic" : {
       "comment" : "Item rarity",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2213,6 +2219,7 @@
     },
     "rarity_legendary" : {
       "comment" : "Item rarity",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2230,6 +2237,7 @@
     },
     "rarity_rare" : {
       "comment" : "Item rarity",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2247,6 +2255,7 @@
     },
     "rarity_uncommon" : {
       "comment" : "Item rarity",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2264,6 +2273,7 @@
     },
     "scavenge_ai_generated" : {
       "comment" : "AI Generated badge",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2281,6 +2291,7 @@
     },
     "scavenge_danger_level_format" : {
       "comment" : "Danger level",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2298,6 +2309,7 @@
     },
     "scavenge_item_count_format" : {
       "comment" : "Item count",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2315,6 +2327,7 @@
     },
     "scavenge_items_obtained" : {
       "comment" : "Items obtained",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2332,6 +2345,7 @@
     },
     "scavenge_story" : {
       "comment" : "Story",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2349,6 +2363,7 @@
     },
     "scavenge_success_title" : {
       "comment" : "Scavenge success title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2427,6 +2442,7 @@
     },
     "territory_count_label" : {
       "comment" : "Territory count",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2478,6 +2494,7 @@
     },
     "territory_empty_description" : {
       "comment" : "Go to map to start claiming",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2495,6 +2512,7 @@
     },
     "territory_empty_title" : {
       "comment" : "No territories",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2512,6 +2530,7 @@
     },
     "territory_login_prompt" : {
       "comment" : "Log in to view and manage your territories",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2546,6 +2565,7 @@
     },
     "territory_my_title" : {
       "comment" : "My Territories",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2580,6 +2600,7 @@
     },
     "territory_points_format" : {
       "comment" : "%lld points",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2614,6 +2635,7 @@
     },
     "territory_total_area_label" : {
       "comment" : "Total area",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2733,6 +2755,7 @@
     },
     "优秀" : {
       "comment" : "Rarity: Uncommon",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2744,6 +2767,7 @@
     },
     "传奇" : {
       "comment" : "Rarity: Legendary",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2799,6 +2823,7 @@
     },
     "全部" : {
       "comment" : "All categories",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2865,6 +2890,7 @@
     },
     "加载背包失败: %@" : {
       "comment" : "错误",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2909,6 +2935,7 @@
     },
     "去探索收集物资吧" : {
       "comment" : "Empty backpack subtitle",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3385,6 +3412,7 @@
     },
     "搜索物品..." : {
       "comment" : "Search items placeholder",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3570,6 +3598,7 @@
     },
     "没有找到相关物品" : {
       "comment" : "No search results title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3795,6 +3824,7 @@
     },
     "移除物品失败: %@" : {
       "comment" : "错误",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3926,6 +3956,7 @@
     },
     "背包" : {
       "comment" : "Backpack navigation title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3937,6 +3968,7 @@
     },
     "背包空空如也" : {
       "comment" : "Empty backpack title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4098,6 +4130,7 @@
     },
     "试试其他关键词或清除筛选条件" : {
       "comment" : "No search results subtitle",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

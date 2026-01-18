@@ -55,7 +55,10 @@ struct Territory: Codable, Identifiable {
 
     /// 显示名称（如果没有名称则显示默认值）
     var displayName: String {
-        return name ?? "未命名领地"
+        // 这里的 NSLocalizedString 告诉系统：
+        // 请拿 "未命名领地" 去 Localizable.xcstrings 里查，
+        // 如果是英文系统，就返回 "Unnamed Territory"
+        return name ?? NSLocalizedString("未命名领地", comment: "Default territory name")
     }
 
     /// 格式化完成时间
