@@ -174,7 +174,7 @@ final class ExplorationManager: NSObject, ObservableObject {
 
             // 2. 查询附近玩家数量，确定密度等级
             currentDensityLevel = await PlayerPresenceManager.shared.fetchNearbyPlayerCount()
-            print("🔍 [探索] 当前密度等级: \(currentDensityLevel.localizedName)，最多显示 \(currentDensityLevel.maxPOICount) 个POI")
+            print("🔍 [探索] 当前密度等级: \(currentDensityLevel)，最多显示 \(currentDensityLevel.maxPOICount) 个POI")
 
             // 3. 根据密度搜索并设置POI
             await searchAndSetupPOIs()
@@ -664,7 +664,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         let limitedPOIs = Array(allPOIs.prefix(maxCount))
         nearbyPOIs = limitedPOIs
 
-        print("🏪 [POI] ✅ 找到 \(allPOIs.count) 个POI，根据密度等级(\(currentDensityLevel.localizedName))显示 \(limitedPOIs.count) 个")
+        print("🏪 [POI] ✅ 找到 \(allPOIs.count) 个POI，根据密度等级(\(currentDensityLevel))显示 \(limitedPOIs.count) 个")
         for (index, poi) in limitedPOIs.enumerated() {
             let poiLocation = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
             let userCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)

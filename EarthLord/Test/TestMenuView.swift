@@ -22,7 +22,7 @@ struct TestMenuView: View {
                     SupabaseTestView()
                 } label: {
                     Label {
-                        Text("Supabase 连接测试".localized)
+                        Text("Supabase 连接测试")
                     } icon: {
                         Image(systemName: "network")
                             .foregroundColor(ApocalypseTheme.info)
@@ -34,7 +34,7 @@ struct TestMenuView: View {
                     TerritoryTestView()
                 } label: {
                     Label {
-                        Text("圈地功能测试".localized)
+                        Text("圈地功能测试")
                     } icon: {
                         Image(systemName: "flag.checkered")
                             .foregroundColor(ApocalypseTheme.primary)
@@ -46,20 +46,20 @@ struct TestMenuView: View {
                     AIDebugView()
                 } label: {
                     Label {
-                        Text("AI 物品生成测试".localized)
+                        Text("AI 物品生成测试")
                     } icon: {
                         Image(systemName: "cpu.fill")
                             .foregroundColor(.blue)
                     }
                 }
             } header: {
-                Text("测试模块".localized)
+                Text("测试模块")
             } footer: {
-                Text("这些工具仅供开发调试使用".localized)
+                Text("这些工具仅供开发调试使用")
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }
         }
-        .navigationTitle("开发测试".localized)
+        .navigationTitle("开发测试")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -13,11 +13,11 @@ enum ItemQuality: String, Codable, CaseIterable {
     /// 本地化显示名称
     var displayName: String {
         switch self {
-        case .pristine: return "quality_pristine".localized
-        case .good: return "quality_good".localized
-        case .worn: return "quality_worn".localized
-        case .damaged: return "quality_damaged".localized
-        case .ruined: return "quality_ruined".localized
+        case .pristine: return "quality_pristine"
+        case .good: return "quality_good"
+        case .worn: return "quality_worn"
+        case .damaged: return "quality_damaged"
+        case .ruined: return "quality_ruined"
         }
     }
 
@@ -50,11 +50,11 @@ enum ItemRarity: String, Codable, CaseIterable {
     /// 本地化显示名称
     var displayName: String {
         switch self {
-        case .common: return "rarity_common".localized
-        case .uncommon: return "rarity_uncommon".localized
-        case .rare: return "rarity_rare".localized
-        case .epic: return "rarity_epic".localized
-        case .legendary: return "rarity_legendary".localized
+        case .common: return "rarity_common"
+        case .uncommon: return "rarity_uncommon"
+        case .rare: return "rarity_rare"
+        case .epic: return "rarity_epic"
+        case .legendary: return "rarity_legendary"
         }
     }
 
@@ -95,13 +95,13 @@ enum ItemCategory: String, Codable, CaseIterable {
     /// 本地化显示名称
     var displayName: String {
         switch self {
-        case .water: return "category_water".localized
-        case .food: return "category_food".localized
-        case .medical: return "category_medical".localized
-        case .material: return "category_material".localized
-        case .tool: return "category_tool".localized
-        case .weapon: return "category_weapon".localized
-        case .other: return "category_other".localized
+        case .water: return "category_water"
+        case .food: return "category_food"
+        case .medical: return "category_medical"
+        case .material: return "category_material"
+        case .tool: return "category_tool"
+        case .weapon: return "category_weapon"
+        case .other: return "category_other"
         }
     }
 }

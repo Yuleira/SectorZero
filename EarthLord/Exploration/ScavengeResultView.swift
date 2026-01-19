@@ -80,7 +80,7 @@ struct ScavengeResultView: View {
             }
 
             // 标题
-            Text("scavenge_success_title".localized)
+            Text("scavenge_success_title")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
@@ -98,7 +98,7 @@ struct ScavengeResultView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 10))
-                    Text("scavenge_danger_level_format".localized(result.poi.dangerLevel))
+                    Text(String(format: NSLocalizedString("scavenge_danger_level_format", comment: ""), result.poi.dangerLevel))
                         .font(.system(size: 11, weight: .medium))
                 }
                 .foregroundColor(dangerLevelColor)
@@ -125,7 +125,7 @@ struct ScavengeResultView: View {
         VStack(alignment: .leading, spacing: 12) {
             // 标题
             HStack {
-                Text("scavenge_items_obtained".localized)
+                Text("scavenge_items_obtained")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(ApocalypseTheme.textSecondary)
 
@@ -136,13 +136,13 @@ struct ScavengeResultView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 10))
-                        Text("scavenge_ai_generated".localized)
+                        Text("scavenge_ai_generated")
                             .font(.system(size: 11, weight: .medium))
                     }
                     .foregroundColor(.purple)
                 }
 
-                Text("scavenge_item_count_format".localized(result.items.count))
+                Text(String(format: NSLocalizedString("scavenge_item_count_format", comment: ""), result.items.count))
                     .font(.system(size: 13))
                     .foregroundColor(ApocalypseTheme.textMuted)
             }
@@ -229,7 +229,7 @@ struct ScavengeResultView: View {
                             HStack(spacing: 2) {
                                 Image(systemName: isExpanded ? "chevron.up" : "text.quote")
                                     .font(.system(size: 10))
-                                Text(isExpanded ? "common_collapse".localized : "scavenge_story".localized)
+                                Text(isExpanded ? "common_collapse" : "scavenge_story")
                                     .font(.system(size: 11))
                             }
                             .foregroundColor(.purple.opacity(0.8))
@@ -298,7 +298,7 @@ struct ScavengeResultView: View {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark")
                     .font(.system(size: 14, weight: .semibold))
-                Text("common_confirm".localized)
+                Text("common_confirm")
                     .font(.system(size: 16, weight: .semibold))
             }
             .foregroundColor(.white)

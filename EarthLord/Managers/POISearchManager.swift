@@ -42,14 +42,14 @@ enum POIType: String, CaseIterable {
     /// 本地化显示名称（供 UI 使用）
     var localizedName: String {
         switch self {
-        case .store: return "poi_type_store".localized
-        case .hospital: return "poi_type_hospital".localized
-        case .pharmacy: return "poi_type_pharmacy".localized
-        case .gasStation: return "poi_type_gas_station".localized
-        case .restaurant: return "poi_type_restaurant".localized
-        case .cafe: return "poi_type_cafe".localized
-        case .supermarket: return "poi_type_supermarket".localized
-        case .convenience: return "poi_type_convenience".localized
+        case .store: return "poi_type_store"
+        case .hospital: return "poi_type_hospital"
+        case .pharmacy: return "poi_type_pharmacy"
+        case .gasStation: return "poi_type_gas_station"
+        case .restaurant: return "poi_type_restaurant"
+        case .cafe: return "poi_type_cafe"
+        case .supermarket: return "poi_type_supermarket"
+        case .convenience: return "poi_type_convenience"
         }
     }
 

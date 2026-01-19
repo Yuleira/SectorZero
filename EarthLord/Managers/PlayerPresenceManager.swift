@@ -177,7 +177,7 @@ final class PlayerPresenceManager: ObservableObject {
             nearbyPlayerCount = count
             densityLevel = DensityLevel.from(playerCount: count)
 
-            print("📍 [玩家在线] 附近玩家: \(count) 人，密度等级: \(densityLevel.localizedName)")
+            print("📍 [玩家在线] 附近玩家: \(count) 人，密度等级: \(densityLevel)")
 
             return densityLevel
         } catch {

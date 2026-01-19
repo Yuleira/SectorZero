@@ -76,7 +76,7 @@ struct BackpackView: View {
                 contentView
             }
         }
-        .navigationTitle("backpack_title".localized)
+        .navigationTitle("backpack_title")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             loadBackpackItems()
@@ -90,7 +90,7 @@ struct BackpackView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(ApocalypseTheme.textMuted)
 
-            TextField("backpack_search_placeholder".localized, text: $searchText)
+            TextField("backpack_search_placeholder", text: $searchText)
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
             if !searchText.isEmpty {
@@ -111,7 +111,7 @@ struct BackpackView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 // 全部按钮
-                categoryButton(category: nil, title: "filter_all".localized)
+                categoryButton(category: nil, title: "filter_all")
 
                 // 各分类按钮
                 ForEach(ItemCategory.allCases, id: \.self) { category in
@@ -156,8 +156,8 @@ struct BackpackView: View {
     private var emptyStateView: some View {
         EmptyStateView(
             icon: "bag.fill",
-            title: "backpack_empty_title".localized,
-            subtitle: "backpack_empty_subtitle".localized,
+            title: "backpack_empty_title",
+            subtitle: "backpack_empty_subtitle",
             buttonTitle: nil,
             action: nil
         )
@@ -167,8 +167,8 @@ struct BackpackView: View {
     private var noSearchResultsView: some View {
         EmptyStateView(
             icon: "magnifyingglass",
-            title: "backpack_no_results_title".localized,
-            subtitle: "backpack_no_results_subtitle".localized,
+            title: "backpack_no_results_title",
+            subtitle: "backpack_no_results_subtitle",
             buttonTitle: nil,
             action: nil
         )

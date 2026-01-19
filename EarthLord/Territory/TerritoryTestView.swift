@@ -42,7 +42,7 @@ struct TerritoryTestView: View {
                 .background(ApocalypseTheme.cardBackground)
         }
         .background(ApocalypseTheme.background)
-        .navigationTitle("圈地测试".localized)
+        .navigationTitle("圈地测试")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -59,14 +59,14 @@ struct TerritoryTestView: View {
                     .frame(width: 10, height: 10)
 
                 // 状态文字
-                Text(locationManager.isTracking ? "追踪中".localized : "未追踪".localized)
+                Text(locationManager.isTracking ? "追踪中" : "未追踪")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(locationManager.isTracking ? .green : ApocalypseTheme.textSecondary)
 
                 Spacer()
 
                 // 日志条数
-                Text("\(logger.logs.count) 条日志".localized)
+                Text("\(logger.logs.count) 条日志")
                     .font(.system(size: 12))
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }
@@ -79,7 +79,7 @@ struct TerritoryTestView: View {
                             .font(.system(size: 12))
                             .foregroundColor(logger.isDebugMode ? ApocalypseTheme.warning : ApocalypseTheme.textMuted)
 
-                        Text("调试模式".localized)
+                        Text("调试模式")
                             .font(.system(size: 13))
                             .foregroundColor(ApocalypseTheme.textSecondary)
                     }
@@ -89,7 +89,7 @@ struct TerritoryTestView: View {
                 Spacer()
 
                 if logger.isDebugMode {
-                    Text("实时记录所有 GPS 更新".localized)
+                    Text("实时记录所有 GPS 更新")
                         .font(.system(size: 11))
                         .foregroundColor(ApocalypseTheme.warning)
                 }
@@ -109,11 +109,11 @@ struct TerritoryTestView: View {
                             .font(.system(size: 48))
                             .foregroundColor(ApocalypseTheme.textMuted)
 
-                        Text("暂无日志".localized)
+                        Text("暂无日志")
                             .font(.subheadline)
                             .foregroundColor(ApocalypseTheme.textSecondary)
 
-                        Text("开始圈地追踪后，日志将在此显示".localized)
+                        Text("开始圈地追踪后，日志将在此显示")
                             .font(.caption)
                             .foregroundColor(ApocalypseTheme.textMuted)
                             .multilineTextAlignment(.center)
@@ -182,7 +182,7 @@ struct TerritoryTestView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "trash")
-                    Text("清空日志".localized)
+                    Text("清空日志")
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(logger.logs.isEmpty ? ApocalypseTheme.textMuted : ApocalypseTheme.danger)
@@ -203,7 +203,7 @@ struct TerritoryTestView: View {
             ShareLink(item: logger.export()) {
                 HStack(spacing: 6) {
                     Image(systemName: "square.and.arrow.up")
-                    Text("导出日志".localized)
+                    Text("导出日志")
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(logger.logs.isEmpty ? ApocalypseTheme.textMuted : ApocalypseTheme.primary)

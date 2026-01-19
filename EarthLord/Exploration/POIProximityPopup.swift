@@ -51,7 +51,7 @@ struct POIProximityPopup: View {
 
                     // 信息
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("poi_discovery_title".localized)
+                        Text("poi_discovery_title")
                             .font(.system(size: 13))
                             .foregroundColor(ApocalypseTheme.textSecondary)
 
@@ -63,7 +63,7 @@ struct POIProximityPopup: View {
                         HStack(spacing: 4) {
                             Image(systemName: "location.fill")
                                 .font(.system(size: 11))
-                            Text("distance_meters_format".localized(distance))
+                            Text(String(format: NSLocalizedString("distance_meters_format", comment: ""), distance))
                                 .font(.system(size: 12))
                         }
                         .foregroundColor(ApocalypseTheme.textMuted)
@@ -82,7 +82,7 @@ struct POIProximityPopup: View {
 
                 // POI类型标签
                 HStack {
-                    Label(poi.type.localizedName, systemImage: poi.type.icon)
+                    Label(LocalizedStringKey(poi.type.rawValue), systemImage: poi.type.icon)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(poiBackgroundColor)
                         .padding(.horizontal, 12)
@@ -95,7 +95,7 @@ struct POIProximityPopup: View {
                     Spacer()
 
                     // 提示文字
-                    Text("poi_scavenge_available".localized)
+                    Text("poi_scavenge_available")
                         .font(.system(size: 12))
                         .foregroundColor(ApocalypseTheme.textSecondary)
                 }
@@ -105,7 +105,7 @@ struct POIProximityPopup: View {
                 HStack(spacing: 12) {
                     // 稍后再说按钮
                     Button(action: onDismiss) {
-                        Text("common_later".localized)
+                        Text("common_later")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(ApocalypseTheme.textSecondary)
                             .frame(maxWidth: .infinity)
@@ -121,7 +121,7 @@ struct POIProximityPopup: View {
                         HStack(spacing: 8) {
                             Image(systemName: "hand.point.up.left.fill")
                                 .font(.system(size: 14))
-                            Text("poi_scavenge_now".localized)
+                            Text("poi_scavenge_now")
                                 .font(.system(size: 15, weight: .semibold))
                         }
                         .foregroundColor(.white)

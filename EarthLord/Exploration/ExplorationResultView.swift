@@ -54,7 +54,7 @@ struct ExplorationResultView: View {
 
                 // 关闭按钮
                 Button(action: onDismiss) {
-                    Text("common_done".localized)
+                    Text("common_done")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -103,7 +103,7 @@ struct ExplorationResultView: View {
                 .foregroundColor(ApocalypseTheme.textSecondary)
 
             // 行走距离
-            Text("exploration_walked_format".localized(String(format: "%.0f", result.distanceWalked)))
+            Text(String(format: NSLocalizedString("exploration_walked_format", comment: ""), String(format: "%.0f",  result.distanceWalked)))
                 .font(.system(size: 14))
                 .foregroundColor(ApocalypseTheme.textMuted)
         }
@@ -114,9 +114,9 @@ struct ExplorationResultView: View {
     private var errorView: some View {
         EmptyStateView(
             icon: "exclamationmark.triangle.fill",
-            title: "exploration_failed".localized,
+            title: "exploration_failed",
             subtitle: result.message,
-            buttonTitle: onRetry != nil ? "common_retry".localized : nil,
+            buttonTitle: onRetry != nil ? "common_retry" : nil,
             action: onRetry
         )
         .overlay(alignment: .topTrailing) {
@@ -134,15 +134,23 @@ struct ExplorationResultView: View {
 
     private var statsSection: some View {
         VStack(spacing: 16) {
-            Text("exploration_stats".localized)
+            Text("exploration_stats")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
             VStack(spacing: 12) {
-                statRow(icon: "figure.walk", label: "exploration_distance".localized, value: "exploration_distance_value".localized(String(format: "%.1f", result.distanceWalked)))
-                statRow(icon: "clock.fill", label: "exploration_duration".localized, value: result.stats.durationString)
-                statRow(icon: "mappin.circle.fill", label: "exploration_points_verified".localized, value: "exploration_points_count".localized(result.stats.pointsVerified))
-                statRow(icon: "chart.bar.fill", label: "exploration_distance_rank".localized, value: result.stats.distanceRank)
+                statRow(
+                    icon: "figure.walk",
+                    label: "exploration_distance",
+                    value: String(format: NSLocalizedString("exploration_distance_value", comment: ""), String(format: "%.1f", result.distanceWalked))
+                )
+                statRow(icon: "clock.fill", label: "exploration_duration", value: result.stats.durationString)
+                statRow(
+                    icon: "mappin.circle.fill",
+                    label: "exploration_points_verified",
+                    value: String(format: NSLocalizedString("exploration_points_count", comment: ""), result.stats.pointsVerified)
+                )
+                statRow(icon: "chart.bar.fill", label: "exploration_distance_rank", value: result.stats.distanceRank)
             }
             .padding(16)
             .background(ApocalypseTheme.cardBackground)
@@ -173,7 +181,7 @@ struct ExplorationResultView: View {
 
     private var collectedItemsSection: some View {
         VStack(spacing: 16) {
-            Text("exploration_collected_items".localized)
+            Text("exploration_collected_items")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
@@ -193,7 +201,7 @@ struct ExplorationResultView: View {
                 .font(.system(size: 24))
                 .foregroundColor(.yellow)
 
-            Text("exploration_experience_gained".localized)
+            Text("exploration_experience_gained")
                 .font(.system(size: 16))
                 .foregroundColor(ApocalypseTheme.textSecondary)
 

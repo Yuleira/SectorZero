@@ -52,6 +52,7 @@ struct ContentView: View {
                     }
             }
         }
+        .environment(\.locale, languageManager.currentLocale) // 注入语言环境
         .id(languageManager.refreshID) // 支持语言切换时刷新
         .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
         .onChange(of: authManager.isAuthenticated) { oldValue, newValue in

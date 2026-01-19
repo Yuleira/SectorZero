@@ -337,11 +337,11 @@ struct MapTabView: View {
                 .font(.body)
 
             if locationManager.territoryValidationPassed {
-                Text("map_claim_success_format".localized(String(format: "%.0f", locationManager.calculatedArea)))
+                Text(String(format: NSLocalizedString("map_claim_success_format", comment: ""), locationManager.calculatedArea))
                     .font(.subheadline)
                     .fontWeight(.medium)
             } else {
-                Text(locationManager.territoryValidationError ?? "map_validation_failed".localized)
+                Text(locationManager.territoryValidationError ?? "map_validation_failed")
                     .font(.subheadline)
                     .fontWeight(.medium)
             }
@@ -366,10 +366,10 @@ struct MapTabView: View {
 
                 // 文字
                 if locationManager.isTracking {
-                    Text("map_stop_claiming".localized)
+                    Text("map_stop_claiming")
                         .font(.system(size: 12, weight: .semibold))
                 } else {
-                    Text("map_start_claiming".localized)
+                    Text("map_start_claiming")
                         .font(.system(size: 12, weight: .semibold))
                 }
             }
@@ -403,7 +403,7 @@ struct MapTabView: View {
                         .font(.system(size: 16, weight: .semibold))
                 }
 
-                Text("map_confirm_register".localized)
+                Text("map_confirm_register")
                     .font(.system(size: 14, weight: .semibold))
             }
             .foregroundColor(.white)
@@ -428,7 +428,7 @@ struct MapTabView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.body)
 
-                Text("map_territory_registered".localized)
+                Text("map_territory_registered")
                     .font(.subheadline)
                     .fontWeight(.medium)
             }
@@ -480,7 +480,7 @@ struct MapTabView: View {
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.white)
 
-                Text("map_locate".localized)
+                Text("map_locate")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
             }
@@ -542,13 +542,21 @@ struct MapTabView: View {
     }
 
     /// 探索按钮标题
-    private var explorationButtonTitle: String {
-        switch explorationManager.state {
-        case .exploring: return "map_stop_explore".localized
-        case .processing: return "map_calculating".localized
-        default: return "map_explore".localized
+        private var explorationButtonTitle: String {
+            switch explorationManager.state {
+            case .exploring:
+                // 告诉系统：去翻译 "map_stop_explore"
+                return NSLocalizedString("map_stop_explore", comment: "Stop exploring")
+                
+            case .processing:
+                // 告诉系统：去翻译 "map_calculating"
+                return NSLocalizedString("map_calculating", comment: "Calculating results")
+                
+            default:
+                // 告诉系统：去翻译 "map_explore"
+                return NSLocalizedString("map_explore", comment: "Start exploration")
+            }
         }
-    }
 
     /// 处理探索按钮点击
     private func handleExplorationButtonTap() {
@@ -575,7 +583,7 @@ struct MapTabView: View {
                 .progressViewStyle(CircularProgressViewStyle(tint: ApocalypseTheme.primary))
                 .scaleEffect(1.5)
 
-            Text("map_locating".localized)
+            Text("map_locating")
                 .font(.subheadline)
                 .foregroundColor(ApocalypseTheme.textSecondary)
         }
@@ -594,7 +602,7 @@ struct MapTabView: View {
                 Text(String(format: "%.0f", explorationManager.currentDistance))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("unit_meter".localized)
+                Text("unit_meter")
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -608,7 +616,7 @@ struct MapTabView: View {
                 Text(formatExplorationDuration(explorationManager.currentDuration))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("map_duration".localized)
+                Text("map_duration")
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -910,7 +918,7 @@ struct MapTabView: View {
         // 再次检查验证状态
         guard locationManager.territoryValidationPassed else {
             withAnimation {
-                uploadError = "map_validation_failed_upload".localized
+                uploadError = "map_validation_failed_upload"
             }
             // 3 秒后清除错误
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -965,7 +973,8 @@ struct MapTabView: View {
 
             // 显示错误提示
             withAnimation {
-                uploadError = "map_upload_failed_format".localized(error.localizedDescription)
+                let format = NSLocalizedString("map_upload_failed_format", comment: "Upload failed")
+                uploadError = String(format: format, error.localizedDescription)
             }
 
             // 3 秒后清除错误
@@ -1005,13 +1014,13 @@ struct LocationDeniedView: View {
                 .foregroundColor(ApocalypseTheme.warning)
 
             // 标题
-            Text("map_location_unavailable".localized)
+            Text("map_location_unavailable")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
             // 说明文字
-            Text("map_location_permission_desc".localized)
+            Text("map_location_permission_desc")
                 .font(.subheadline)
                 .foregroundColor(ApocalypseTheme.textSecondary)
                 .multilineTextAlignment(.center)
@@ -1023,7 +1032,7 @@ struct LocationDeniedView: View {
             } label: {
                 HStack {
                     Image(systemName: "gear")
-                    Text("map_go_to_settings".localized)
+                    Text("map_go_to_settings")
                 }
                 .font(.headline)
                 .foregroundColor(.white)

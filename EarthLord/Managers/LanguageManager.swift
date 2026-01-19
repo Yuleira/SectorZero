@@ -21,7 +21,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var displayName: String {
         switch self {
         case .system:
-            return "language_follow_system".localized
+            return "language_follow_system"
         case .zhHans:
             return "简体中文"
         case .en:
@@ -123,6 +123,14 @@ final class LanguageManager: ObservableObject {
             return "zh-Hans"
         }
         return "en"
+    }
+
+    /// 获取当前的 Locale 对象（用于注入SwiftUI环境）
+    var currentLocale: Locale {
+        if let code = currentLanguage.languageCode {
+            return Locale(identifier: code)
+        }
+        return Locale.current
     }
 
     // MARK: - 私有方法
@@ -315,12 +323,16 @@ final class LanguageManager: ObservableObject {
 extension String {
     /// 获取本地化字符串
     var localized: String {
-        return LanguageManager.shared.localizedString(for: self)
+        // ❌ 删掉 LanguageManager.sharedString...
+        // ✅ 改成标准写法：直接翻译自己
+        return NSLocalizedString(self, comment: "")
     }
-
+    
     /// 获取本地化字符串（带参数）
     func localized(_ arguments: CVarArg...) -> String {
-        let format = LanguageManager.shared.localizedString(for: self)
+        // ❌ 删掉 self.rawValue (字符串本身没有 rawValue)
+        // ✅ 改成直接用 self
+        let format = NSLocalizedString(self, comment: "")
         return String(format: format, arguments: arguments)
     }
 }
