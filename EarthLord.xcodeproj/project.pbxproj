@@ -110,6 +110,14 @@
 		EBA4B57D86AA4709948D4FF9 /* DensityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DensityLevel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E6422F2E2F22422F00610E97 /* Docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Docs;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		E62B8A632EFABFFF00FFC7A0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -129,6 +137,7 @@
 			children = (
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
 				E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */,
+				E6422F2E2F22422F00610E97 /* Docs */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
 			);
 			sourceTree = "<group>";
@@ -289,6 +298,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E6422F2E2F22422F00610E97 /* Docs */,
 			);
 			name = EarthLord;
 			packageProductDependencies = (
