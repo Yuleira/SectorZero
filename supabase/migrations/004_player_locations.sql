@@ -1,36 +1,40 @@
--- =====================================================
--- 004_player_locations.sql
--- 玩家位置上报与附近玩家检测系统
--- =====================================================
 
--- 玩家位置表
--- 用于存储玩家的实时位置，支持附近玩家密度查询
-CREATE TABLE player_locations (
-    user_id UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
-    location geography(Point, 4326) NOT NULL,
-    latitude DOUBLE PRECISION NOT NULL,
-    longitude DOUBLE PRECISION NOT NULL,
-    last_updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    is_online BOOLEAN NOT NULL DEFAULT TRUE
+-- 004_player_locations.sql
+-- Reconciliation migration: player_locations already exists
+
+CREATE TABLE IF NOT EXISTS player_locations (
+  user_id UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+  location geography(Point, 4326) NOT NULL,
+  latitude DOUBLE PRECISION NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL,
+  last_updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  is_online BOOLEAN NOT NULL DEFAULT TRUE
 );
 
--- 空间索引（用于范围查询，PostGIS 已在 002 中启用）
-CREATE INDEX idx_player_locations_geo ON player_locations USING GIST(location);
+CREATE INDEX IF NOT EXISTS idx_player_locations_geo
+  ON player_locations USING GIST(location);
 
--- 时间索引（用于在线状态过滤）
-CREATE INDEX idx_player_locations_updated ON player_locations(last_updated_at);
+CREATE INDEX IF NOT EXISTS idx_player_locations_updated
+  ON player_locations(last_updated_at);
 
--- 在线状态索引
-CREATE INDEX idx_player_locations_online ON player_locations(is_online) WHERE is_online = TRUE;
+CREATE INDEX IF NOT EXISTS idx_player_locations_online
+  ON player_locations(is_online)
+  WHERE is_online = TRUE;
 
--- 启用行级安全
 ALTER TABLE player_locations ENABLE ROW LEVEL SECURITY;
 
+
 -- RLS 策略：用户只能插入/更新自己的位置
+DROP POLICY IF EXISTS "Users can insert own location" 
+    ON player_locations;
+
 CREATE POLICY "Users can insert own location"
     ON player_locations
     FOR INSERT
     WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update own location"
+    ON player_locations;
 
 CREATE POLICY "Users can update own location"
     ON player_locations
@@ -39,6 +43,9 @@ CREATE POLICY "Users can update own location"
     WITH CHECK (auth.uid() = user_id);
 
 -- RLS 策略：用户可以查看自己的位置（用于调试）
+DROP POLICY IF EXISTS "Users can view own location"
+    ON player_locations;
+
 CREATE POLICY "Users can view own location"
     ON player_locations
     FOR SELECT

@@ -170,6 +170,90 @@ final class InventoryManager: ObservableObject {
         definitionsCache.removeAll()
     }
 
+    /// 根据物品定义 ID 移除物品（用于建筑系统的资源消耗）
+    /// 优先消耗低品质物品，支持跨堆叠消耗
+    /// - Parameters:
+    ///   - definitionId: 物品定义 ID（如 "wood"、"stone"）
+    ///   - quantity: 要移除的数量
+    /// - Returns: 是否成功移除
+    func removeItemsByDefinition(definitionId: String, quantity: Int) async -> Bool {
+        guard let userId = AuthManager.shared.currentUser?.id else {
+            print("📦 [背包] 未登录，无法移除物品")
+            return false
+        }
+
+        do {
+            // 查询该物品定义的所有堆叠，按品质从低到高排序
+            let qualityOrder: [ItemQuality] = [.ruined, .damaged, .worn, .good, .pristine]
+            var remaining = quantity
+
+            for quality in qualityOrder {
+                guard remaining > 0 else { break }
+
+                let matchingItems: [DBInventoryItem] = try await supabase
+                    .from("inventory_items")
+                    .select()
+                    .eq("user_id", value: userId.uuidString)
+                    .eq("item_definition_id", value: definitionId)
+                    .eq("quality", value: quality.rawValue)
+                    .execute()
+                    .value
+
+                for item in matchingItems {
+                    guard remaining > 0 else { break }
+
+                    let toRemove = min(remaining, item.quantity)
+
+                    if item.quantity <= toRemove {
+                        // 删除整个堆叠
+                        try await supabase
+                            .from("inventory_items")
+                            .delete()
+                            .eq("id", value: item.id.uuidString)
+                            .execute()
+                        print("📦 [背包] 删除堆叠: \(definitionId) (\(quality.rawValue)) x\(item.quantity)")
+                    } else {
+                        // 减少数量
+                        try await supabase
+                            .from("inventory_items")
+                            .update(["quantity": item.quantity - toRemove])
+                            .eq("id", value: item.id.uuidString)
+                            .execute()
+                        print("📦 [背包] 减少数量: \(definitionId) (\(quality.rawValue)) \(item.quantity) -> \(item.quantity - toRemove)")
+                    }
+
+                    remaining -= toRemove
+                }
+            }
+
+            // 检查是否完全消耗
+            if remaining > 0 {
+                print("📦 [背包] 资源不足: \(definitionId)，缺少 \(remaining)")
+                return false
+            }
+
+            // 刷新背包
+            await loadItems()
+            print("📦 [背包] 成功消耗: \(definitionId) x\(quantity)")
+            return true
+        } catch {
+            errorMessage = String(format: "error_remove_item", error.localizedDescription)
+            print("📦 [背包] 移除物品失败: \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// 获取资源汇总（用于建筑系统验证资源）
+    /// - Returns: [物品定义ID: 总数量]
+    func getResourceSummary() -> [String: Int] {
+        var summary: [String: Int] = [:]
+        for item in items {
+            let id = item.definition.id
+            summary[id, default: 0] += item.quantity
+        }
+        return summary
+    }
+
     // MARK: - 私有方法
 
     /// 加载物品定义到缓存
