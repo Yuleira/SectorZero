@@ -10,6 +10,7 @@
 
 import SwiftUI
 import MapKit
+import CoreLocation
 
 /// 末世风格地图视图
 /// 包装 MKMapView 以在 SwiftUI 中使用
@@ -46,6 +47,12 @@ struct MapViewRepresentable: UIViewRepresentable {
 
     /// 附近的POI列表
     var nearbyPOIs: [NearbyPOI] = []
+    
+    /// 玩家建筑列表 (Phase 4)
+    var playerBuildings: [PlayerBuilding] = []
+    
+    /// 建筑模板字典 (Phase 4)
+    var buildingTemplates: [String: BuildingTemplate] = [:]
 
     // MARK: - UIViewRepresentable
 
@@ -98,6 +105,9 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         // 更新POI标记
         updatePOIAnnotations(on: mapView)
+        
+        // 更新建筑标注 (Phase 4)
+        updateBuildingAnnotations(on: mapView)
     }
 
     /// 更新轨迹路径
@@ -193,6 +203,33 @@ struct MapViewRepresentable: UIViewRepresentable {
         }
 
         print("🗺️ [地图视图] 已添加 \(nearbyPOIs.count) 个POI标记")
+    }
+    
+    /// 更新建筑标注 (Phase 4)
+    /// ⚠️ 重要：building.locationLat/Lon 已经是 GCJ-02 坐标，直接使用！
+    private func updateBuildingAnnotations(on mapView: MKMapView) {
+        // 移除旧的建筑标注
+        let existingBuildingAnnotations = mapView.annotations.filter { $0 is BuildingAnnotation }
+        mapView.removeAnnotations(existingBuildingAnnotations)
+        
+        // 没有建筑则返回
+        guard !playerBuildings.isEmpty else { return }
+        
+        // 添加建筑标注
+        for building in playerBuildings {
+            // ⚠️ 重要：building.locationLat/Lon 已经是 GCJ-02 坐标
+            // 直接使用，不要调用 CoordinateConverter！
+            guard let coordinate = building.coordinate else { continue }
+            
+            let annotation = BuildingAnnotation(
+                coordinate: coordinate,
+                building: building,
+                template: buildingTemplates[building.templateId]
+            )
+            mapView.addAnnotation(annotation)
+        }
+        
+        print("🗺️ [地图视图] 已添加 \(playerBuildings.count) 个建筑标注")
     }
 
     /// 创建 Coordinator
@@ -359,7 +396,7 @@ struct MapViewRepresentable: UIViewRepresentable {
             return MKOverlayRenderer(overlay: overlay)
         }
 
-        /// 标注视图回调（为POI创建自定义标注视图）
+        /// 标注视图回调（为POI和建筑创建自定义标注视图）
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             // 忽略用户位置标注
             guard !(annotation is MKUserLocation) else { return nil }
@@ -389,6 +426,50 @@ struct MapViewRepresentable: UIViewRepresentable {
                     annotationView?.alpha = 1.0
                 }
 
+                return annotationView
+            }
+            
+            // 处理建筑标注 (Phase 4)
+            if let buildingAnnotation = annotation as? BuildingAnnotation {
+                let identifier = "BuildingAnnotation"
+                var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+                
+                if annotationView == nil {
+                    annotationView = MKMarkerAnnotationView(annotation: buildingAnnotation, reuseIdentifier: identifier)
+                    annotationView?.canShowCallout = true
+                } else {
+                    annotationView?.annotation = buildingAnnotation
+                }
+                
+                let building = buildingAnnotation.building
+                
+                // 设置标记样式
+                if let template = buildingAnnotation.template {
+                    // 根据分类设置颜色
+                    switch template.category {
+                    case .survival:
+                        annotationView?.markerTintColor = .orange
+                    case .storage:
+                        annotationView?.markerTintColor = .brown
+                    case .production:
+                        annotationView?.markerTintColor = .systemIndigo
+                    case .energy:
+                        annotationView?.markerTintColor = .yellow
+                    }
+                    
+                    annotationView?.glyphImage = UIImage(systemName: template.icon)
+                } else {
+                    annotationView?.markerTintColor = .gray
+                    annotationView?.glyphImage = UIImage(systemName: "building.2.fill")
+                }
+                
+                // 根据状态调整透明度
+                if building.status == .constructing {
+                    annotationView?.alpha = 0.6
+                } else {
+                    annotationView?.alpha = 1.0
+                }
+                
                 return annotationView
             }
 
@@ -431,6 +512,7 @@ class POIAnnotation: NSObject, MKAnnotation {
         super.init()
     }
 }
+
 
 // MARK: - 预览
 

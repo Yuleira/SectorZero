@@ -35,6 +35,12 @@ final class InventoryManager: ObservableObject {
     /// 物品定义缓存
     private var definitionsCache: [String: ItemDefinition] = [:]
 
+    /// Demo seed guard
+    private var isSeedingDemoResources = false
+
+    /// Demo seed flag
+    private let demoSeedKey = "demo_seeded_basic_resources"
+
     // MARK: - 初始化
 
     private init() {
@@ -58,6 +64,9 @@ final class InventoryManager: ObservableObject {
             if definitionsCache.isEmpty {
                 await loadDefinitions()
             }
+
+            // Demo: auto-seed on first launch (DEBUG)
+            await seedDemoResourcesIfNeeded(userId: userId)
 
             // 2. 加载用户背包物品
             let dbItems: [DBInventoryItem] = try await supabase
@@ -254,6 +263,48 @@ final class InventoryManager: ObservableObject {
         return summary
     }
 
+    // MARK: - Resource Display Helpers (Day 29)
+
+    /// 获取资源本地化显示名称（用于建筑系统 UI）
+    /// - Note: 优先使用已加载的 ItemDefinition.name（通常是本地化 key），否则使用 resource_<id> 的本地化 key。
+    func resourceDisplayName(for definitionId: String) -> String {
+        let normalizedId = definitionId.lowercased()
+
+        if let definition = definitionsCache[normalizedId] {
+            return NSLocalizedString(definition.name, comment: "Resource display name")
+        }
+
+        let key = "resource_\(normalizedId)"
+        return NSLocalizedString(key, comment: "Resource display name")
+    }
+
+    /// 获取资源图标（用于建筑系统 UI）
+    /// - Note: 优先使用已加载的 ItemDefinition.icon，否则使用内置映射。
+    func resourceIconName(for definitionId: String) -> String {
+        let normalizedId = definitionId.lowercased()
+
+        if let definition = definitionsCache[normalizedId] {
+            return definition.icon
+        }
+
+        switch normalizedId {
+        case "wood", "wood_plank":
+            return "tree.fill"
+        case "stone":
+            return "square.stack.3d.up.fill"
+        case "metal", "scrap_metal":
+            return "gearshape.fill"
+        case "fabric":
+            return "scissors"
+        case "glass":
+            return "circle.grid.cross.fill"
+        case "circuit", "electronic_parts":
+            return "cpu.fill"
+        default:
+            return "cube.fill"
+        }
+    }
+
     // MARK: - 私有方法
 
     /// 加载物品定义到缓存
@@ -352,4 +403,148 @@ final class InventoryManager: ObservableObject {
             print("📦 [背包] 添加物品失败: \(error.localizedDescription)")
         }
     }
+
+    private func seedDemoResourcesIfNeeded(userId: UUID) async {
+#if DEBUG
+        guard !isSeedingDemoResources else { return }
+        let defaults = UserDefaults.standard
+        guard !defaults.bool(forKey: demoSeedKey) else { return }
+        isSeedingDemoResources = true
+        defer { isSeedingDemoResources = false }
+
+        let resources: [(String, Int)] = [
+            ("wood", 100),
+            ("stone", 100)
+        ]
+
+        for (resourceId, quantity) in resources {
+            let definition = ItemDefinition(
+                id: resourceId,
+                name: resourceId.capitalized,
+                description: "Demo resource",
+                category: .material,
+                icon: "cube.fill",
+                rarity: .common
+            )
+            definitionsCache[resourceId] = definition
+
+            let item = CollectedItem(
+                id: UUID(),
+                definition: definition,
+                quality: .good,
+                foundDate: Date(),
+                quantity: quantity
+            )
+
+            await addSingleItem(
+                userId: userId,
+                item: item,
+                sourceType: "demo",
+                sourceSessionId: nil
+            )
+        }
+
+        defaults.set(true, forKey: demoSeedKey)
+#endif
+    }
+    
+    // MARK: - Developer Tools (Phase 4)
+    
+    #if DEBUG
+    /// 添加建筑测试资源包（统一入口）
+    func addTestResources() async {
+        await addBuildingTestResources()
+    }
+
+    /// 添加测试资源（用于开发调试）
+    /// - Parameters:
+    ///   - resourceId: 资源ID（如 "wood", "stone", "metal"）
+    ///   - quantity: 数量
+    func addTestResource(resourceId: String, quantity: Int) async {
+        guard let userId = AuthManager.shared.currentUser?.id else {
+            print("📦 [DEBUG] 未登录，无法添加测试资源")
+            return
+        }
+        
+        // 创建测试物品定义
+        let testDefinition = ItemDefinition(
+            id: resourceId,
+            name: resourceId.capitalized,
+            description: "Test resource for building",
+            category: .material,
+            icon: "cube.fill",
+            rarity: .common
+        )
+
+        // 确保 definitionsCache 有该资源，避免 loadItems 丢失映射
+        definitionsCache[resourceId] = testDefinition
+        
+        // 创建物品
+        let testItem = CollectedItem(
+            id: UUID(),
+            definition: testDefinition,
+            quality: .good,
+            foundDate: Date(),
+            quantity: quantity
+        )
+        
+        print("📦 [DEBUG] 添加测试资源: \(resourceId) x\(quantity)")
+        
+        await addSingleItem(
+            userId: userId,
+            item: testItem,
+            sourceType: "debug",
+            sourceSessionId: nil
+        )
+        
+        // 刷新背包
+        await loadItems()
+        
+        print("📦 [DEBUG] ✅ 测试资源添加完成")
+    }
+    
+    /// 清空背包（用于测试重置）
+    func clearAllItems() async {
+        guard let userId = AuthManager.shared.currentUser?.id else {
+            print("📦 [DEBUG] 未登录，无法清空背包")
+            return
+        }
+        
+        do {
+            print("📦 [DEBUG] 开始清空背包...")
+            
+            try await supabase
+                .from("inventory_items")
+                .delete()
+                .eq("user_id", value: userId.uuidString)
+                .execute()
+            
+            items.removeAll()
+            
+            print("📦 [DEBUG] ✅ 背包已清空")
+            
+        } catch {
+            print("📦 [DEBUG] ❌ 清空背包失败: \(error.localizedDescription)")
+        }
+    }
+    
+    /// 添加建筑测试资源包（包含所有常用资源）
+    func addBuildingTestResources() async {
+        print("📦 [DEBUG] 添加建筑测试资源包...")
+        
+        let resources: [(String, Int)] = [
+            ("wood", 500),
+            ("stone", 500),
+            ("metal", 200),
+            ("concrete", 100),
+            ("glass", 100)
+        ]
+        
+        for (resourceId, quantity) in resources {
+            await addTestResource(resourceId: resourceId, quantity: quantity)
+        }
+        
+        print("📦 [DEBUG] ✅ 建筑测试资源包添加完成")
+    }
+    #endif
 }

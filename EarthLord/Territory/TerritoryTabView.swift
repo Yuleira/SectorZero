@@ -80,6 +80,12 @@ struct TerritoryTabView: View {
                     await loadTerritories()
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .territoryUpdated)) { _ in
+                // 监听领地更新通知，刷新列表
+                Task {
+                    await loadTerritories()
+                }
+            }
             .sheet(item: $selectedTerritory) { territory in
                 TerritoryDetailView(
                     territory: territory,
@@ -294,7 +300,7 @@ struct TerritoryCard: View {
 
                     // 点数
                     if let pointCount = territory.pointCount {
-                        Label("territory_points_format \(pointCount)", systemImage: "mappin.circle")
+                        Label(String(format: String(localized: "territory_points_format"), pointCount), systemImage: "mappin.circle")
                             .font(.caption)
                             .foregroundColor(ApocalypseTheme.textSecondary)
                     }

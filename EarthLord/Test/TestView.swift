@@ -13,7 +13,7 @@ struct TestView: View {
             Color.blue.opacity(0.3)
                 .ignoresSafeArea()
 
-            Text("这里是分支宇宙的测试页")
+            Text("test_branch_universe_page")
                 .font(.largeTitle)
                 .fontWeight(.bold)
         }

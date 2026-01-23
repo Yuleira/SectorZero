@@ -15,6 +15,7 @@ struct Territory: Codable, Identifiable {
     let id: String
     let userId: String
     let name: String?             // 可选，数据库允许为空
+    var customName: String?       // 用户自定义名称
     let path: [[String: Double]]  // 格式：[{"lat": x, "lon": y}]
     let area: Double
     let pointCount: Int?
@@ -26,7 +27,8 @@ struct Territory: Codable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id
         case userId = "user_id"
-        case name
+    case name
+    case customName = "custom_name"
         case path
         case area
         case pointCount = "point_count"
@@ -55,10 +57,13 @@ struct Territory: Codable, Identifiable {
 
     /// 显示名称（如果没有名称则显示默认值）
     var displayName: String {
-        // 这里的 NSLocalizedString 告诉系统：
-        // 请拿 "未命名领地" 去 Localizable.xcstrings 里查，
-        // 如果是英文系统，就返回 "Unnamed Territory"
-        return name ?? NSLocalizedString("未命名领地", comment: "Default territory name")
+        if let custom = customName, !custom.isEmpty {
+            return custom
+        }
+        if let name = name, !name.isEmpty {
+            return name
+        }
+        return String(localized: "territory_unnamed")
     }
 
     /// 格式化完成时间

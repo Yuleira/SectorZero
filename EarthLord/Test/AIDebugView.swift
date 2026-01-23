@@ -11,7 +11,7 @@ import CoreLocation
 
 struct AIDebugView: View {
     @State private var isGenerating = false
-    @State private var testResults: String = "点击按钮开始测试..."
+    @State private var testResults: String = ""
     @State private var generatedItems: [AIGeneratedItem] = []
     @State private var usedFallback = false
     @State private var generationTime: TimeInterval = 0
@@ -35,7 +35,7 @@ struct AIDebugView: View {
             }
             .padding()
         }
-        .navigationTitle("AI 生成器调试")
+        .navigationTitle(String(localized: "test_ai_generator_debug"))
         .navigationBarTitleDisplayMode(.inline)
     }
     
@@ -47,11 +47,11 @@ struct AIDebugView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.blue)
             
-            Text("AI 物品生成测试")
+            Text("test_ai_item_generation")
                 .font(.title2)
                 .fontWeight(.bold)
-            
-            Text("测试 Edge Function 和降级方案")
+
+            Text("test_edge_function_fallback")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -108,7 +108,7 @@ struct AIDebugView: View {
     private var resultsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("测试结果")
+                Text("test_test_result")
                     .font(.headline)
                 Spacer()
                 if isGenerating {
@@ -121,7 +121,7 @@ struct AIDebugView: View {
             if !generatedItems.isEmpty {
                 HStack {
                     Label(
-                        usedFallback ? "降级方案" : "AI 生成",
+                        usedFallback ? String(localized: "test_fallback_solution") : String(localized: "item_ai_generated"),
                         systemImage: usedFallback ? "exclamationmark.triangle.fill" : "checkmark.circle.fill"
                     )
                     .font(.subheadline)
@@ -156,7 +156,7 @@ struct AIDebugView: View {
     
     private var itemsListSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("生成的物品")
+            Text("backpack_generated_items")
                 .font(.headline)
             
             ForEach(Array(generatedItems.enumerated()), id: \.offset) { index, item in

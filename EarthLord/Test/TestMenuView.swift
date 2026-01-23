@@ -34,7 +34,7 @@ struct TestMenuView: View {
                     TerritoryTestView()
                 } label: {
                     Label {
-                        Text("圈地功能测试")
+                        Text(String(localized: "test_territory_claiming"))
                     } icon: {
                         Image(systemName: "flag.checkered")
                             .foregroundColor(ApocalypseTheme.primary)
@@ -53,13 +53,13 @@ struct TestMenuView: View {
                     }
                 }
             } header: {
-                Text("测试模块")
+                Text(String(localized: "test_modules"))
             } footer: {
-                Text("这些工具仅供开发调试使用")
+                Text(String(localized: "dev_tools_warning"))
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }
         }
-        .navigationTitle("开发测试")
+        .navigationTitle(String(localized: "test_developer"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

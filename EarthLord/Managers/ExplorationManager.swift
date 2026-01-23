@@ -262,7 +262,7 @@ final class ExplorationManager: NSObject, ObservableObject {
 
         let result = ExplorationResult(
             isSuccess: tier != .none,
-            message: tier == .none ? NSLocalizedString("行走距离不足200米，未获得奖励", comment: "探索结果") : NSLocalizedString("探索成功！", comment: "探索结果"),
+            message: tier == .none ? NSLocalizedString("exploration_distance_insufficient", comment: "") : NSLocalizedString("exploration_success", comment: ""),
             itemsCollected: collectedItems,
             experienceGained: calculateExperience(tier: tier, distance: currentDistance),
             distanceWalked: currentDistance,
@@ -311,12 +311,12 @@ final class ExplorationManager: NSObject, ObservableObject {
             totalDistance: currentDistance,
             duration: duration,
             pointsVerified: trackPoints.count,
-            distanceRank: NSLocalizedString("失败", comment: "探索等级")
+            distanceRank: NSLocalizedString("exploration_failed", comment: "")
         )
 
         let result = ExplorationResult(
             isSuccess: false,
-            message: NSLocalizedString("探索失败：移动速度超过30km/h，可能使用了交通工具", comment: "探索结果"),
+            message: NSLocalizedString("error_exploration_speed_exceeded", comment: ""),
             itemsCollected: [],
             experienceGained: 0,
             distanceWalked: currentDistance,
@@ -326,7 +326,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         )
 
         latestResult = result
-        state = .failed(NSLocalizedString("速度过快", comment: "探索失败原因"))
+        state = .failed(NSLocalizedString("map_speed_too_fast", comment: ""))
 
         print("🔍 [探索] ❌ 探索失败 - 原因：超速")
 
@@ -344,7 +344,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         }
 
         guard locationManager.isAuthorized else {
-            state = .failed(NSLocalizedString("需要定位权限", comment: "探索失败原因"))
+            state = .failed(NSLocalizedString("error_location_permission_required", comment: ""))
             return false
         }
 
@@ -460,7 +460,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         if speedWarningStartTime == nil {
             // 第一次超速，开始警告
             speedWarningStartTime = Date()
-            speedWarning = String(format: NSLocalizedString("⚠️ 速度过快！当前: %.0fkm/h，限制: 30km/h", comment: "速度警告"), speedKmh)
+            speedWarning = String(format: NSLocalizedString("exploration_speed_warning_current", comment: ""), speedKmh)
             print("🔍 [速度检测] ⚠️ 超速警告：当前速度 \(String(format: "%.1f", speedKmh))km/h，开始倒计时")
         } else {
             // 持续超速，检查是否超过容忍时间
@@ -475,7 +475,7 @@ final class ExplorationManager: NSObject, ObservableObject {
             } else {
                 // 更新警告消息，显示剩余时间
                 let remainingTime = Int(speedWarningTimeout - warningDuration)
-                speedWarning = String(format: NSLocalizedString("⚠️ 速度过快！%.0fkm/h > 30km/h，%d秒后停止", comment: "速度警告"), speedKmh, remainingTime)
+                speedWarning = String(format: NSLocalizedString("exploration_speed_warning_countdown", comment: ""), speedKmh, remainingTime)
                 print("🔍 [速度检测] ⚠️ 持续超速 \(String(format: "%.1f", warningDuration))秒，剩余 \(remainingTime) 秒")
             }
         }
@@ -903,47 +903,47 @@ final class ExplorationManager: NSObject, ObservableObject {
         switch rarity {
         case .common:
             let items = [
-                ItemDefinition(id: "water_bottle", name: NSLocalizedString("纯净水", comment: "物品名称"), description: NSLocalizedString("一瓶还算干净的水", comment: "物品描述"), category: .water, icon: "drop.fill", rarity: .common),
-                ItemDefinition(id: "canned_beans", name: NSLocalizedString("罐头豆子", comment: "物品名称"), description: NSLocalizedString("高蛋白食物", comment: "物品描述"), category: .food, icon: "takeoutbag.and.cup.and.straw.fill", rarity: .common),
-                ItemDefinition(id: "bandage", name: NSLocalizedString("绷带", comment: "物品名称"), description: NSLocalizedString("简单的止血工具", comment: "物品描述"), category: .medical, icon: "bandage.fill", rarity: .common),
-                ItemDefinition(id: "scrap_metal", name: NSLocalizedString("废金属", comment: "物品名称"), description: NSLocalizedString("可用于制造", comment: "物品描述"), category: .material, icon: "gearshape.fill", rarity: .common),
-                ItemDefinition(id: "rope", name: NSLocalizedString("绳索", comment: "物品名称"), description: NSLocalizedString("多用途工具", comment: "物品描述"), category: .tool, icon: "line.diagonal", rarity: .common),
-                ItemDefinition(id: "matches", name: NSLocalizedString("火柴", comment: "物品名称"), description: NSLocalizedString("生火必备", comment: "物品描述"), category: .tool, icon: "flame.fill", rarity: .common),
-                ItemDefinition(id: "cloth", name: NSLocalizedString("布料", comment: "物品名称"), description: NSLocalizedString("可以缝补衣物", comment: "物品描述"), category: .material, icon: "tshirt.fill", rarity: .common)
+                ItemDefinition(id: "water_bottle", name: NSLocalizedString("item_pure_water", comment: ""), description: NSLocalizedString("item_pure_water_desc", comment: ""), category: .water, icon: "drop.fill", rarity: .common),
+                ItemDefinition(id: "canned_beans", name: NSLocalizedString("item_canned_beans", comment: ""), description: NSLocalizedString("item_canned_beans_desc", comment: ""), category: .food, icon: "takeoutbag.and.cup.and.straw.fill", rarity: .common),
+                ItemDefinition(id: "bandage", name: NSLocalizedString("item_bandage", comment: ""), description: NSLocalizedString("item_bandage_desc", comment: ""), category: .medical, icon: "bandage.fill", rarity: .common),
+                ItemDefinition(id: "scrap_metal", name: NSLocalizedString("item_scrap_metal", comment: ""), description: NSLocalizedString("item_scrap_metal_desc", comment: ""), category: .material, icon: "gearshape.fill", rarity: .common),
+                ItemDefinition(id: "rope", name: NSLocalizedString("item_rope", comment: ""), description: NSLocalizedString("item_rope_desc", comment: ""), category: .tool, icon: "line.diagonal", rarity: .common),
+                ItemDefinition(id: "matches", name: NSLocalizedString("item_matches", comment: ""), description: NSLocalizedString("item_matches_desc", comment: ""), category: .tool, icon: "flame.fill", rarity: .common),
+                ItemDefinition(id: "cloth", name: NSLocalizedString("item_cloth", comment: ""), description: NSLocalizedString("item_cloth_desc", comment: ""), category: .material, icon: "tshirt.fill", rarity: .common)
             ]
             return items.randomElement()!
         case .uncommon:
             let items = [
-                ItemDefinition(id: "energy_drink", name: NSLocalizedString("能量饮料", comment: "物品名称"), description: NSLocalizedString("提神醒脑的饮品", comment: "物品描述"), category: .food, icon: "bolt.fill", rarity: .uncommon),
-                ItemDefinition(id: "multi_tool", name: NSLocalizedString("多功能工具", comment: "物品名称"), description: NSLocalizedString("集成多种工具的便携装置", comment: "物品描述"), category: .tool, icon: "wrench.and.screwdriver.fill", rarity: .uncommon),
-                ItemDefinition(id: "med_kit_small", name: NSLocalizedString("小型急救包", comment: "物品名称"), description: NSLocalizedString("基本的医疗用品", comment: "物品描述"), category: .medical, icon: "cross.case.fill", rarity: .uncommon),
-                ItemDefinition(id: "canned_fruit", name: NSLocalizedString("水果罐头", comment: "物品名称"), description: NSLocalizedString("补充维生素的好选择", comment: "物品描述"), category: .food, icon: "leaf.fill", rarity: .uncommon),
-                ItemDefinition(id: "duct_tape", name: NSLocalizedString("万能胶带", comment: "物品名称"), description: NSLocalizedString("修复一切的神器", comment: "物品描述"), category: .material, icon: "rectangle.fill", rarity: .uncommon)
+                ItemDefinition(id: "energy_drink", name: NSLocalizedString("item_energy_drink", comment: ""), description: NSLocalizedString("item_energy_drink_desc", comment: ""), category: .food, icon: "bolt.fill", rarity: .uncommon),
+                ItemDefinition(id: "multi_tool", name: NSLocalizedString("item_multi_tool", comment: ""), description: NSLocalizedString("item_multi_tool_desc", comment: ""), category: .tool, icon: "wrench.and.screwdriver.fill", rarity: .uncommon),
+                ItemDefinition(id: "med_kit_small", name: NSLocalizedString("item_small_first_aid_kit", comment: ""), description: NSLocalizedString("item_small_first_aid_kit_desc", comment: ""), category: .medical, icon: "cross.case.fill", rarity: .uncommon),
+                ItemDefinition(id: "canned_fruit", name: NSLocalizedString("item_canned_fruit", comment: ""), description: NSLocalizedString("item_canned_fruit_desc", comment: ""), category: .food, icon: "leaf.fill", rarity: .uncommon),
+                ItemDefinition(id: "duct_tape", name: NSLocalizedString("item_duct_tape", comment: ""), description: NSLocalizedString("item_duct_tape_desc", comment: ""), category: .material, icon: "rectangle.fill", rarity: .uncommon)
             ]
             return items.randomElement()!
         case .rare:
             let items = [
-                ItemDefinition(id: "first_aid_kit", name: NSLocalizedString("急救包", comment: "物品名称"), description: NSLocalizedString("包含多种医疗用品", comment: "物品描述"), category: .medical, icon: "cross.case.fill", rarity: .rare),
-                ItemDefinition(id: "flashlight", name: NSLocalizedString("手电筒", comment: "物品名称"), description: NSLocalizedString("黑暗中的光明", comment: "物品描述"), category: .tool, icon: "flashlight.on.fill", rarity: .rare),
-                ItemDefinition(id: "canned_meat", name: NSLocalizedString("肉罐头", comment: "物品名称"), description: NSLocalizedString("珍贵的蛋白质来源", comment: "物品描述"), category: .food, icon: "fork.knife", rarity: .rare),
-                ItemDefinition(id: "painkillers", name: NSLocalizedString("止痛药", comment: "物品名称"), description: NSLocalizedString("缓解疼痛", comment: "物品描述"), category: .medical, icon: "pills.fill", rarity: .rare),
-                ItemDefinition(id: "batteries", name: NSLocalizedString("电池", comment: "物品名称"), description: NSLocalizedString("电子设备的能源", comment: "物品描述"), category: .material, icon: "battery.100", rarity: .rare)
+                ItemDefinition(id: "first_aid_kit", name: NSLocalizedString("item_first_aid_kit", comment: ""), description: NSLocalizedString("item_first_aid_kit_desc", comment: ""), category: .medical, icon: "cross.case.fill", rarity: .rare),
+                ItemDefinition(id: "flashlight", name: NSLocalizedString("item_flashlight", comment: ""), description: NSLocalizedString("item_flashlight_desc", comment: ""), category: .tool, icon: "flashlight.on.fill", rarity: .rare),
+                ItemDefinition(id: "canned_meat", name: NSLocalizedString("item_canned_meat", comment: ""), description: NSLocalizedString("item_canned_meat_desc", comment: ""), category: .food, icon: "fork.knife", rarity: .rare),
+                ItemDefinition(id: "painkillers", name: NSLocalizedString("item_painkillers", comment: ""), description: NSLocalizedString("item_painkillers_desc", comment: ""), category: .medical, icon: "pills.fill", rarity: .rare),
+                ItemDefinition(id: "batteries", name: NSLocalizedString("item_batteries", comment: ""), description: NSLocalizedString("item_batteries_desc", comment: ""), category: .material, icon: "battery.100", rarity: .rare)
             ]
             return items.randomElement()!
         case .epic:
             let items = [
-                ItemDefinition(id: "antibiotics", name: NSLocalizedString("抗生素", comment: "物品名称"), description: NSLocalizedString("珍贵的药物", comment: "物品描述"), category: .medical, icon: "pills.fill", rarity: .epic),
-                ItemDefinition(id: "radio", name: NSLocalizedString("对讲机", comment: "物品名称"), description: NSLocalizedString("远距离通讯设备", comment: "物品描述"), category: .tool, icon: "antenna.radiowaves.left.and.right", rarity: .epic),
-                ItemDefinition(id: "solar_charger", name: NSLocalizedString("太阳能充电器", comment: "物品名称"), description: NSLocalizedString("可再生能源", comment: "物品描述"), category: .tool, icon: "sun.max.fill", rarity: .epic),
-                ItemDefinition(id: "military_ration", name: NSLocalizedString("军用口粮", comment: "物品名称"), description: NSLocalizedString("高热量应急食品", comment: "物品描述"), category: .food, icon: "bag.fill", rarity: .epic)
+                ItemDefinition(id: "antibiotics", name: NSLocalizedString("item_antibiotics", comment: ""), description: NSLocalizedString("item_antibiotics_desc", comment: ""), category: .medical, icon: "pills.fill", rarity: .epic),
+                ItemDefinition(id: "radio", name: NSLocalizedString("item_radio", comment: ""), description: NSLocalizedString("item_radio_desc", comment: ""), category: .tool, icon: "antenna.radiowaves.left.and.right", rarity: .epic),
+                ItemDefinition(id: "solar_charger", name: NSLocalizedString("item_solar_charger", comment: ""), description: NSLocalizedString("item_solar_charger_desc", comment: ""), category: .tool, icon: "sun.max.fill", rarity: .epic),
+                ItemDefinition(id: "military_ration", name: NSLocalizedString("item_military_ration", comment: ""), description: NSLocalizedString("item_military_ration_desc", comment: ""), category: .food, icon: "bag.fill", rarity: .epic)
             ]
             return items.randomElement()!
         case .legendary:
             let items = [
-                ItemDefinition(id: "hazmat_suit", name: NSLocalizedString("防护服", comment: "物品名称"), description: NSLocalizedString("全身防护装备", comment: "物品描述"), category: .tool, icon: "figure.dress.line.vertical.figure", rarity: .legendary),
-                ItemDefinition(id: "night_vision", name: NSLocalizedString("夜视仪", comment: "物品名称"), description: NSLocalizedString("在黑暗中看清一切", comment: "物品描述"), category: .tool, icon: "eye.fill", rarity: .legendary),
-                ItemDefinition(id: "surgical_kit", name: NSLocalizedString("手术套件", comment: "物品名称"), description: NSLocalizedString("专业医疗设备", comment: "物品描述"), category: .medical, icon: "scissors", rarity: .legendary),
-                ItemDefinition(id: "water_purifier", name: NSLocalizedString("净水器", comment: "物品名称"), description: NSLocalizedString("将任何水变成饮用水", comment: "物品描述"), category: .tool, icon: "drop.triangle.fill", rarity: .legendary)
+                ItemDefinition(id: "hazmat_suit", name: NSLocalizedString("item_hazmat_suit", comment: ""), description: NSLocalizedString("item_hazmat_suit_desc", comment: ""), category: .tool, icon: "figure.dress.line.vertical.figure", rarity: .legendary),
+                ItemDefinition(id: "night_vision", name: NSLocalizedString("item_night_vision", comment: ""), description: NSLocalizedString("item_night_vision_desc", comment: ""), category: .tool, icon: "eye.fill", rarity: .legendary),
+                ItemDefinition(id: "surgical_kit", name: NSLocalizedString("item_surgical_kit", comment: ""), description: NSLocalizedString("item_surgical_kit_desc", comment: ""), category: .medical, icon: "scissors", rarity: .legendary),
+                ItemDefinition(id: "water_purifier", name: NSLocalizedString("item_water_purifier", comment: ""), description: NSLocalizedString("item_water_purifier_desc", comment: ""), category: .tool, icon: "drop.triangle.fill", rarity: .legendary)
             ]
             return items.randomElement()!
         }

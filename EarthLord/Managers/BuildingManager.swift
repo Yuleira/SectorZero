@@ -38,22 +38,39 @@ final class BuildingManager: ObservableObject {
 
     /// 模板缓存（templateId -> BuildingTemplate）
     private var templateCache: [String: BuildingTemplate] = [:]
+    
+    /// 进度更新定时器
+    private var progressTimer: Timer?
 
     // MARK: - 初始化
 
     private init() {
         print("🏗️ [建筑管理器] 初始化")
+        startProgressTimer()
     }
+    
+    deinit {
+        // 获取定时器的引用
+            let timerToInvalidate = self.progressTimer
+        // 使用传统的异步主线程派发，避开 Task 的 Sendable 检查
+            DispatchQueue.main.async {
+                timerToInvalidate?.invalidate()
+            }
+            print("🏗️ [建筑] BuildingManager 已销毁")
+        }
 
     // MARK: - 模板加载
 
     /// 从 JSON 文件加载建筑模板
     func loadTemplates() async {
+        print("🏗️ [建筑] instance id=\(ObjectIdentifier(self))")
         print("🏗️ [建筑] 开始加载建筑模板...")
 
         // 确保在 bundle 中找到文件
-        guard let url = Bundle.main.url(forResource: "building_templates", withExtension: "json") else {
-            errorMessage = "未找到 building_templates.json 文件"
+        let url = Bundle.main.url(forResource: "building_templates", withExtension: "json")
+            ?? Bundle.main.url(forResource: "building_templates", withExtension: "json", subdirectory: "Resources")
+        guard let url = url else {
+            errorMessage = String(localized: "error_building_templates_not_found")
             print("🏗️ [建筑] ❌ 文件不存在")
             return
         }
@@ -61,18 +78,23 @@ final class BuildingManager: ObservableObject {
         do {
             let data = try Data(contentsOf: url)
             let decoder = JSONDecoder()
-            // 使用 snake_case 转换策略
+            
+            // 📋 重要：JSON 使用 snake_case，Swift 使用 camelCase
+            // .convertFromSnakeCase 会自动将 template_id → templateId
+            // 对于复杂映射（如 required_resources），BuildingTemplate.CodingKeys 手动处理
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             decoder.dateDecodingStrategy = .iso8601
 
             let templates = try decoder.decode([BuildingTemplate].self, from: data)
+            print("🏗️ [建筑] 解码模板数: \(templates.count)")
             
             buildingTemplates = templates
             templateCache = Dictionary(uniqueKeysWithValues: templates.map { ($0.templateId, $0) })
+            print("🏗️ [建筑] 赋值后 templates: \(buildingTemplates.count)")
             
             print("🏗️ [建筑] ✅ 成功加载 \(templates.count) 个建筑模板")
         } catch {
-            errorMessage = "加载建筑模板失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "error_load_building_templates_failed") + ": " + error.localizedDescription
             print("🏗️ [建筑] ❌ 加载失败: \(error)")
         }
     }
@@ -163,7 +185,7 @@ final class BuildingManager: ObservableObject {
             
             if !success {
                 print("🏗️ [建筑] ❌ 资源消耗失败: \(resourceId) x\(amount)")
-                errorMessage = "资源消耗失败，建造已取消"
+                errorMessage = String(localized: "error_resource_consumption_failed")
                 // TODO: 回滚已消耗的资源（未来优化）
                 return .failure(.insufficientResources(missing: [resourceId: amount]))
             }
@@ -174,8 +196,8 @@ final class BuildingManager: ObservableObject {
         // 5. 获取当前用户
         guard let userId = AuthManager.shared.currentUser?.id else {
             print("🏗️ [建筑] ❌ 未登录")
-            errorMessage = "未登录"
-            return .failure(.templateNotFound) // 临时使用，应创建 .notAuthenticated 错误
+            errorMessage = String(localized: "error_not_logged_in")
+            return .failure(.notAuthenticated)
         }
         
         // 6. 计算完成时间
@@ -187,7 +209,7 @@ final class BuildingManager: ObservableObject {
             "user_id": .string(userId.uuidString),
             "territory_id": .string(territoryId),
             "template_id": .string(templateId),
-            "building_name": .string(template.name),
+            "building_name": .string(template.localizedName),
             "status": .string(BuildingStatus.constructing.rawValue),
             "level": .integer(1),
             "location_lat": location.map { .double($0.latitude) } ?? .null,
@@ -222,7 +244,7 @@ final class BuildingManager: ObservableObject {
             
         } catch {
             print("🏗️ [建筑] ❌ 数据库插入失败: \(error.localizedDescription)")
-            errorMessage = "建造失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "error_construction_failed") + ": " + error.localizedDescription
             return .failure(.templateNotFound)
         }
     }
@@ -255,7 +277,7 @@ final class BuildingManager: ObservableObject {
             
         } catch {
             print("🏗️ [建筑] ❌ 完成失败: \(error.localizedDescription)")
-            errorMessage = "完成建造失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "error_complete_construction_failed") + ": " + error.localizedDescription
             return false
         }
     }
@@ -315,8 +337,37 @@ final class BuildingManager: ObservableObject {
             
         } catch {
             print("🏗️ [建筑] ❌ 升级失败: \(error.localizedDescription)")
-            errorMessage = "升级失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "error_upgrade_failed") + ": " + error.localizedDescription
             return .failure(.templateNotFound)
+        }
+    }
+
+    // MARK: - 拆除操作 (Day 29)
+
+    /// 拆除建筑
+    /// - Parameter buildingId: 建筑 ID
+    /// - Returns: 是否成功
+    func demolishBuilding(buildingId: UUID) async -> Bool {
+        print("🏗️ [建筑] 开始拆除建筑: \(buildingId)")
+        
+        do {
+            // 从数据库删除
+            try await supabase
+                .from("player_buildings")
+                .delete()
+                .eq("id", value: buildingId.uuidString)
+                .execute()
+            
+            // 从本地缓存移除
+            playerBuildings.removeAll { $0.id == buildingId }
+            
+            print("🏗️ [建筑] ✅ 拆除成功")
+            return true
+            
+        } catch {
+            print("🏗️ [建筑] ❌ 拆除失败: \(error.localizedDescription)")
+            errorMessage = String(localized: "error_demolish_failed") + ": " + error.localizedDescription
+            return false
         }
     }
 
@@ -359,7 +410,7 @@ final class BuildingManager: ObservableObject {
             await checkPendingCompletions()
             
         } catch {
-            errorMessage = "加载建筑失败: \(error.localizedDescription)"
+            errorMessage = String(localized: "error_load_buildings_failed") + ": " + error.localizedDescription
             print("🏗️ [建筑] ❌ 加载失败: \(error.localizedDescription)")
         }
     }
@@ -407,7 +458,7 @@ final class BuildingManager: ObservableObject {
         // 使用 Task.sleep 实现定时器
         Task {
             try? await Task.sleep(nanoseconds: UInt64(timeInterval * 1_000_000_000))
-            await completeConstruction(buildingId: buildingId)
+            _ = await completeConstruction(buildingId: buildingId)
         }
     }
 
@@ -424,7 +475,7 @@ final class BuildingManager: ObservableObject {
             
             if completionTime <= now {
                 // 已经到时间，立即完成
-                await completeConstruction(buildingId: building.id)
+                _ = await completeConstruction(buildingId: building.id)
             } else {
                 // 尚未到时间，设置定时器
                 scheduleCompletion(buildingId: building.id, completionTime: completionTime)
@@ -436,5 +487,57 @@ final class BuildingManager: ObservableObject {
     func clearCache() {
         playerBuildings.removeAll()
         // buildingTemplates 不需要清除，因为是静态配置
+    }
+    
+    // MARK: - Progress Timer (Phase 4)
+    
+    /// 启动进度更新定时器（每秒更新一次）
+    private func startProgressTimer() {
+        // 避免重复启动
+        guard progressTimer == nil else { return }
+        
+        print("🏗️ [建筑] 启动进度定时器")
+        
+        progressTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                await self?.updateBuildingProgress()
+            }
+        }
+    }
+    
+    /// 停止进度定时器
+    private func stopProgressTimer() {
+        progressTimer?.invalidate()
+        progressTimer = nil
+        print("🏗️ [建筑] 停止进度定时器")
+    }
+    
+    /// 更新建筑进度并触发 UI 刷新
+    private func updateBuildingProgress() async {
+        let now = Date()
+        var hasChanges = false
+        
+        for (_, building) in playerBuildings.enumerated() {
+            // 只处理 constructing 状态
+            guard building.status == .constructing,
+                  let completionTime = building.buildCompletedAt else {
+                continue
+            }
+            
+            // 检查是否已完成
+            if completionTime <= now {
+                // 自动完成建造
+                _ = await completeConstruction(buildingId: building.id)
+                hasChanges = true
+            } else {
+                // 触发 UI 更新（buildProgress 和 formattedRemainingTime 是计算属性）
+                // 通过修改数组来触发 @Published 更新
+                objectWillChange.send()
+            }
+        }
+        
+        if hasChanges {
+            print("🏗️ [建筑] 定时器检测到建筑完成")
+        }
     }
 }

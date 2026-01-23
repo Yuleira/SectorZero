@@ -14,6 +14,7 @@
 		E605D1002F030AA3003D9861 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E605D0FF2F030AA3003D9861 /* GoogleSignIn */; };
 		E605D1022F030AA3003D9861 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E605D1012F030AA3003D9861 /* GoogleSignInSwift */; };
 		E60C1BC52EFEABE3005E0B24 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = E60C1BC42EFEABE3005E0B24 /* Supabase */; };
+		E61D7CB42F23A0730088DCB4 /* building_templates.json in Resources */ = {isa = PBXBuildFile; fileRef = E61D7CB22F23A0730088DCB4 /* building_templates.json */; };
 		E62484F52F152D31001B6ABC /* ExplorationReward.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484F42F152D31001B6ABC /* ExplorationReward.swift */; };
 		E62484F72F152D3B001B6ABC /* InventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484F62F152D3B001B6ABC /* InventoryItem.swift */; };
 		E62484F92F152D4D001B6ABC /* ExplorationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484F82F152D4D001B6ABC /* ExplorationManager.swift */; };
@@ -26,6 +27,18 @@
 		E69FA4392F1CEBB900E53528 /* POIProximityPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4342F1CEBB900E53528 /* POIProximityPopup.swift */; };
 		E69FA43A2F1CEBB900E53528 /* ScavengeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4352F1CEBB900E53528 /* ScavengeResultView.swift */; };
 		E6A8F0522F12C378002EE1DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */; };
+		E6AFAD6E2F22ACAC0058275D /* BuildingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */; };
+		E6AFAD702F22ACF50058275D /* BuildingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */; };
+		E6AFAD722F22B2870058275D /* TerritoryMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD712F22B2870058275D /* TerritoryMapView.swift */; };
+		E6AFAD742F22B2940058275D /* TerritoryToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD732F22B2940058275D /* TerritoryToolbarView.swift */; };
+		E6AFAD762F22B31B0058275D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD752F22B31B0058275D /* RootView.swift */; };
+		E6AFAD832F22BD100058275D /* ResourceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD802F22BD100058275D /* ResourceRow.swift */; };
+		E6AFAD842F22BD100058275D /* BuildingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD7C2F22BD100058275D /* BuildingCard.swift */; };
+		E6AFAD852F22BD100058275D /* CategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD7F2F22BD100058275D /* CategoryButton.swift */; };
+		E6AFAD862F22BD100058275D /* TerritoryBuildingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD812F22BD100058275D /* TerritoryBuildingRow.swift */; };
+		E6AFAD872F22BD100058275D /* BuildingBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD7B2F22BD100058275D /* BuildingBrowserView.swift */; };
+		E6AFAD882F22BD100058275D /* BuildingPlacementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD7E2F22BD100058275D /* BuildingPlacementView.swift */; };
+		E6AFAD892F22BD100058275D /* BuildingLocationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD7D2F22BD100058275D /* BuildingLocationPickerView.swift */; };
 		E6C38A9F2F12E046001005E9 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C38A9E2F12E046001005E9 /* EmptyStateView.swift */; };
 		E6E50DB52F12898D0096D2BB /* ProfileTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DAB2F12898D0096D2BB /* ProfileTabView.swift */; };
 		E6E50DB62F12898D0096D2BB /* TerritoryLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50D9C2F12898D0096D2BB /* TerritoryLogger.swift */; };
@@ -63,6 +76,7 @@
 		0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlayerPresenceManager.swift; sourceTree = "<group>"; };
 		5C987D042E72C465043FA761 /* AIGeneratedItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIGeneratedItem.swift; sourceTree = "<group>"; };
 		A4DD4FD11BCB70FADC5ED58B /* AIItemGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIItemGenerator.swift; sourceTree = "<group>"; };
+		E61D7CB22F23A0730088DCB4 /* building_templates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = building_templates.json; sourceTree = "<group>"; };
 		E62484F42F152D31001B6ABC /* ExplorationReward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationReward.swift; sourceTree = "<group>"; };
 		E62484F62F152D3B001B6ABC /* InventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryItem.swift; sourceTree = "<group>"; };
 		E62484F82F152D4D001B6ABC /* ExplorationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationManager.swift; sourceTree = "<group>"; };
@@ -76,6 +90,18 @@
 		E69FA4342F1CEBB900E53528 /* POIProximityPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIProximityPopup.swift; sourceTree = "<group>"; };
 		E69FA4352F1CEBB900E53528 /* ScavengeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScavengeResultView.swift; sourceTree = "<group>"; };
 		E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingModels.swift; sourceTree = "<group>"; };
+		E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingManager.swift; sourceTree = "<group>"; };
+		E6AFAD712F22B2870058275D /* TerritoryMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryMapView.swift; sourceTree = "<group>"; };
+		E6AFAD732F22B2940058275D /* TerritoryToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryToolbarView.swift; sourceTree = "<group>"; };
+		E6AFAD752F22B31B0058275D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		E6AFAD7B2F22BD100058275D /* BuildingBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingBrowserView.swift; sourceTree = "<group>"; };
+		E6AFAD7C2F22BD100058275D /* BuildingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingCard.swift; sourceTree = "<group>"; };
+		E6AFAD7D2F22BD100058275D /* BuildingLocationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingLocationPickerView.swift; sourceTree = "<group>"; };
+		E6AFAD7E2F22BD100058275D /* BuildingPlacementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingPlacementView.swift; sourceTree = "<group>"; };
+		E6AFAD7F2F22BD100058275D /* CategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryButton.swift; sourceTree = "<group>"; };
+		E6AFAD802F22BD100058275D /* ResourceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceRow.swift; sourceTree = "<group>"; };
+		E6AFAD812F22BD100058275D /* TerritoryBuildingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryBuildingRow.swift; sourceTree = "<group>"; };
 		E6C38A9E2F12E046001005E9 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		E6E50D862F12898D0096D2BB /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		E6E50D892F12898D0096D2BB /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
@@ -132,6 +158,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E61D7CB32F23A0730088DCB4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E61D7CB22F23A0730088DCB4 /* building_templates.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		E62B8A5D2EFABFFF00FFC7A0 = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +174,20 @@
 				E6422F2E2F22422F00610E97 /* Docs */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
 			);
+			sourceTree = "<group>";
+		};
+		E6AFAD822F22BD100058275D /* Building */ = {
+			isa = PBXGroup;
+			children = (
+				E6AFAD7B2F22BD100058275D /* BuildingBrowserView.swift */,
+				E6AFAD7C2F22BD100058275D /* BuildingCard.swift */,
+				E6AFAD7D2F22BD100058275D /* BuildingLocationPickerView.swift */,
+				E6AFAD7E2F22BD100058275D /* BuildingPlacementView.swift */,
+				E6AFAD7F2F22BD100058275D /* CategoryButton.swift */,
+				E6AFAD802F22BD100058275D /* ResourceRow.swift */,
+				E6AFAD812F22BD100058275D /* TerritoryBuildingRow.swift */,
+			);
+			path = Building;
 			sourceTree = "<group>";
 		};
 		E6E50D872F12898D0096D2BB /* Auth */ = {
@@ -173,6 +221,7 @@
 		E6E50D912F12898D0096D2BB /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */,
 				E62484FA2F152D59001B6ABC /* InventoryManager.swift */,
 				E62484FC2F152D66001B6ABC /* RewardGenerator.swift */,
 				E62484F82F152D4D001B6ABC /* ExplorationManager.swift */,
@@ -208,6 +257,8 @@
 		E6E50D9F2F12898D0096D2BB /* Territory */ = {
 			isa = PBXGroup;
 			children = (
+				E6AFAD732F22B2940058275D /* TerritoryToolbarView.swift */,
+				E6AFAD712F22B2870058275D /* TerritoryMapView.swift */,
 				E6E50D9A2F12898D0096D2BB /* Territory.swift */,
 				E6E50D9B2F12898D0096D2BB /* TerritoryDetailView.swift */,
 				E6E50D9C2F12898D0096D2BB /* TerritoryLogger.swift */,
@@ -239,6 +290,8 @@
 		E6E50DAD2F12898D0096D2BB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E6AFAD822F22BD100058275D /* Building */,
+				E6AFAD752F22B31B0058275D /* RootView.swift */,
 				E6C38A9E2F12E046001005E9 /* EmptyStateView.swift */,
 				E6E50DA82F12898D0096D2BB /* PlaceholderView.swift */,
 				E6E50DAB2F12898D0096D2BB /* ProfileTabView.swift */,
@@ -250,6 +303,7 @@
 		E6E50DB42F12898D0096D2BB /* EarthLord */ = {
 			isa = PBXGroup;
 			children = (
+				E61D7CB32F23A0730088DCB4 /* Resources */,
 				E6E50DD62F1298520096D2BB /* Models */,
 				E6E50D872F12898D0096D2BB /* Auth */,
 				E6E50D8A2F12898D0096D2BB /* Config */,
@@ -273,6 +327,7 @@
 		E6E50DD62F1298520096D2BB /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */,
 				EBA4B57D86AA4709948D4FF9 /* DensityLevel.swift */,
 				E62484F62F152D3B001B6ABC /* InventoryItem.swift */,
 				E62484F42F152D31001B6ABC /* ExplorationReward.swift */,
@@ -356,6 +411,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E61D7CB42F23A0730088DCB4 /* building_templates.json in Resources */,
 				E6A8F0522F12C378002EE1DC /* Localizable.xcstrings in Resources */,
 				E6E50DD32F12898D0096D2BB /* Assets.xcassets in Resources */,
 			);
@@ -373,7 +429,16 @@
 				E6E50DB62F12898D0096D2BB /* TerritoryLogger.swift in Sources */,
 				E6E50DB72F12898D0096D2BB /* PlaceholderView.swift in Sources */,
 				E6E50DB82F12898D0096D2BB /* Territory.swift in Sources */,
+				E6AFAD702F22ACF50058275D /* BuildingManager.swift in Sources */,
+				E6AFAD832F22BD100058275D /* ResourceRow.swift in Sources */,
+				E6AFAD842F22BD100058275D /* BuildingCard.swift in Sources */,
+				E6AFAD852F22BD100058275D /* CategoryButton.swift in Sources */,
+				E6AFAD862F22BD100058275D /* TerritoryBuildingRow.swift in Sources */,
+				E6AFAD872F22BD100058275D /* BuildingBrowserView.swift in Sources */,
+				E6AFAD882F22BD100058275D /* BuildingPlacementView.swift in Sources */,
+				E6AFAD892F22BD100058275D /* BuildingLocationPickerView.swift in Sources */,
 				E6E50DBA2F12898D0096D2BB /* TestMenuView.swift in Sources */,
+				E6AFAD742F22B2940058275D /* TerritoryToolbarView.swift in Sources */,
 				E6E50DBB2F12898D0096D2BB /* AuthManager.swift in Sources */,
 				E6E50DBD2F12898D0096D2BB /* TestView.swift in Sources */,
 				E6E50DBE2F12898D0096D2BB /* ApocalypseTheme.swift in Sources */,
@@ -385,6 +450,7 @@
 				E69FA4382F1CEBB900E53528 /* POIListView.swift in Sources */,
 				E69FA4392F1CEBB900E53528 /* POIProximityPopup.swift in Sources */,
 				E69FA43A2F1CEBB900E53528 /* ScavengeResultView.swift in Sources */,
+				E6AFAD6E2F22ACAC0058275D /* BuildingModels.swift in Sources */,
 				E6E50DC02F12898D0096D2BB /* LanguageManager.swift in Sources */,
 				E6E50DDC2F1299070096D2BB /* MockExplorationData.swift in Sources */,
 				E6E50DC12F12898D0096D2BB /* TerritoryTestView.swift in Sources */,
@@ -403,6 +469,8 @@
 				E6C38A9F2F12E046001005E9 /* EmptyStateView.swift in Sources */,
 				E6E50DCC2F12898D0096D2BB /* TerritoryManager.swift in Sources */,
 				E6E50DCE2F12898D0096D2BB /* LocationManager.swift in Sources */,
+				E6AFAD722F22B2870058275D /* TerritoryMapView.swift in Sources */,
+				E6AFAD762F22B31B0058275D /* RootView.swift in Sources */,
 				E6E50DCF2F12898D0096D2BB /* TerritoryTabView.swift in Sources */,
 				E6E50DD02F12898D0096D2BB /* MapViewRepresentable.swift in Sources */,
 				E6E50DD12F12898D0096D2BB /* AuthView.swift in Sources */,

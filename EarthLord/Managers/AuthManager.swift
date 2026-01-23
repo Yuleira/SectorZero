@@ -390,7 +390,7 @@ final class AuthManager: NSObject, ObservableObject {
     func signInWithGoogle() async {
         // 检查是否已配置 Google Client ID
         guard AppConfig.GoogleSignIn.isConfigured else {
-            errorMessage = NSLocalizedString("Google 登录未配置，请先设置 Client ID", comment: "错误")
+            errorMessage = NSLocalizedString("error_google_login_not_configured", comment: "")
             print("⚠️ Google Sign-In: 请在 AppConfig.GoogleSignIn.clientId 中填入你的 Client ID")
             return
         }
@@ -402,7 +402,7 @@ final class AuthManager: NSObject, ObservableObject {
             // 获取当前窗口的 rootViewController
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let rootViewController = windowScene.windows.first?.rootViewController else {
-                throw NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("无法获取根视图控制器", comment: "错误")])
+                throw NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("error_cannot_get_root_view_controller", comment: "")])
             }
 
             // 配置 Google Sign-In
@@ -414,7 +414,7 @@ final class AuthManager: NSObject, ObservableObject {
 
             // 获取 ID Token（OpenID Connect token）
             guard let idToken = result.user.idToken?.tokenString else {
-                throw NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("无法获取 Google ID Token", comment: "错误")])
+                throw NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("error_cannot_get_google_token", comment: "")])
             }
 
             // 使用 Supabase 验证 Google token
@@ -433,7 +433,7 @@ final class AuthManager: NSObject, ObservableObject {
         } catch {
             isLoading = false
             if (error as NSError).code == GIDSignInError.canceled.rawValue {
-                errorMessage = NSLocalizedString("用户取消了登录", comment: "错误")
+                errorMessage = NSLocalizedString("auth_user_cancelled_login", comment: "")
             } else {
                 errorMessage = mapAuthError(error)
             }
@@ -497,7 +497,7 @@ final class AuthManager: NSObject, ObservableObject {
             // 即使 API 调用失败，也强制清除本地状态
             // 这样用户可以重新登录
             handleSessionExpired()
-            errorMessage = NSLocalizedString("退出登录失败，已清除本地会话", comment: "错误")
+            errorMessage = NSLocalizedString("error_logout_failed_session_cleared", comment: "")
             print("❌ Sign out error: \(error.localizedDescription)")
         }
     }
@@ -596,30 +596,30 @@ final class AuthManager: NSObject, ObservableObject {
         let errorString = String(describing: error)
 
         if errorString.contains("Invalid login credentials") {
-            return NSLocalizedString("邮箱或密码错误", comment: "认证错误")
+            return NSLocalizedString("error_email_or_password_incorrect", comment: "")
         } else if errorString.contains("Email not confirmed") {
-            return NSLocalizedString("请先验证邮箱", comment: "认证错误")
+            return NSLocalizedString("error_please_verify_email_first", comment: "")
         } else if errorString.contains("User already registered") {
-            return NSLocalizedString("该邮箱已注册", comment: "认证错误")
+            return NSLocalizedString("error_email_already_registered", comment: "")
         } else if errorString.contains("Password should be at least") {
-            return NSLocalizedString("密码至少需要6个字符", comment: "认证错误")
+            return NSLocalizedString("error_password_min_length", comment: "")
         } else if errorString.contains("Invalid email") {
-            return NSLocalizedString("邮箱格式不正确", comment: "认证错误")
+            return NSLocalizedString("error_invalid_email_format", comment: "")
         } else if errorString.contains("Token has expired") || errorString.contains("otp_expired") {
-            return NSLocalizedString("验证码已过期，请重新获取", comment: "认证错误")
+            return NSLocalizedString("error_verification_code_expired", comment: "")
         } else if errorString.contains("Invalid OTP") || errorString.contains("invalid") && errorString.contains("otp") {
-            return NSLocalizedString("验证码错误，请检查后重试", comment: "认证错误")
+            return NSLocalizedString("error_verification_code_incorrect", comment: "")
         } else if errorString.contains("Email rate limit exceeded") {
-            return NSLocalizedString("发送邮件过于频繁，请稍后再试", comment: "认证错误")
+            return NSLocalizedString("error_email_sent_too_frequently", comment: "")
         } else if errorString.contains("network") || errorString.contains("NSURLErrorDomain") {
-            return NSLocalizedString("网络连接失败，请检查网络", comment: "认证错误")
+            return NSLocalizedString("error_network_connection_failed", comment: "")
         } else if errorString.contains("canceled") || errorString.contains("1001") {
-            return NSLocalizedString("用户取消了操作", comment: "认证错误")
+            return NSLocalizedString("error_user_cancelled", comment: "")
         } else if errorString.contains("For security purposes") {
-            return NSLocalizedString("操作过于频繁，请稍后再试", comment: "认证错误")
+            return NSLocalizedString("error_operation_too_frequent", comment: "")
         }
 
-        return String(format: NSLocalizedString("操作失败: %@", comment: "认证错误"), error.localizedDescription)
+        return String(format: NSLocalizedString("error_operation_failed_format", comment: ""), error.localizedDescription)
     }
 }
 
@@ -645,7 +645,7 @@ extension AuthManager: ASAuthorizationControllerDelegate {
               let identityTokenData = appleIDCredential.identityToken,
               let identityToken = String(data: identityTokenData, encoding: .utf8),
               let nonce = currentNonce else {
-            let error = NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("无法获取 Apple 登录凭证", comment: "错误")])
+            let error = NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("error_cannot_get_apple_credentials", comment: "")])
             appleSignInContinuation?.resume(throwing: error)
             appleSignInContinuation = nil
             return

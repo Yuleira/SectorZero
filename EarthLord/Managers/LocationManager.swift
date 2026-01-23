@@ -203,7 +203,7 @@ final class LocationManager: NSObject, ObservableObject {
         }
 
         print("📍 [路径追踪] 开始追踪...")
-        TerritoryLogger.shared.log(NSLocalizedString("开始圈地追踪", comment: "日志"), type: .info)
+        TerritoryLogger.shared.log(NSLocalizedString("territory_start_claiming_tracking", comment: ""), type: .info)
 
         // 清除旧路径
         clearPath()
@@ -245,7 +245,7 @@ final class LocationManager: NSObject, ObservableObject {
     /// 停止路径追踪
     func stopPathTracking() {
         print("📍 [路径追踪] 停止追踪，共记录 \(pathCoordinates.count) 个点")
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("停止追踪，共 %d 个点", comment: "日志"), pathCoordinates.count), type: .info)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_stop_tracking_points_format", comment: ""), pathCoordinates.count), type: .info)
 
         // 停止定时器
         pathUpdateTimer?.invalidate()
@@ -302,7 +302,7 @@ final class LocationManager: NSObject, ObservableObject {
             lastLocationForSpeed = location
             lastLocationTimestamp = Date()
             print("📍 [路径追踪] 记录第一个点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
-            TerritoryLogger.shared.log(NSLocalizedString("记录第 1 个点（起点）", comment: "日志"), type: .info)
+            TerritoryLogger.shared.log(NSLocalizedString("territory_record_first_point", comment: ""), type: .info)
             return
         }
 
@@ -326,7 +326,7 @@ final class LocationManager: NSObject, ObservableObject {
         pathCoordinates.append(coordinate)
         pathUpdateVersion += 1
         print("📍 [路径追踪] 记录新点 #\(pathCoordinates.count): 距离上点 \(String(format: "%.1f", distance))m")
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("记录第 %d 个点，距上点 %.1fm", comment: "日志"), pathCoordinates.count, distance), type: .info)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_record_point_format", comment: ""), pathCoordinates.count, distance), type: .info)
 
         // 4. 记录后，更新速度检测的参考点
         lastLocationForSpeed = location
@@ -361,14 +361,14 @@ final class LocationManager: NSObject, ObservableObject {
         let distanceToStart = currentLocation.distance(from: startLocation)
 
         print("📍 [闭环检测] 距起点 \(String(format: "%.1f", distanceToStart))m（阈值 \(closureDistanceThreshold)m）")
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("距起点 %.1fm (需≤30m)", comment: "日志"), distanceToStart), type: .info)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_distance_from_start_format", comment: ""), distanceToStart), type: .info)
 
         // 判断是否闭环
         if distanceToStart <= closureDistanceThreshold {
             isPathClosed = true
             pathUpdateVersion += 1  // 触发 UI 更新
             print("📍 [闭环检测] ✅ 闭环成功！共 \(pathCoordinates.count) 个点")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("闭环成功！距起点 %.1fm", comment: "日志"), distanceToStart), type: .success)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_loop_closed_format", comment: ""), distanceToStart), type: .success)
 
             // 停止追踪（但保留路径数据供验证和上传使用）
             pathUpdateTimer?.invalidate()
@@ -517,13 +517,13 @@ final class LocationManager: NSObject, ObservableObject {
                 let p4 = pathSnapshot[j + 1]
 
                 if segmentsIntersect(p1: p1, p2: p2, p3: p3, p4: p4) {
-                    TerritoryLogger.shared.log(String(format: NSLocalizedString("自交检测: 线段%d-%d 与 线段%d-%d 相交", comment: "日志"), i, i+1, j, j+1), type: .error)
+                    TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_self_intersection_found_format", comment: ""), i, i+1, j, j+1), type: .error)
                     return true
                 }
             }
         }
 
-        TerritoryLogger.shared.log(NSLocalizedString("自交检测: 无交叉 ✓", comment: "日志"), type: .info)
+        TerritoryLogger.shared.log(NSLocalizedString("territory_no_self_intersection", comment: ""), type: .info)
         return false
     }
 
@@ -537,27 +537,27 @@ final class LocationManager: NSObject, ObservableObject {
         // 1. 点数检查
         let pointCount = pathCoordinates.count
         if pointCount < minimumPathPoints {
-            let error = String(format: NSLocalizedString("点数不足: %d个 (需≥%d个)", comment: "验证错误"), pointCount, minimumPathPoints)
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("点数检查: %d个点 ✗", comment: "日志"), pointCount), type: .error)
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("领地验证失败: %@", comment: "日志"), error), type: .error)
+            let error = String(format: NSLocalizedString("error_insufficient_points_format", comment: ""), pointCount, minimumPathPoints)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_point_check_failed_format", comment: ""), pointCount), type: .error)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("error_territory_validation_failed_format", comment: ""), error), type: .error)
             return (false, error)
         }
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("点数检查: %d个点 ✓", comment: "日志"), pointCount), type: .info)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_point_check_passed_format", comment: ""), pointCount), type: .info)
 
         // 2. 距离检查
         let totalDistance = calculateTotalPathDistance()
         if totalDistance < minimumTotalDistance {
-            let error = String(format: NSLocalizedString("距离不足: %.0fm (需≥%dm)", comment: "验证错误"), totalDistance, Int(minimumTotalDistance))
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("距离检查: %.0fm ✗", comment: "日志"), totalDistance), type: .error)
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("领地验证失败: %@", comment: "日志"), error), type: .error)
+            let error = String(format: NSLocalizedString("error_insufficient_distance_format", comment: ""), totalDistance, Int(minimumTotalDistance))
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_distance_check_failed_format", comment: ""), totalDistance), type: .error)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("error_territory_validation_failed_format", comment: ""), error), type: .error)
             return (false, error)
         }
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("距离检查: %.0fm ✓", comment: "日志"), totalDistance), type: .info)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_distance_check_passed_format", comment: ""), totalDistance), type: .info)
 
         // 3. 自交检测
         if hasPathSelfIntersection() {
-            let error = NSLocalizedString("轨迹自相交，请勿画8字形", comment: "验证错误")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("领地验证失败: %@", comment: "日志"), error), type: .error)
+            let error = NSLocalizedString("error_trajectory_self_intersection", comment: "")
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("error_territory_validation_failed_format", comment: ""), error), type: .error)
             return (false, error)
         }
 
@@ -565,15 +565,15 @@ final class LocationManager: NSObject, ObservableObject {
         let area = calculatePolygonArea()
         calculatedArea = area
         if area < minimumEnclosedArea {
-            let error = String(format: NSLocalizedString("面积不足: %.0fm² (需≥%dm²)", comment: "验证错误"), area, Int(minimumEnclosedArea))
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("面积检查: %.0fm² ✗", comment: "日志"), area), type: .error)
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("领地验证失败: %@", comment: "日志"), error), type: .error)
+            let error = String(format: NSLocalizedString("error_insufficient_area_format", comment: ""), area, Int(minimumEnclosedArea))
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_area_check_failed_format", comment: ""), area), type: .error)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("error_territory_validation_failed_format", comment: ""), error), type: .error)
             return (false, error)
         }
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("面积检查: %.0fm² ✓", comment: "日志"), area), type: .info)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_area_check_passed_format", comment: ""), area), type: .info)
 
         // 验证通过
-        TerritoryLogger.shared.log(String(format: NSLocalizedString("领地验证通过！面积: %.0fm²", comment: "日志"), area), type: .success)
+        TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_validation_passed_format", comment: ""), area), type: .success)
         return (true, nil)
     }
 
@@ -607,20 +607,20 @@ final class LocationManager: NSObject, ObservableObject {
 
         // 超过暂停阈值（30 km/h）
         if speedKMH > speedStopThreshold {
-            speedWarning = String(format: NSLocalizedString("速度过快（%.0f km/h），追踪已暂停", comment: "速度警告"), speedKMH)
+            speedWarning = String(format: NSLocalizedString("map_speed_too_fast_tracking_paused_format", comment: ""), speedKMH)
             isOverSpeed = true
             print("📍 [速度检测] ❌ 严重超速！自动停止追踪")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("超速 %.1f km/h，已停止追踪", comment: "日志"), speedKMH), type: .error)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
             stopPathTracking()
             return false
         }
 
         // 达到警告阈值（15-30 km/h）但未超过暂停阈值
         if speedKMH >= speedWarningThreshold {
-            speedWarning = String(format: NSLocalizedString("移动过快（%.0f km/h），请步行", comment: "速度警告"), speedKMH)
+            speedWarning = String(format: NSLocalizedString("map_moving_too_fast_format", comment: ""), speedKMH)
             isOverSpeed = true
             print("📍 [速度检测] ⚠️ 速度较快，显示警告但继续记录")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("速度较快 %.1f km/h（继续记录）", comment: "日志"), speedKMH), type: .warning)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("map_speed_fast_continuing_format", comment: ""), speedKMH), type: .warning)
             return true  // 警告但继续记录
         }
 
@@ -736,17 +736,17 @@ extension LocationManager: CLLocationManagerDelegate {
 
         // 超过暂停阈值（30 km/h）
         if speedKMH > speedStopThreshold {
-            speedWarning = String(format: NSLocalizedString("速度过快（%.0f km/h），追踪已暂停", comment: "速度警告"), speedKMH)
+            speedWarning = String(format: NSLocalizedString("map_speed_too_fast_tracking_paused_format", comment: ""), speedKMH)
             isOverSpeed = true
             print("📍 [速度检测] ❌ 严重超速！自动停止追踪")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("超速 %.1f km/h，已停止追踪", comment: "日志"), speedKMH), type: .error)
+            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
             stopPathTracking()
             return
         }
 
         // 达到警告阈值（15-30 km/h）
         if speedKMH >= speedWarningThreshold {
-            speedWarning = String(format: NSLocalizedString("移动过快（%.0f km/h），请步行", comment: "速度警告"), speedKMH)
+            speedWarning = String(format: NSLocalizedString("map_moving_too_fast_format", comment: ""), speedKMH)
             isOverSpeed = true
         } else if isOverSpeed {
             // 速度恢复正常，清除警告
@@ -763,16 +763,16 @@ extension LocationManager: CLLocationManagerDelegate {
         if let clError = error as? CLError {
             switch clError.code {
             case .denied:
-                locationError = NSLocalizedString("定位权限被拒绝，请在设置中开启", comment: "定位错误")
+                locationError = NSLocalizedString("error_location_permission_denied", comment: "")
             case .locationUnknown:
-                locationError = NSLocalizedString("无法获取位置，请稍后重试", comment: "定位错误")
+                locationError = NSLocalizedString("error_cannot_get_location", comment: "")
             case .network:
-                locationError = NSLocalizedString("网络错误，请检查网络连接", comment: "定位错误")
+                locationError = NSLocalizedString("error_network_error", comment: "")
             default:
-                locationError = String(format: NSLocalizedString("定位失败: %@", comment: "定位错误"), error.localizedDescription)
+                locationError = String(format: NSLocalizedString("error_location_failed_format", comment: ""), error.localizedDescription)
             }
         } else {
-            locationError = String(format: NSLocalizedString("定位失败: %@", comment: "定位错误"), error.localizedDescription)
+            locationError = String(format: NSLocalizedString("error_location_failed_format", comment: ""), error.localizedDescription)
         }
     }
 }

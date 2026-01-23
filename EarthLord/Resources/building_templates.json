@@ -2,10 +2,10 @@
     {
         "id": "b6479c34-d0b0-4a4f-9e0f-5f2f8d24c3c2",
         "template_id": "campfire",
-        "name": "Campfire",
+        "name": "building_name_campfire",
         "category": "survival",
         "tier": 1,
-        "description": "A simple fire pit that keeps you warm and cooks food.",
+        "description": "building_description_campfire",
         "icon": "flame.fill",
         "required_resources": {
             "wood": 30,
@@ -18,10 +18,10 @@
     {
         "id": "9f2d1739-d7ce-4acb-b9d6-b1a1c5fce682",
         "template_id": "shelter_frame",
-        "name": "Shelter Frame",
+        "name": "building_name_shelter_frame",
         "category": "survival",
         "tier": 2,
-        "description": "A basic shelter that shields you from the elements.",
+        "description": "building_description_shelter_frame",
         "icon": "tent.fill",
         "required_resources": {
             "wood": 60,
@@ -35,10 +35,10 @@
     {
         "id": "f1dd04ef-3e2c-45ee-9d6b-2590632c98da",
         "template_id": "small_cache",
-        "name": "Small Cache",
+        "name": "building_name_small_cache",
         "category": "storage",
         "tier": 1,
-        "description": "A wooden crate for storing scavenged materials.",
+        "description": "building_description_small_cache",
         "icon": "archivebox.fill",
         "required_resources": {
             "wood": 40,
@@ -51,10 +51,10 @@
     {
         "id": "2c7fda40-f622-4f3c-9dce-5c72f7159e0c",
         "template_id": "workbench",
-        "name": "Workbench",
+        "name": "building_name_workbench",
         "category": "production",
         "tier": 2,
-        "description": "A sturdy bench for crafting better gear.",
+        "description": "building_description_workbench",
         "icon": "hammer.fill",
         "required_resources": {
             "wood": 50,
@@ -68,10 +68,10 @@
     {
         "id": "a9c8d3b0-131f-4c9f-938e-fa1bec7d8e26",
         "template_id": "solar_array",
-        "name": "Solar Array",
+        "name": "building_name_solar_array",
         "category": "energy",
         "tier": 3,
-        "description": "Harnesses sunlight to power your outpost.",
+        "description": "building_description_solar_array",
         "icon": "sun.max.fill",
         "required_resources": {
             "metal": 80,
