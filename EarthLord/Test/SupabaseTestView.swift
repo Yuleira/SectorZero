@@ -41,7 +41,7 @@ struct SupabaseTestView: View {
             verifyTablesButton
         }
         .padding()
-        .navigationTitle("Supabase 连接测试")
+        .navigationTitle(String(localized: "test_supabase_connection"))
         .navigationBarTitleDisplayMode(.inline)
     }
 

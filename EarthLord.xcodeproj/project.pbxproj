@@ -20,13 +20,13 @@
 		E62484F92F152D4D001B6ABC /* ExplorationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484F82F152D4D001B6ABC /* ExplorationManager.swift */; };
 		E62484FB2F152D59001B6ABC /* InventoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484FA2F152D59001B6ABC /* InventoryManager.swift */; };
 		E62484FD2F152D66001B6ABC /* RewardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484FC2F152D66001B6ABC /* RewardGenerator.swift */; };
+		E66247752F250BC70094BEBF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E66247742F250BC70094BEBF /* Localizable.xcstrings */; };
 		E68C12DB2F1A5983008967AA /* AIDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C12DA2F1A5983008967AA /* AIDebugView.swift */; };
 		E69FA4362F1CEBB900E53528 /* BackpackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4312F1CEBB900E53528 /* BackpackView.swift */; };
 		E69FA4372F1CEBB900E53528 /* ExplorationResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4322F1CEBB900E53528 /* ExplorationResultView.swift */; };
 		E69FA4382F1CEBB900E53528 /* POIListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4332F1CEBB900E53528 /* POIListView.swift */; };
 		E69FA4392F1CEBB900E53528 /* POIProximityPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4342F1CEBB900E53528 /* POIProximityPopup.swift */; };
 		E69FA43A2F1CEBB900E53528 /* ScavengeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4352F1CEBB900E53528 /* ScavengeResultView.swift */; };
-		E6A8F0522F12C378002EE1DC /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */; };
 		E6AFAD6E2F22ACAC0058275D /* BuildingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */; };
 		E6AFAD702F22ACF50058275D /* BuildingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */; };
 		E6AFAD722F22B2870058275D /* TerritoryMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD712F22B2870058275D /* TerritoryMapView.swift */; };
@@ -83,13 +83,13 @@
 		E62484FA2F152D59001B6ABC /* InventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryManager.swift; sourceTree = "<group>"; };
 		E62484FC2F152D66001B6ABC /* RewardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardGenerator.swift; sourceTree = "<group>"; };
 		E632AFC02F12BECD0098D5EC /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E66247742F250BC70094BEBF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		E68C12DA2F1A5983008967AA /* AIDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDebugView.swift; sourceTree = "<group>"; };
 		E69FA4312F1CEBB900E53528 /* BackpackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackpackView.swift; sourceTree = "<group>"; };
 		E69FA4322F1CEBB900E53528 /* ExplorationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationResultView.swift; sourceTree = "<group>"; };
 		E69FA4332F1CEBB900E53528 /* POIListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIListView.swift; sourceTree = "<group>"; };
 		E69FA4342F1CEBB900E53528 /* POIProximityPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIProximityPopup.swift; sourceTree = "<group>"; };
 		E69FA4352F1CEBB900E53528 /* ScavengeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScavengeResultView.swift; sourceTree = "<group>"; };
-		E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingModels.swift; sourceTree = "<group>"; };
 		E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingManager.swift; sourceTree = "<group>"; };
 		E6AFAD712F22B2870058275D /* TerritoryMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryMapView.swift; sourceTree = "<group>"; };
@@ -169,8 +169,8 @@
 		E62B8A5D2EFABFFF00FFC7A0 = {
 			isa = PBXGroup;
 			children = (
+				E66247742F250BC70094BEBF /* Localizable.xcstrings */,
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
-				E6A8F0512F12C378002EE1DC /* Localizable.xcstrings */,
 				E6422F2E2F22422F00610E97 /* Docs */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
 			);
@@ -387,8 +387,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
 				"zh-Hans",
+				Base,
 			);
 			mainGroup = E62B8A5D2EFABFFF00FFC7A0;
 			minimizedProjectReferenceProxies = 1;
@@ -411,8 +411,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E66247752F250BC70094BEBF /* Localizable.xcstrings in Resources */,
 				E61D7CB42F23A0730088DCB4 /* building_templates.json in Resources */,
-				E6A8F0522F12C378002EE1DC /* Localizable.xcstrings in Resources */,
 				E6E50DD32F12898D0096D2BB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

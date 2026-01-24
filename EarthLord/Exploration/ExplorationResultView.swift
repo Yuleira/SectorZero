@@ -115,7 +115,7 @@ struct ExplorationResultView: View {
         EmptyStateView(
             icon: "exclamationmark.triangle.fill",
             title: "exploration_failed",
-            subtitle: result.message,
+            subtitle: LocalizedStringKey(result.message),
             buttonTitle: onRetry != nil ? "common_retry" : nil,
             action: onRetry
         )

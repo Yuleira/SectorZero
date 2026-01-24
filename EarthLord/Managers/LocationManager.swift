@@ -645,17 +645,17 @@ final class LocationManager: NSObject, ObservableObject {
     private var authorizationStatusDescription: String {
         switch authorizationStatus {
         case .notDetermined:
-            return "未决定"
+            return String(localized: "location_auth_not_determined")
         case .restricted:
-            return "受限制"
+            return String(localized: "location_auth_restricted")
         case .denied:
-            return "已拒绝"
+            return String(localized: "location_auth_denied")
         case .authorizedAlways:
-            return "始终允许"
+            return String(localized: "location_auth_always")
         case .authorizedWhenInUse:
-            return "使用时允许"
+            return String(localized: "location_auth_when_in_use")
         @unknown default:
-            return "未知"
+            return String(localized: "location_auth_unknown")
         }
     }
 }

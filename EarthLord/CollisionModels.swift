@@ -22,11 +22,11 @@ enum WarningLevel: Int {
 
     var description: String {
         switch self {
-        case .safe: return "安全"
-        case .caution: return "注意"
-        case .warning: return "警告"
-        case .danger: return "危险"
-        case .violation: return "违规"
+        case .safe: return String(localized: "warning_level_safe")
+        case .caution: return String(localized: "warning_level_caution")
+        case .warning: return String(localized: "warning_level_warning")
+        case .danger: return String(localized: "warning_level_danger")
+        case .violation: return String(localized: "warning_level_violation")
         }
     }
 }

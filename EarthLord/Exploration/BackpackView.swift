@@ -111,7 +111,7 @@ struct BackpackView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 // 全部按钮
-                categoryButton(category: nil, title: "filter_all")
+                categoryButton(category: nil, title: String(localized: "filter_all"))
 
                 // 各分类按钮
                 ForEach(ItemCategory.allCases, id: \.self) { category in

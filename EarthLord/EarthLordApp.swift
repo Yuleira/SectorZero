@@ -12,6 +12,8 @@ import GoogleSignIn
 struct EarthLordApp: App {
 
     init() {
+        // Step 1A：清空历史语言缓存
+        UserDefaults.standard.removeObject(forKey: "app_language")
         // 验证配置（仅在 DEBUG 模式下输出）
         AppConfig.validateConfiguration()
     }
@@ -28,7 +30,6 @@ struct EarthLordApp: App {
 }
 
 /// 应用根容器视图 - 认证状态驱动的导航
-/// 这是认证导航的单一真相来源
 struct ContentView: View {
     /// 认证管理器 - 观察认证状态变化
     @ObservedObject private var authManager = AuthManager.shared
@@ -41,25 +42,18 @@ struct ContentView: View {
             if authManager.isAuthenticated {
                 // 已认证：显示主应用界面
                 MainTabView()
-                    .onAppear {
-                        print("🏠 [ContentView] Showing MainTabView (authenticated)")
-                    }
             } else {
                 // 未认证：显示登录界面
                 AuthView()
-                    .onAppear {
-                        print("🏠 [ContentView] Showing AuthView (not authenticated)")
-                    }
             }
         }
-        .environment(\.locale, languageManager.currentLocale) // 注入语言环境
-        .id(languageManager.refreshID) // 支持语言切换时刷新
-        .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
-        .onChange(of: authManager.isAuthenticated) { oldValue, newValue in
-            print("🏠 [ContentView] Auth state changed: \(oldValue) → \(newValue)")
-        }
-        .onAppear {
-            print("🏠 [ContentView] Initial auth state: \(authManager.isAuthenticated)")
+    // --- 🚀 重新加回来的关键代码 ---
+            .environment(\.locale, languageManager.currentLocale) // 1. 注入语言环境，让 String(localized:) 生效
+            .id(languageManager.refreshID) // 2. 切换语言时强制刷新整个视图树
+            // ----------------------------
+            .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+            .onAppear {
+                print("🏠 [ContentView] Current Locale: \(languageManager.currentLocale.identifier)")
         }
     }
 }

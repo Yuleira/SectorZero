@@ -90,11 +90,9 @@ struct MapTabView: View {
 
             // 根据授权状态显示不同内容
             if locationManager.isDenied {
-                // 权限被拒绝：显示提示卡片
                 LocationDeniedView()
             } else {
-                // 已授权或未决定：显示地图
-                mapContent
+                mapContent  // ← 临时注释
             }
         }
         .onAppear {
@@ -107,6 +105,7 @@ struct MapTabView: View {
     /// 地图内容视图
     private var mapContent: some View {
         ZStack {
+        
             // 末世风格地图
             MapViewRepresentable(
                 userLocation: $userLocation,
@@ -366,10 +365,10 @@ struct MapTabView: View {
 
                 // 文字
                 if locationManager.isTracking {
-                    Text("map_stop_claiming")
+                    Text(String(localized: "map_stop_claiming"))
                         .font(.system(size: 12, weight: .semibold))
                 } else {
-                    Text("map_start_claiming")
+                    Text(String(localized: "map_start_claiming"))
                         .font(.system(size: 12, weight: .semibold))
                 }
             }
@@ -403,7 +402,7 @@ struct MapTabView: View {
                         .font(.system(size: 16, weight: .semibold))
                 }
 
-                Text("map_confirm_register")
+                Text(String(localized: "map_confirm_register"))
                     .font(.system(size: 14, weight: .semibold))
             }
             .foregroundColor(.white)
@@ -480,7 +479,7 @@ struct MapTabView: View {
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.white)
 
-                Text("map_locate")
+                Text(String(localized: "map_locate"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
             }
@@ -513,7 +512,7 @@ struct MapTabView: View {
                         .font(.system(size: 20, weight: .semibold))
                 }
 
-                Text(explorationButtonTitle)
+                Text(LocalizedStringKey(explorationButtonTitle))
                     .font(.system(size: 12, weight: .semibold))
             }
             .foregroundColor(.white)
@@ -546,14 +545,15 @@ struct MapTabView: View {
             switch explorationManager.state {
             case .exploring:
                 // 告诉系统：去翻译 "map_stop_explore"
-                return NSLocalizedString("map_stop_explore", comment: "Stop exploring")
+                return String(localized: "map_stop_explore")
                 
             case .processing:
                 // 告诉系统：去翻译 "map_calculating"
-                return NSLocalizedString("map_calculating", comment: "Calculating results")
+                return String(localized: "map_calculating")
                 
             default:
-                return NSLocalizedString("map_explore", comment: "Start exploration")
+                // 确保这里的 Key 名在 xcstrings 翻译表里能找到
+                return String(localized: "map_explore")
             }
         }
 
@@ -582,7 +582,7 @@ struct MapTabView: View {
                 .progressViewStyle(CircularProgressViewStyle(tint: ApocalypseTheme.primary))
                 .scaleEffect(1.5)
 
-            Text("map_locating")
+            Text(String(localized: "map_locating"))
                 .font(.subheadline)
                 .foregroundColor(ApocalypseTheme.textSecondary)
         }
@@ -601,7 +601,7 @@ struct MapTabView: View {
                 Text(String(format: "%.0f", explorationManager.currentDistance))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("unit_meter")
+                Text(String(localized: "unit_meter"))
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -615,7 +615,7 @@ struct MapTabView: View {
                 Text(formatExplorationDuration(explorationManager.currentDuration))
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                Text("map_duration")
+                Text(String(localized: "map_duration"))
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -1013,13 +1013,13 @@ struct LocationDeniedView: View {
                 .foregroundColor(ApocalypseTheme.warning)
 
             // 标题
-            Text("map_location_unavailable")
+            Text(String(localized: "map_location_unavailable"))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
             // 说明文字
-            Text("map_location_permission_desc")
+            Text(String(localized: "map_location_permission_desc"))
                 .font(.subheadline)
                 .foregroundColor(ApocalypseTheme.textSecondary)
                 .multilineTextAlignment(.center)
@@ -1031,7 +1031,7 @@ struct LocationDeniedView: View {
             } label: {
                 HStack {
                     Image(systemName: "gear")
-                    Text("map_go_to_settings")
+            Text(String(localized: "map_go_to_settings"))
                 }
                 .font(.headline)
                 .foregroundColor(.white)

@@ -10,16 +10,16 @@ import SwiftUI
 /// 空状态视图
 struct EmptyStateView: View {
     let icon: String
-    let title: String
-    let subtitle: String
-    let buttonTitle: String?
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
+    let buttonTitle: LocalizedStringKey?
     let action: (() -> Void)?
 
     init(
         icon: String,
-        title: String,
-        subtitle: String,
-        buttonTitle: String? = nil,
+        title: LocalizedStringKey,
+        subtitle: LocalizedStringKey,
+        buttonTitle: LocalizedStringKey? = nil,
         action: (() -> Void)? = nil
     ) {
         self.icon = icon

@@ -13,11 +13,11 @@ enum ItemQuality: String, Codable, CaseIterable {
     /// 本地化显示名称
     var displayName: String {
         switch self {
-        case .pristine: return "quality_pristine"
-        case .good: return "quality_good"
-        case .worn: return "quality_worn"
-        case .damaged: return "quality_damaged"
-        case .ruined: return "quality_ruined"
+        case .pristine: return String(localized: "quality_pristine")
+        case .good: return String(localized: "quality_good")
+        case .worn: return String(localized: "quality_worn")
+        case .damaged: return String(localized: "quality_damaged")
+        case .ruined: return String(localized: "quality_ruined")
         }
     }
 
@@ -50,11 +50,11 @@ enum ItemRarity: String, Codable, CaseIterable {
     /// 本地化显示名称
     var displayName: String {
         switch self {
-        case .common: return "rarity_common"
-        case .uncommon: return "rarity_uncommon"
-        case .rare: return "rarity_rare"
-        case .epic: return "rarity_epic"
-        case .legendary: return "rarity_legendary"
+        case .common: return String(localized: "rarity_common")
+        case .uncommon: return String(localized: "rarity_uncommon")
+        case .rare: return String(localized: "rarity_rare")
+        case .epic: return String(localized: "rarity_epic")
+        case .legendary: return String(localized: "rarity_legendary")
         }
     }
 
@@ -95,13 +95,13 @@ enum ItemCategory: String, Codable, CaseIterable {
     /// 本地化显示名称
     var displayName: String {
         switch self {
-        case .water: return "category_water"
-        case .food: return "category_food"
-        case .medical: return "category_medical"
-        case .material: return "category_material"
-        case .tool: return "category_tool"
-        case .weapon: return "category_weapon"
-        case .other: return "category_other"
+        case .water: return String(localized: "category_water")
+        case .food: return String(localized: "category_food")
+        case .medical: return String(localized: "category_medical")
+        case .material: return String(localized: "category_material")
+        case .tool: return String(localized: "category_tool")
+        case .weapon: return String(localized: "category_weapon")
+        case .other: return String(localized: "category_other")
         }
     }
 }

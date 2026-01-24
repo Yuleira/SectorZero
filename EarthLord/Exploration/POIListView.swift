@@ -175,8 +175,8 @@ struct POIListView: View {
     private var emptyStateView: some View {
         EmptyStateView(
             icon: "mappin.slash.circle",
-            title: NSLocalizedString("poi_empty_title", comment: "No POI nearby"),
-            subtitle: NSLocalizedString("poi_empty_description", comment: "Tap search to discover ruins"),
+            title: "poi_empty_title",
+            subtitle: "poi_empty_description",
             buttonTitle: nil,
             action: nil
         )
@@ -186,8 +186,8 @@ struct POIListView: View {
     private var noFilterResultsView: some View {
         EmptyStateView(
             icon: "magnifyingglass",
-            title: NSLocalizedString("poi_no_filter_results_title", comment: "No locations of this type"),
-            subtitle: NSLocalizedString("poi_no_filter_results_description", comment: "Try other types or clear filter"),
+            title: "poi_no_filter_results_title",
+            subtitle: "poi_no_filter_results_description",
             buttonTitle: nil,
             action: nil
         )
