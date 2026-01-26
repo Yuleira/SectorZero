@@ -266,7 +266,17 @@ final class InventoryManager: ObservableObject {
         }
         return summary
     }
-    
+
+    /// 获取指定资源的数量
+    /// - Parameter definitionId: 物品定义ID
+    /// - Returns: 该资源的总数量
+    func getResourceQuantity(for definitionId: String) -> Int {
+        let normalizedId = definitionId.lowercased()
+        return items
+            .filter { $0.definition.id.lowercased() == normalizedId }
+            .reduce(0) { $0 + $1.quantity }
+    }
+
     // MARK: - Resource Display Helpers (Day 29)
     
     /// 获取资源本地化显示名称（用于建筑系统 UI）

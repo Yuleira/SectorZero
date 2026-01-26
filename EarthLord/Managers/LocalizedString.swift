@@ -641,6 +641,88 @@ enum LocalizedString {
     /// 参数无效 (trade_error_invalid_parameters)
     static let tradeErrorInvalidParameters: LocalizedStringResource = "trade_error_invalid_parameters"
 
+    // MARK: - Trade System Extended (Additional 58 keys for UI)
+
+    // 主标题
+    static let tradeSystemTitle: LocalizedStringResource = "trade_system_title"
+
+    // 空状态
+    static let tradeNoOffersTitle: LocalizedStringResource = "trade_no_offers_title"
+    static let tradeNoOffersSubtitle: LocalizedStringResource = "trade_no_offers_subtitle"
+    static let tradeMarketEmptyTitle: LocalizedStringResource = "trade_market_empty_title"
+    static let tradeMarketEmptySubtitle: LocalizedStringResource = "trade_market_empty_subtitle"
+    static let tradeHistoryEmptyTitle: LocalizedStringResource = "trade_history_empty_title"
+    static let tradeHistoryEmptySubtitle: LocalizedStringResource = "trade_history_empty_subtitle"
+
+    // 操作按钮
+    static let tradeCancelOffer: LocalizedStringResource = "trade_cancel_offer"
+    static let tradePublishOffer: LocalizedStringResource = "trade_publish_offer"
+    static let tradePublishing: LocalizedStringResource = "trade_publishing"
+    static let tradeAddItem: LocalizedStringResource = "trade_add_item"
+    static let tradeViewDetails: LocalizedStringResource = "trade_view_details"
+    static let tradeAccepting: LocalizedStringResource = "trade_accepting"
+    static let tradeRateNow: LocalizedStringResource = "trade_rate_now"
+    static let tradeSubmitRating: LocalizedStringResource = "trade_submit_rating"
+    static let tradeSubmitting: LocalizedStringResource = "trade_submitting"
+    static let tradeConfirmAdd: LocalizedStringResource = "trade_confirm_add"
+    static let tradeSelectAll: LocalizedStringResource = "trade_select_all"
+    static let tradeCancelOfferTitle: LocalizedStringResource = "trade_cancel_offer_title"
+    static let tradeOfferDetails: LocalizedStringResource = "trade_offer_details"
+    static let tradeSelectItem: LocalizedStringResource = "trade_select_item"
+
+    // 表单字段
+    static let tradeOfferingItems: LocalizedStringResource = "trade_offering_items"
+    static let tradeRequestingItems: LocalizedStringResource = "trade_requesting_items"
+    static let tradeValidityPeriod: LocalizedStringResource = "trade_validity_period"
+    static let tradeMessageOptional: LocalizedStringResource = "trade_message_optional"
+    static let tradeMessagePlaceholder: LocalizedStringResource = "trade_message_placeholder"
+    static let tradeCommentOptional: LocalizedStringResource = "trade_comment_optional"
+    static let tradeCommentPlaceholder: LocalizedStringResource = "trade_comment_placeholder"
+
+    // 卡片标签
+    static let tradeIProvide: LocalizedStringResource = "trade_i_provide"
+    static let tradeIWant: LocalizedStringResource = "trade_i_want"
+    static let tradeTheyProvide: LocalizedStringResource = "trade_they_provide"
+    static let tradeTheyWant: LocalizedStringResource = "trade_they_want"
+    static let tradeYouGave: LocalizedStringResource = "trade_you_gave"
+    static let tradeYouReceived: LocalizedStringResource = "trade_you_received"
+    static let tradeYourRating: LocalizedStringResource = "trade_your_rating"
+    static let tradePartnerRating: LocalizedStringResource = "trade_partner_rating"
+    static let tradeNotRatedYet: LocalizedStringResource = "trade_not_rated_yet"
+    static let tradePublishedAt: LocalizedStringResource = "trade_published_at"
+    static let tradeYourInventory: LocalizedStringResource = "trade_your_inventory"
+
+    // 状态和时间
+    static let tradeExpired: LocalizedStringResource = "trade_expired"
+    static let tradeRemainingHoursFormat: LocalizedStringResource = "trade_remaining_hours_format"
+    static let tradeRemainingMinutesFormat: LocalizedStringResource = "trade_remaining_minutes_format"
+
+    // 对话框和提示
+    static let tradeCancelOfferMessage: LocalizedStringResource = "trade_cancel_offer_message"
+    static let tradeConfirmTitle: LocalizedStringResource = "trade_confirm_title"
+    static let tradeConfirmMessage: LocalizedStringResource = "trade_confirm_message"
+    static let tradeYouWillPay: LocalizedStringResource = "trade_you_will_pay"
+    static let tradeYouWillReceive: LocalizedStringResource = "trade_you_will_receive"
+    static let tradeSuccessTitle: LocalizedStringResource = "trade_success_title"
+    static let tradeSuccessMessage: LocalizedStringResource = "trade_success_message"
+    static let tradeRateTitle: LocalizedStringResource = "trade_rate_title"
+    static let tradeRateThisTrade: LocalizedStringResource = "trade_rate_this_trade"
+
+    // 物品选择器
+    static let tradeSearchItems: LocalizedStringResource = "trade_search_items"
+    static let tradeNoItemsAvailable: LocalizedStringResource = "trade_no_items_available"
+    static let tradeSelectQuantity: LocalizedStringResource = "trade_select_quantity"
+
+    // 格式化字符串
+    static let tradeInStockFormat: LocalizedStringResource = "trade_in_stock_format"
+    static let tradeValidityHoursFormat: LocalizedStringResource = "trade_validity_hours_format"
+    static let tradeValidityDaysFormat: LocalizedStringResource = "trade_validity_days_format"
+    static let tradeAcceptedByFormat: LocalizedStringResource = "trade_accepted_by_format"
+
+    // 其他
+    static let tradeUnknownUser: LocalizedStringResource = "trade_unknown_user"
+    static let tradeWithUserFormat: LocalizedStringResource = "trade_with_user_format"
+
     // MARK: - Key Strings (for statusKey parameters)
 
     /// 仅需 key 字符串（如 statusKey）时使用
