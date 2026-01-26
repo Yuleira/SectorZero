@@ -23,6 +23,16 @@ struct ResourceRow: View {
         InventoryManager.shared.resourceIconName(for: resourceId)
     }
     
+    /// 本地化资源名称
+    private var localizedResourceName: String {
+        // 确保 resourceId 不包含 "item_" 前缀，然后添加前缀进行本地化查找
+        let normalizedId = resourceId.lowercased()
+        let localizationKey = normalizedId.hasPrefix("item_") ? normalizedId : "item_\(normalizedId)"
+        // 使用 LanguageManager 的当前 locale 确保正确本地化
+        let locale = LanguageManager.shared.currentLocale
+        return String(localized: String.LocalizationValue(localizationKey), locale: locale)
+    }
+    
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: resourceIcon)
@@ -30,8 +40,9 @@ struct ResourceRow: View {
                 .symbolRenderingMode(.hierarchical)
                 .foregroundColor(ApocalypseTheme.primary)
                 .frame(width: 24, height: 24)
-            
-            Text(LocalizedStringKey("item_\(resourceId.lowercased())"))
+
+            // ✅ 使用本地化字符串显示资源名称
+            Text(localizedResourceName)
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(ApocalypseTheme.textPrimary)
                 .lineLimit(1)

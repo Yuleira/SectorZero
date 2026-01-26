@@ -9,11 +9,11 @@
 import SwiftUI
 
 struct TerritoryToolbarView: View {
-    let territoryName: String
+    let territoryName: LocalizedStringResource
     let onBack: () -> Void
     let onBuild: () -> Void
     let onInfo: () -> Void
-    
+
     var body: some View {
         HStack {
             // 返回按钮
@@ -33,10 +33,10 @@ struct TerritoryToolbarView: View {
                         .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
                 )
             }
-            
+
             Spacer()
-            
-            // 领地名称（中央）
+
+            // 领地名称（中央）- 接收 LocalizedStringResource 实现 Late-Binding
             Text(territoryName)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(ApocalypseTheme.textPrimary)
@@ -92,10 +92,10 @@ struct TerritoryToolbarView: View {
     ZStack {
         ApocalypseTheme.background
             .ignoresSafeArea()
-        
+
         VStack {
             TerritoryToolbarView(
-                territoryName: "Test Territory",
+                territoryName: LocalizedString.unnamedTerritory,
                 onBack: {},
                 onBuild: {},
                 onInfo: {}

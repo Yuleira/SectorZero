@@ -226,7 +226,7 @@ struct ItemRowView: View {
             // 物品信息
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
-                    Text(LocalizedStringKey(item.displayName))
+                    Text(item.displayName)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(ApocalypseTheme.textPrimary)
 

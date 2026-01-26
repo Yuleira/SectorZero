@@ -22,8 +22,14 @@ struct BuildingCard: View {
     /// 资源成本摘要（显示前3个资源）
     private var resourceSummary: String {
         let resources = template.requiredResources.prefix(3)
-        return resources.map { "\(InventoryManager.shared.resourceDisplayName(for: $0.key)) ×\($0.value)" }
-            .joined(separator: ", ")
+        let locale = LanguageManager.shared.currentLocale
+        return resources.map { resource in
+            let normalizedId = resource.key.lowercased()
+            let localizationKey = normalizedId.hasPrefix("item_") ? normalizedId : "item_\(normalizedId)"
+            let resourceName = String(localized: String.LocalizationValue(localizationKey), locale: locale)
+            return "\(resourceName) ×\(resource.value)"
+        }
+        .joined(separator: ", ")
     }
     
     var body: some View {
@@ -46,14 +52,7 @@ struct BuildingCard: View {
                         
                         Spacer()
                         
-                        Text(String(format: String(localized: LocalizedString.buildingTierFormat), template.tier))
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(isLocked ? ApocalypseTheme.textMuted : ApocalypseTheme.textSecondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Capsule().fill(ApocalypseTheme.cardBackground))
+                        tierLabel
                     }
                     
                     Text(template.localizedName)
@@ -69,11 +68,7 @@ struct BuildingCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                     
                     if let cur = builtCurrent, let max = builtMax {
-                        Text(String(format: String(localized: LocalizedString.builtFormat), cur, max))
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ApocalypseTheme.textSecondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
+                        builtCountLabel(current: cur, max: max)
                     }
 
                     HStack(spacing: 4) {
@@ -105,18 +100,7 @@ struct BuildingCard: View {
                         
                         Spacer()
                         
-                        Label {
-                            Text(String(format: String(localized: LocalizedString.buildingMaxLimitFormat), template.maxPerTerritory))
-                                .font(.system(size: 11, weight: .medium))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                        } icon: {
-                            Image(systemName: "number.circle.fill")
-                                .font(.system(size: 10))
-                                .symbolRenderingMode(.hierarchical)
-                                .foregroundColor(ApocalypseTheme.primary)
-                        }
-                        .foregroundColor(ApocalypseTheme.textSecondary)
+                        maxLimitLabel
                     }
                 }
                 .padding(14)
@@ -168,6 +152,57 @@ struct BuildingCard: View {
         }
         .buttonStyle(.plain)
         .disabled(isLocked)
+    }
+    
+    // MARK: - Subviews (拆分复杂表达式)
+    
+    /// 等级标签
+    private var tierLabel: some View {
+        let locale = LanguageManager.shared.currentLocale
+        let formatString = String(localized: String.LocalizationValue("building_tier_format %lld"), locale: locale)
+        let tierText = String(format: formatString, template.tier)
+        
+        return Text(tierText)
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(isLocked ? ApocalypseTheme.textMuted : ApocalypseTheme.textSecondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Capsule().fill(ApocalypseTheme.cardBackground))
+    }
+    
+    /// 已建数量标签
+    private func builtCountLabel(current: Int, max: Int) -> some View {
+        let locale = LanguageManager.shared.currentLocale
+        let formatString = String(localized: String.LocalizationValue("Built %lld/%lld"), locale: locale)
+        let builtText = String(format: formatString, current, max)
+        
+        return Text(builtText)
+            .font(.system(size: 12, weight: .medium))
+            .foregroundColor(ApocalypseTheme.textSecondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+    }
+    
+    /// 上限标签
+    private var maxLimitLabel: some View {
+        let locale = LanguageManager.shared.currentLocale
+        let formatString = String(localized: String.LocalizationValue("building_max_limit_format %lld"), locale: locale)
+        let limitText = String(format: formatString, template.maxPerTerritory)
+        
+        return Label {
+            Text(limitText)
+                .font(.system(size: 11, weight: .medium))
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+        } icon: {
+            Image(systemName: "number.circle.fill")
+                .font(.system(size: 10))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundColor(ApocalypseTheme.primary)
+        }
+        .foregroundColor(ApocalypseTheme.textSecondary)
     }
 }
 

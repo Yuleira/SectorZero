@@ -58,10 +58,10 @@ struct TerritoryDetailView: View {
         self.territory = territory
         self.onDelete = onDelete
         // ✅ 修复：使用我们之前在 LanguageManager 里定义的 translate 助手方法
-            // 把高级钥匙 (Resource) 转换成普通字符串 (String) 存入 State
-            let resolvedName = LanguageManager.shared.translate(territory.displayName)
-            self._currentDisplayName = State(initialValue: resolvedName)
-        }
+        // 把高级钥匙 (Resource) 转换成普通字符串 (String) 存入 State
+        let resolvedName = LanguageManager.shared.translate(territory.displayName)
+        self._currentDisplayName = State(initialValue: resolvedName)
+    }
     // MARK: - Computed Properties
 
     /// 领地坐标
@@ -77,6 +77,27 @@ struct TerritoryDetailView: View {
     /// 建筑模板字典（快速查找）
     private var templateDict: [String: BuildingTemplate] {
         Dictionary(uniqueKeysWithValues: buildingManager.buildingTemplates.map { ($0.templateId, $0) })
+    }
+    
+    /// 获取建筑的本地化名称
+    private func getLocalizedBuildingName(for building: PlayerBuilding) -> String {
+        let locale = LanguageManager.shared.currentLocale
+        // 优先使用 template 的本地化名称，否则使用 buildingName
+        if let template = templateDict[building.templateId] {
+            return template.resolvedLocalizedName
+        } else {
+            return building.buildingName
+        }
+    }
+    
+    /// 拆除确认消息文本
+    @ViewBuilder
+    private var demolishMessage: some View {
+        if let building = buildingToDelete {
+            let locale = LanguageManager.shared.currentLocale
+            let buildingName = getLocalizedBuildingName(for: building)
+            Text(String(format: String(localized: "building_demolish_message %@", locale: locale), buildingName))
+        }
     }
 
     // MARK: - Body
@@ -94,7 +115,9 @@ struct TerritoryDetailView: View {
             // 顶部浮动工具栏
             VStack {
                 TerritoryToolbarView(
-                    territoryName: currentDisplayName == "Unnamed Territory" ? String(localized: LocalizedString.unnamedTerritory) : currentDisplayName,
+                    // 🚀 这里的改动是救命稻草！
+                    // 不再传递死字符串 currentDisplayName，直接传活资源 displayName
+                    territoryName: territory.displayName,
                     onBack: {
                         dismiss()
                     },
@@ -153,9 +176,7 @@ struct TerritoryDetailView: View {
                 }
             }
         } message: {
-            if let building = buildingToDelete {
-                Text(String(format: String(localized: "building_demolish_message %@"), building.buildingName))
-            }
+            demolishMessage
         }
     }
 
@@ -183,7 +204,7 @@ struct TerritoryDetailView: View {
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(ApocalypseTheme.textPrimary)
                     
-                    Text(String(format: String(localized: "building_count_format %lld"), territoryBuildings.count))
+                    Text(String(format: String(localized: "building_count_format %lld", locale: LanguageManager.shared.currentLocale), territoryBuildings.count))
                         .font(.system(size: 13))
                         .foregroundColor(ApocalypseTheme.textSecondary)
                 }

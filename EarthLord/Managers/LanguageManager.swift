@@ -22,11 +22,12 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    /// 显示名称 (native language names - not localized)
-    var displayName: String {
+    /// 显示名称（Late-Binding: 返回 LocalizedStringResource）
+    /// Note: Native language names use string literals, not localized
+    var displayName: LocalizedStringResource {
         switch self {
         case .system:
-            return String(localized: "language_follow_system")
+            return "language_follow_system"
         case .zhHans:
             return "简体中文"
         case .en:

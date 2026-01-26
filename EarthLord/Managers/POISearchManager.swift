@@ -39,8 +39,8 @@ enum POIType: String, CaseIterable {
     case supermarket = "超市"
     case convenience = "便利店"
 
-    /// 本地化显示名称（供 UI 使用）
-    var localizedName: String {
+    /// 本地化显示名称（Late-Binding: 返回 LocalizedStringResource）
+    var localizedName: LocalizedStringResource {
         switch self {
         case .store: return "poi_type_store"
         case .hospital: return "poi_type_hospital"

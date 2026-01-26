@@ -287,7 +287,8 @@ struct TerritoryCard: View {
 
             // 中间信息
             VStack(alignment: .leading, spacing: 4) {
-                Text(territory.name == "Unnamed Territory" ? String(localized: LocalizedString.unnamedTerritory) : (territory.customName ?? territory.name ?? String(localized: LocalizedString.unnamedTerritory)))
+                // ✅ 直接使用 territory.displayName (已在 Territory.swift 中处理本地化)
+                Text(territory.displayName)
                     .font(.headline)
                     .foregroundColor(ApocalypseTheme.textPrimary)
                     .lineLimit(1)

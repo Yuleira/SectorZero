@@ -136,12 +136,14 @@ struct BuildingTemplate: Identifiable, Codable {
 
     /// 已解析的本地化名称（用于 DB、插值等需要 String 的场景）
     var resolvedLocalizedName: String {
-        String(localized: String.LocalizationValue(name))
+        let locale = LanguageManager.shared.currentLocale
+        return String(localized: String.LocalizationValue(name), locale: locale)
     }
 
     /// 已解析的本地化描述（用于需要 String 的场景）
     var resolvedLocalizedDescription: String {
-        String(localized: String.LocalizationValue(description))
+        let locale = LanguageManager.shared.currentLocale
+        return String(localized: String.LocalizationValue(description), locale: locale)
     }
 
     /// CodingKeys 映射：兼容 snake_case / camelCase
@@ -327,18 +329,19 @@ enum BuildingError: Error {
     
     /// 本地化错误描述
     var localizedDescription: String {
+        let locale = LanguageManager.shared.currentLocale
         switch self {
         case .insufficientResources(let missing):
             let resourceList = missing.map { "\($0.key): \($0.value)" }.joined(separator: ", ")
-            return String(format: String(localized: "error_insufficient_resources"), resourceList)
+            return String(format: String(localized: "error_insufficient_resources", locale: locale), resourceList)
         case .maxBuildingsReached(let max):
-            return String(format: String(localized: "error_max_buildings_reached"), max)
+            return String(format: String(localized: "error_max_buildings_reached", locale: locale), max)
         case .invalidStatus:
-            return String(localized: "error_invalid_status")
+            return String(localized: "error_invalid_status", locale: locale)
         case .templateNotFound:
-            return String(localized: "error_template_not_found")
+            return String(localized: "error_template_not_found", locale: locale)
         case .notAuthenticated:
-            return String(localized: "error_not_authenticated")
+            return String(localized: "error_not_authenticated", locale: locale)
         }
     }
 }
@@ -350,14 +353,22 @@ class BuildingAnnotation: NSObject, MKAnnotation {
     let template: BuildingTemplate?
     
     var title: String? {
-        template.map { $0.resolvedLocalizedName } ?? building.buildingName
+        // 始终优先使用 template 的本地化名称，确保根据当前语言设置显示
+        if let template = template {
+            let locale = LanguageManager.shared.currentLocale
+            return String(localized: String.LocalizationValue(template.name), locale: locale)
+        } else {
+            // 如果没有 template，fallback 到 buildingName（可能是旧数据）
+            return building.buildingName
+        }
     }
     
     var subtitle: String? {
+        let locale = LanguageManager.shared.currentLocale
         if building.status == .constructing {
-            return String(localized: "status_constructing")
+            return String(localized: "status_constructing", locale: locale)
         } else {
-            return String(format: String(localized: "building_level_format %lld"), building.level)
+            return String(format: String(localized: "building_level_format %lld", locale: locale), building.level)
         }
     }
     

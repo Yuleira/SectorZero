@@ -110,7 +110,7 @@ struct BuildingPlacementView: View {
                 dismiss()
             }
         } message: {
-            Text(String(format: String(localized: "building_construction_started_format %@"), template.resolvedLocalizedName))
+            Text(String(format: String(localized: "building_construction_started_format %@", locale: LanguageManager.shared.currentLocale), template.resolvedLocalizedName))
         }
         .alert("building_construction_failed", isPresented: $showErrorAlert) {
             Button(LocalizedString.commonConfirm, role: .cancel) {}
@@ -153,7 +153,7 @@ struct BuildingPlacementView: View {
                         Text("•")
                             .foregroundColor(ApocalypseTheme.textMuted)
                         
-                        Text(String(format: String(localized: "building_tier_format %lld"), template.tier))
+                        Text(String(format: String(localized: "building_tier_format %lld", locale: LanguageManager.shared.currentLocale), template.tier))
                             .font(.system(size: 13))
                             .foregroundColor(ApocalypseTheme.textSecondary)
                             .lineLimit(1)
@@ -388,7 +388,7 @@ struct BuildingPlacementView: View {
     /// 处理建造
     private func handleConstruction() async {
         guard let location = selectedLocation else {
-            errorMessage = String(localized: "building_error_no_location")
+            errorMessage = String(localized: "building_error_no_location", locale: LanguageManager.shared.currentLocale)
             showErrorAlert = true
             return
         }

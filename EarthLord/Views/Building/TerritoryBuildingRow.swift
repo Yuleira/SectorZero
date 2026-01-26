@@ -57,7 +57,7 @@ struct TerritoryBuildingRow: View {
                         Text("•")
                             .foregroundColor(ApocalypseTheme.textMuted)
                         
-                        Text(String(format: String(localized: "building_level_format %lld"), building.level))
+                        Text(String(format: String(localized: "building_level_format %lld", locale: LanguageManager.shared.currentLocale), building.level))
                             .font(.system(size: 13))
                             .foregroundColor(ApocalypseTheme.textSecondary)
                     }

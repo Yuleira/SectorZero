@@ -50,17 +50,17 @@ enum DensityLevel: String, CaseIterable {
         }
     }
 
-    /// 本地化显示名称
-    var localizedName: String {
+    /// 本地化显示名称（Late-Binding: 返回 LocalizedStringResource）
+    var localizedName: LocalizedStringResource {
         switch self {
         case .alone:
-            return String(localized: "density_alone", defaultValue: "独行者")
+            return "density_alone"
         case .low:
-            return String(localized: "density_low", defaultValue: "低密度")
+            return "density_low"
         case .medium:
-            return String(localized: "density_medium", defaultValue: "中密度")
+            return "density_medium"
         case .high:
-            return String(localized: "density_high", defaultValue: "高密度")
+            return "density_high"
         }
     }
 

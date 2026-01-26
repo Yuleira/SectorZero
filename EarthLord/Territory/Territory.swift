@@ -63,12 +63,18 @@ struct Territory: Codable, Identifiable {
             return LocalizedStringResource(stringLiteral: custom)
         }
         // 如果名字是数据库默认的英文，或者为空，强制拦截并返回本地化钥匙
-            if name == "Unnamed Territory" || name == nil || name?.isEmpty == true {
+        // 使用 localizedCaseInsensitiveCompare 进行更健壮的匹配
+        if let actualName = name, !actualName.isEmpty {
+            if actualName.localizedCaseInsensitiveCompare("Unnamed Territory") == .orderedSame {
                 return LocalizedString.unnamedTerritory
             }
-            // 否则显示原始名称
-            return LocalizedStringResource(stringLiteral: name ?? "")
+            // 有实际名称，直接返回
+            return LocalizedStringResource(stringLiteral: actualName)
+        } else {
+            // nil 或空字符串，返回本地化默认值
+            return LocalizedString.unnamedTerritory
         }
+    }
 
     /// 格式化完成时间
     var formattedCompletedAt: String? {

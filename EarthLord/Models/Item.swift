@@ -140,12 +140,14 @@ struct ItemDefinition: Identifiable, Codable {
 
     /// 已解析的本地化名称（用于字符串插值和数据库操作）
     var resolvedLocalizedName: String {
-        String(localized: String.LocalizationValue(name))
+        let locale = LanguageManager.shared.currentLocale
+        return String(localized: String.LocalizationValue(name), locale: locale)
     }
 
     /// 已解析的本地化描述（用于字符串插值）
     var resolvedLocalizedDescription: String {
-        String(localized: String.LocalizationValue(description))
+        let locale = LanguageManager.shared.currentLocale
+        return String(localized: String.LocalizationValue(description), locale: locale)
     }
 }
 
@@ -167,9 +169,16 @@ struct CollectedItem: Identifiable, Codable {
     /// 是否为 AI 生成的物品
     var isAIGenerated: Bool = false
 
-    /// 显示名称（优先使用 AI 名称）
-    var displayName: String {
-        return aiName ?? definition.name
+    /// 显示名称（Late-Binding: 优先使用 AI 名称）
+    /// AI 名称不需要本地化（用户生成），定义名称需要本地化
+    var displayName: LocalizedStringResource {
+        if let aiName = aiName {
+            // AI-generated name: return as string literal (no localization)
+            return LocalizedStringResource(stringLiteral: aiName)
+        } else {
+            // Definition name: return localized resource
+            return definition.localizedName
+        }
     }
 
     /// 物品 ID，让 View 能找到它

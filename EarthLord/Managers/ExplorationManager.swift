@@ -898,52 +898,53 @@ final class ExplorationManager: NSObject, ObservableObject {
     }
 
     /// 随机物品定义（用于探索奖励等非 AI 场景）
+    /// ✅ Late-Binding: name 和 description 存储为 localization keys，在 ItemDefinition.localizedName 和 localizedDescription 中解析
     private func randomItemDefinition(rarity: ItemRarity) -> ItemDefinition {
         // 根据稀有度返回不同类型的物品
         switch rarity {
         case .common:
             let items = [
-                ItemDefinition(id: "water_bottle", name: NSLocalizedString("item_pure_water", comment: ""), description: NSLocalizedString("item_pure_water_desc", comment: ""), category: .water, icon: "drop.fill", rarity: .common),
-                ItemDefinition(id: "canned_beans", name: NSLocalizedString("item_canned_beans", comment: ""), description: NSLocalizedString("item_canned_beans_desc", comment: ""), category: .food, icon: "takeoutbag.and.cup.and.straw.fill", rarity: .common),
-                ItemDefinition(id: "bandage", name: NSLocalizedString("item_bandage", comment: ""), description: NSLocalizedString("item_bandage_desc", comment: ""), category: .medical, icon: "bandage.fill", rarity: .common),
-                ItemDefinition(id: "scrap_metal", name: NSLocalizedString("item_scrap_metal", comment: ""), description: NSLocalizedString("item_scrap_metal_desc", comment: ""), category: .material, icon: "gearshape.fill", rarity: .common),
-                ItemDefinition(id: "rope", name: NSLocalizedString("item_rope", comment: ""), description: NSLocalizedString("item_rope_desc", comment: ""), category: .tool, icon: "line.diagonal", rarity: .common),
-                ItemDefinition(id: "matches", name: NSLocalizedString("item_matches", comment: ""), description: NSLocalizedString("item_matches_desc", comment: ""), category: .tool, icon: "flame.fill", rarity: .common),
-                ItemDefinition(id: "cloth", name: NSLocalizedString("item_cloth", comment: ""), description: NSLocalizedString("item_cloth_desc", comment: ""), category: .material, icon: "tshirt.fill", rarity: .common)
+                ItemDefinition(id: "water_bottle", name: "item_pure_water", description: "item_pure_water_desc", category: .water, icon: "drop.fill", rarity: .common),
+                ItemDefinition(id: "canned_beans", name: "item_canned_beans", description: "item_canned_beans_desc", category: .food, icon: "takeoutbag.and.cup.and.straw.fill", rarity: .common),
+                ItemDefinition(id: "bandage", name: "item_bandage", description: "item_bandage_desc", category: .medical, icon: "bandage.fill", rarity: .common),
+                ItemDefinition(id: "scrap_metal", name: "item_scrap_metal", description: "item_scrap_metal_desc", category: .material, icon: "gearshape.fill", rarity: .common),
+                ItemDefinition(id: "rope", name: "item_rope", description: "item_rope_desc", category: .tool, icon: "line.diagonal", rarity: .common),
+                ItemDefinition(id: "matches", name: "item_matches", description: "item_matches_desc", category: .tool, icon: "flame.fill", rarity: .common),
+                ItemDefinition(id: "cloth", name: "item_cloth", description: "item_cloth_desc", category: .material, icon: "tshirt.fill", rarity: .common)
             ]
             return items.randomElement()!
         case .uncommon:
             let items = [
-                ItemDefinition(id: "energy_drink", name: NSLocalizedString("item_energy_drink", comment: ""), description: NSLocalizedString("item_energy_drink_desc", comment: ""), category: .food, icon: "bolt.fill", rarity: .uncommon),
-                ItemDefinition(id: "multi_tool", name: NSLocalizedString("item_multi_tool", comment: ""), description: NSLocalizedString("item_multi_tool_desc", comment: ""), category: .tool, icon: "wrench.and.screwdriver.fill", rarity: .uncommon),
-                ItemDefinition(id: "med_kit_small", name: NSLocalizedString("item_small_first_aid_kit", comment: ""), description: NSLocalizedString("item_small_first_aid_kit_desc", comment: ""), category: .medical, icon: "cross.case.fill", rarity: .uncommon),
-                ItemDefinition(id: "canned_fruit", name: NSLocalizedString("item_canned_fruit", comment: ""), description: NSLocalizedString("item_canned_fruit_desc", comment: ""), category: .food, icon: "leaf.fill", rarity: .uncommon),
-                ItemDefinition(id: "duct_tape", name: NSLocalizedString("item_duct_tape", comment: ""), description: NSLocalizedString("item_duct_tape_desc", comment: ""), category: .material, icon: "rectangle.fill", rarity: .uncommon)
+                ItemDefinition(id: "energy_drink", name: "item_energy_drink", description: "item_energy_drink_desc", category: .food, icon: "bolt.fill", rarity: .uncommon),
+                ItemDefinition(id: "multi_tool", name: "item_multi_tool", description: "item_multi_tool_desc", category: .tool, icon: "wrench.and.screwdriver.fill", rarity: .uncommon),
+                ItemDefinition(id: "med_kit_small", name: "item_small_first_aid_kit", description: "item_small_first_aid_kit_desc", category: .medical, icon: "cross.case.fill", rarity: .uncommon),
+                ItemDefinition(id: "canned_fruit", name: "item_canned_fruit", description: "item_canned_fruit_desc", category: .food, icon: "leaf.fill", rarity: .uncommon),
+                ItemDefinition(id: "duct_tape", name: "item_duct_tape", description: "item_duct_tape_desc", category: .material, icon: "rectangle.fill", rarity: .uncommon)
             ]
             return items.randomElement()!
         case .rare:
             let items = [
-                ItemDefinition(id: "first_aid_kit", name: NSLocalizedString("item_first_aid_kit", comment: ""), description: NSLocalizedString("item_first_aid_kit_desc", comment: ""), category: .medical, icon: "cross.case.fill", rarity: .rare),
-                ItemDefinition(id: "flashlight", name: NSLocalizedString("item_flashlight", comment: ""), description: NSLocalizedString("item_flashlight_desc", comment: ""), category: .tool, icon: "flashlight.on.fill", rarity: .rare),
-                ItemDefinition(id: "canned_meat", name: NSLocalizedString("item_canned_meat", comment: ""), description: NSLocalizedString("item_canned_meat_desc", comment: ""), category: .food, icon: "fork.knife", rarity: .rare),
-                ItemDefinition(id: "painkillers", name: NSLocalizedString("item_painkillers", comment: ""), description: NSLocalizedString("item_painkillers_desc", comment: ""), category: .medical, icon: "pills.fill", rarity: .rare),
-                ItemDefinition(id: "batteries", name: NSLocalizedString("item_batteries", comment: ""), description: NSLocalizedString("item_batteries_desc", comment: ""), category: .material, icon: "battery.100", rarity: .rare)
+                ItemDefinition(id: "first_aid_kit", name: "item_first_aid_kit", description: "item_first_aid_kit_desc", category: .medical, icon: "cross.case.fill", rarity: .rare),
+                ItemDefinition(id: "flashlight", name: "item_flashlight", description: "item_flashlight_desc", category: .tool, icon: "flashlight.on.fill", rarity: .rare),
+                ItemDefinition(id: "canned_meat", name: "item_canned_meat", description: "item_canned_meat_desc", category: .food, icon: "fork.knife", rarity: .rare),
+                ItemDefinition(id: "painkillers", name: "item_painkillers", description: "item_painkillers_desc", category: .medical, icon: "pills.fill", rarity: .rare),
+                ItemDefinition(id: "batteries", name: "item_batteries", description: "item_batteries_desc", category: .material, icon: "battery.100", rarity: .rare)
             ]
             return items.randomElement()!
         case .epic:
             let items = [
-                ItemDefinition(id: "antibiotics", name: NSLocalizedString("item_antibiotics", comment: ""), description: NSLocalizedString("item_antibiotics_desc", comment: ""), category: .medical, icon: "pills.fill", rarity: .epic),
-                ItemDefinition(id: "radio", name: NSLocalizedString("item_radio", comment: ""), description: NSLocalizedString("item_radio_desc", comment: ""), category: .tool, icon: "antenna.radiowaves.left.and.right", rarity: .epic),
-                ItemDefinition(id: "solar_charger", name: NSLocalizedString("item_solar_charger", comment: ""), description: NSLocalizedString("item_solar_charger_desc", comment: ""), category: .tool, icon: "sun.max.fill", rarity: .epic),
-                ItemDefinition(id: "military_ration", name: NSLocalizedString("item_military_ration", comment: ""), description: NSLocalizedString("item_military_ration_desc", comment: ""), category: .food, icon: "bag.fill", rarity: .epic)
+                ItemDefinition(id: "antibiotics", name: "item_antibiotics", description: "item_antibiotics_desc", category: .medical, icon: "pills.fill", rarity: .epic),
+                ItemDefinition(id: "radio", name: "item_radio", description: "item_radio_desc", category: .tool, icon: "antenna.radiowaves.left.and.right", rarity: .epic),
+                ItemDefinition(id: "solar_charger", name: "item_solar_charger", description: "item_solar_charger_desc", category: .tool, icon: "sun.max.fill", rarity: .epic),
+                ItemDefinition(id: "military_ration", name: "item_military_ration", description: "item_military_ration_desc", category: .food, icon: "bag.fill", rarity: .epic)
             ]
             return items.randomElement()!
         case .legendary:
             let items = [
-                ItemDefinition(id: "hazmat_suit", name: NSLocalizedString("item_hazmat_suit", comment: ""), description: NSLocalizedString("item_hazmat_suit_desc", comment: ""), category: .tool, icon: "figure.dress.line.vertical.figure", rarity: .legendary),
-                ItemDefinition(id: "night_vision", name: NSLocalizedString("item_night_vision", comment: ""), description: NSLocalizedString("item_night_vision_desc", comment: ""), category: .tool, icon: "eye.fill", rarity: .legendary),
-                ItemDefinition(id: "surgical_kit", name: NSLocalizedString("item_surgical_kit", comment: ""), description: NSLocalizedString("item_surgical_kit_desc", comment: ""), category: .medical, icon: "scissors", rarity: .legendary),
-                ItemDefinition(id: "water_purifier", name: NSLocalizedString("item_water_purifier", comment: ""), description: NSLocalizedString("item_water_purifier_desc", comment: ""), category: .tool, icon: "drop.triangle.fill", rarity: .legendary)
+                ItemDefinition(id: "hazmat_suit", name: "item_hazmat_suit", description: "item_hazmat_suit_desc", category: .tool, icon: "figure.dress.line.vertical.figure", rarity: .legendary),
+                ItemDefinition(id: "night_vision", name: "item_night_vision", description: "item_night_vision_desc", category: .tool, icon: "eye.fill", rarity: .legendary),
+                ItemDefinition(id: "surgical_kit", name: "item_surgical_kit", description: "item_surgical_kit_desc", category: .medical, icon: "scissors", rarity: .legendary),
+                ItemDefinition(id: "water_purifier", name: "item_water_purifier", description: "item_water_purifier_desc", category: .tool, icon: "drop.triangle.fill", rarity: .legendary)
             ]
             return items.randomElement()!
         }

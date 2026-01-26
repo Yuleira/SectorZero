@@ -190,8 +190,8 @@ struct ScavengeResultView: View {
                 // 物品信息
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
-                        // 使用 displayName（优先 AI 名称）并支持本地化
-                        Text(LocalizedStringKey(item.displayName))
+                        // 使用 displayName（优先 AI 名称）Late-Binding 本地化
+                        Text(item.displayName)
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(ApocalypseTheme.textPrimary)
                             .lineLimit(1)

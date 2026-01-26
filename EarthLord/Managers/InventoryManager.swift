@@ -273,11 +273,12 @@ final class InventoryManager: ObservableObject {
     /// - Note: 优先使用 ItemDefinition.name（本地化 key），否则使用 item_<id>，与 building_templates.json 的 ID 一致。
     func resourceDisplayName(for definitionId: String) -> String {
         let normalizedId = definitionId.lowercased()
+        let locale = LanguageManager.shared.currentLocale
         if let definition = definitionsCache[normalizedId] {
-            return String(localized: String.LocalizationValue(definition.name))
+            return String(localized: String.LocalizationValue(definition.name), locale: locale)
         }
         let key = "item_\(normalizedId)"
-        return String(localized: String.LocalizationValue(key))
+        return String(localized: String.LocalizationValue(key), locale: locale)
     }
     
     /// 获取资源图标（用于建筑系统 UI）
