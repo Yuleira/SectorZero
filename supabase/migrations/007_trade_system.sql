@@ -1,6 +1,6 @@
 -- =============================================
 -- 交易系统数据库迁移
--- 版本: 008
+-- 版本: 007
 -- 创建时间: 2026-01-26
 -- 描述: 创建交易挂单表和交易历史表，支持玩家之间的异步物品交易
 -- =============================================
@@ -11,7 +11,7 @@
 
 CREATE TABLE IF NOT EXISTS trade_offers (
     -- 基本信息
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     owner_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     owner_username TEXT,
 
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS trade_offers (
 
 CREATE TABLE IF NOT EXISTS trade_history (
     -- 基本信息
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     offer_id UUID REFERENCES trade_offers(id) ON DELETE SET NULL,
 
     -- 交易双方
