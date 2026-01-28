@@ -13,7 +13,7 @@ struct ChannelDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authManager: AuthManager
-    @StateObject private var communicationManager = CommunicationManager.shared
+    @ObservedObject private var communicationManager = CommunicationManager.shared
 
     @State private var showDeleteConfirm = false
     @State private var isProcessing = false

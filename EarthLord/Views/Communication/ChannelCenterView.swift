@@ -10,7 +10,7 @@ import Supabase
 
 struct ChannelCenterView: View {
     @EnvironmentObject var authManager: AuthManager
-    @StateObject private var communicationManager = CommunicationManager.shared
+    @ObservedObject private var communicationManager = CommunicationManager.shared
 
     @State private var selectedTab = 0  // 0 = 我的频道, 1 = 发现频道
     @State private var showCreateSheet = false

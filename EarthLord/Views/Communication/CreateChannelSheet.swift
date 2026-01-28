@@ -11,7 +11,7 @@ import Supabase
 struct CreateChannelSheet: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authManager: AuthManager
-    @StateObject private var communicationManager = CommunicationManager.shared
+    @ObservedObject private var communicationManager = CommunicationManager.shared
 
     @State private var selectedType: ChannelType = .publicChannel
     @State private var channelName = ""

@@ -11,7 +11,7 @@ import Supabase
 
 struct CommunicationTabView: View {
     @State private var selectedSection: CommunicationSection = .messages
-    @StateObject private var communicationManager = CommunicationManager.shared
+    @ObservedObject private var communicationManager = CommunicationManager.shared
     @ObservedObject private var authManager = AuthManager.shared
 
     var body: some View {
