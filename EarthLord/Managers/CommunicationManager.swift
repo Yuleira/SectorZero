@@ -158,12 +158,6 @@ final class CommunicationManager: ObservableObject {
     private var messageSubscriptionTask: Task<Void, Never>?
     @Published var subscribedMessageChannelIds: Set<UUID> = []
 
-    // MARK: - Distance Filtering Properties (Day 35-A)
-
-    /// Mock current location for Phase 35-A (Beijing coordinates)
-    /// TODO: Day 35-B - Replace with real LocationManager integration
-    private let mockCurrentLocation = LocationPoint(latitude: 39.9042, longitude: 116.4074)
-
     // MARK: - Channel Methods
 
     /// 加载公共频道（发现页面）
@@ -432,12 +426,15 @@ final class CommunicationManager: ObservableObject {
         channelMessages[channelId] ?? []
     }
 
-    // MARK: - Distance Filtering (Day 35-A)
+    // MARK: - Distance Filtering (Day 35-B)
 
-    /// Get current user location (mock for Phase 35-A)
-    private func getCurrentLocation() -> LocationPoint {
-        // TODO: Day 35-B - Integrate with LocationManager
-        return mockCurrentLocation
+    /// Get current user location from GPS via LocationManager
+    /// Returns nil if GPS not available (conservative strategy will show message)
+    private func getCurrentLocation() -> LocationPoint? {
+        guard let coordinate = LocationManager.shared.userLocation else {
+            return nil
+        }
+        return LocationPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
     }
 
     /// Calculate distance between two LocationPoints in kilometers
@@ -508,10 +505,10 @@ final class CommunicationManager: ObservableObject {
     /// Determine if a message should be received based on distance filtering
     /// Conservative strategy: show message if any required info is missing
     private func shouldReceiveMessage(_ message: ChannelMessage, channelType: ChannelType) -> Bool {
-        // Rule 1: Private channels (walkie, camp, satellite) - always show
-        // Only apply distance filtering to public channels
+        // Rule 1: Distance filtering applies ONLY to public channels
+        // Private/subscription channels (official, walkie, camp, satellite) always show messages
         guard channelType == .publicChannel else {
-            return true
+            return true  // Skip distance filtering entirely for non-public channels
         }
 
         // Rule 2: Conservative strategy - if sender location missing, show message
@@ -532,8 +529,13 @@ final class CommunicationManager: ObservableObject {
             return true
         }
 
+        // Rule 5: Conservative strategy - if GPS not available, show message
+        guard let myLocation = getCurrentLocation() else {
+            print("[DistanceFilter] GPS not available, showing message (conservative)")
+            return true
+        }
+
         // Calculate distance
-        let myLocation = getCurrentLocation()
         let distance = calculateDistance(from: senderLocation, to: myLocation)
 
         // Check if within range
