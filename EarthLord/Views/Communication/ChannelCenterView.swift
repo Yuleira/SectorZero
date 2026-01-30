@@ -167,9 +167,7 @@ struct ChannelCenterView: View {
                                     channel: subscribedChannel.channel,
                                     isSubscribed: true,
                                     showEnterChat: true
-                                ) {
-                                    // Tap action handled by NavigationLink
-                                }
+                                )
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -295,87 +293,95 @@ struct ChannelRowView: View {
     let channel: CommunicationChannel
     let isSubscribed: Bool
     var showEnterChat: Bool = false
-    let onTap: () -> Void
+    var onTap: (() -> Void)? = nil  // Optional: when nil, used inside NavigationLink
 
     var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 12) {
-                // 频道图标
-                ZStack {
-                    Circle()
-                        .fill(ApocalypseTheme.primary.opacity(0.15))
-                        .frame(width: 44, height: 44)
+        if let onTap = onTap {
+            Button(action: onTap) {
+                rowContent
+            }
+            .buttonStyle(PlainButtonStyle())
+        } else {
+            rowContent
+        }
+    }
 
-                    Image(systemName: channel.channelType.iconName)
-                        .font(.system(size: 20))
-                        .foregroundColor(ApocalypseTheme.primary)
-                }
+    private var rowContent: some View {
+        HStack(spacing: 12) {
+            // 频道图标
+            ZStack {
+                Circle()
+                    .fill(ApocalypseTheme.primary.opacity(0.15))
+                    .frame(width: 44, height: 44)
 
-                // 频道信息
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(channel.name)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(ApocalypseTheme.textPrimary)
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(1)
+                Image(systemName: channel.channelType.iconName)
+                    .font(.system(size: 20))
+                    .foregroundColor(ApocalypseTheme.primary)
+            }
 
-                        if isSubscribed {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.caption)
-                                .foregroundColor(.green)
-                        }
-                    }
-
-                    HStack(spacing: 8) {
-                        Text(channel.channelType.displayName)
-                            .font(.caption)
-                            .foregroundColor(ApocalypseTheme.textSecondary)
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(1)
-
-                        Text("\(channel.memberCount)")
-                            .font(.caption)
-                            .foregroundColor(ApocalypseTheme.textSecondary)
-                        +
-                        Text(" ")
-                        +
-                        Text(LocalizedString.memberCount)
-                            .font(.caption)
-                            .foregroundColor(ApocalypseTheme.textSecondary)
-                    }
-                }
-
-                Spacer()
-
-                // Enter chat button or channel code
-                if showEnterChat {
-                    Text(LocalizedString.enterChat)
-                        .font(.caption)
+            // 频道信息
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(channel.name)
+                        .font(.subheadline)
                         .fontWeight(.medium)
-                        .foregroundColor(ApocalypseTheme.primary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(ApocalypseTheme.primary.opacity(0.15))
-                        .cornerRadius(8)
-                } else {
-                    Text(channel.channelCode)
+                        .foregroundColor(ApocalypseTheme.textPrimary)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+
+                    if isSubscribed {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundColor(.green)
+                    }
+                }
+
+                HStack(spacing: 8) {
+                    Text(channel.channelType.displayName)
                         .font(.caption)
                         .foregroundColor(ApocalypseTheme.textSecondary)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
-                }
 
-                Image(systemName: "chevron.right")
+                    Text("\(channel.memberCount)")
+                        .font(.caption)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                    +
+                    Text(" ")
+                    +
+                    Text(LocalizedString.memberCount)
+                        .font(.caption)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                }
+            }
+
+            Spacer()
+
+            // Enter chat button or channel code
+            if showEnterChat {
+                Text(LocalizedString.enterChat)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(ApocalypseTheme.primary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(ApocalypseTheme.primary.opacity(0.15))
+                    .cornerRadius(8)
+            } else {
+                Text(channel.channelCode)
                     .font(.caption)
                     .foregroundColor(ApocalypseTheme.textSecondary)
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
             }
-            .padding(12)
-            .background(ApocalypseTheme.cardBackground)
-            .cornerRadius(12)
+
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundColor(ApocalypseTheme.textSecondary)
         }
-        .buttonStyle(PlainButtonStyle())
+        .padding(12)
+        .background(ApocalypseTheme.cardBackground)
+        .cornerRadius(12)
     }
 }
 

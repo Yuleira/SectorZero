@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import Supabase
 import Realtime
+import CoreLocation
 
 @MainActor
 final class CommunicationManager: ObservableObject {
@@ -156,6 +157,12 @@ final class CommunicationManager: ObservableObject {
     private var realtimeChannel: RealtimeChannelV2?
     private var messageSubscriptionTask: Task<Void, Never>?
     @Published var subscribedMessageChannelIds: Set<UUID> = []
+
+    // MARK: - Distance Filtering Properties (Day 35-A)
+
+    /// Mock current location for Phase 35-A (Beijing coordinates)
+    /// TODO: Day 35-B - Replace with real LocationManager integration
+    private let mockCurrentLocation = LocationPoint(latitude: 39.9042, longitude: 116.4074)
 
     // MARK: - Channel Methods
 
@@ -355,8 +362,17 @@ final class CommunicationManager: ObservableObject {
                 .execute()
                 .value
 
+            // Day 35-A: Apply distance filtering for public channels
+            let filteredMessages: [ChannelMessage]
+            if let channel = getChannel(byId: channelId) {
+                filteredMessages = messages.filter { shouldReceiveMessage($0, channelType: channel.channelType) }
+            } else {
+                // Conservative: if channel not found, show all messages
+                filteredMessages = messages
+            }
+
             await MainActor.run {
-                channelMessages[channelId] = messages
+                channelMessages[channelId] = filteredMessages
             }
         } catch {
             await MainActor.run {
@@ -416,6 +432,123 @@ final class CommunicationManager: ObservableObject {
         channelMessages[channelId] ?? []
     }
 
+    // MARK: - Distance Filtering (Day 35-A)
+
+    /// Get current user location (mock for Phase 35-A)
+    private func getCurrentLocation() -> LocationPoint {
+        // TODO: Day 35-B - Integrate with LocationManager
+        return mockCurrentLocation
+    }
+
+    /// Calculate distance between two LocationPoints in kilometers
+    private func calculateDistance(from point1: LocationPoint, to point2: LocationPoint) -> Double {
+        let location1 = CLLocation(latitude: point1.latitude, longitude: point1.longitude)
+        let location2 = CLLocation(latitude: point2.latitude, longitude: point2.longitude)
+        // CLLocation.distance returns meters, convert to kilometers
+        return location1.distance(from: location2) / 1000.0
+    }
+
+    /// Get effective communication range between sender and receiver devices
+    /// Returns the maximum distance in km at which communication is possible
+    private func getEffectiveRange(senderDevice: DeviceType, myDevice: DeviceType) -> Double {
+        // Radio receiver: unlimited range (always receive)
+        if myDevice == .radio {
+            return Double.infinity
+        }
+
+        // Radio cannot send
+        if senderDevice == .radio {
+            return 0  // Should never happen, but handle defensively
+        }
+
+        // Device matrix based on requirements:
+        // - Walkie-Talkie to Walkie-Talkie: 3km
+        // - Walkie-Talkie to Camp Radio: 30km
+        // - Walkie-Talkie to Satellite: 100km
+        // - Camp Radio to any: 30km
+        // - Satellite to any: 100km
+
+        switch senderDevice {
+        case .radio:
+            return 0  // Radio cannot send
+        case .walkieTalkie:
+            switch myDevice {
+            case .radio:
+                return Double.infinity  // Already handled above
+            case .walkieTalkie:
+                return 3.0
+            case .campRadio:
+                return 30.0
+            case .satellite:
+                return 100.0
+            }
+        case .campRadio:
+            return 30.0  // Camp radio: 30km to any device
+        case .satellite:
+            return 100.0  // Satellite: 100km to any device
+        }
+    }
+
+    /// Check if a message can be received based on device types and distance
+    private func canReceiveMessage(senderDevice: DeviceType, myDevice: DeviceType, distance: Double) -> Bool {
+        let effectiveRange = getEffectiveRange(senderDevice: senderDevice, myDevice: myDevice)
+        return distance <= effectiveRange
+    }
+
+    /// Get channel by ID from local cache
+    private func getChannel(byId channelId: UUID) -> CommunicationChannel? {
+        // First check subscribed channels
+        if let subscribed = subscribedChannels.first(where: { $0.channel.id == channelId }) {
+            return subscribed.channel
+        }
+        // Then check public channels list
+        return channels.first(where: { $0.id == channelId })
+    }
+
+    /// Determine if a message should be received based on distance filtering
+    /// Conservative strategy: show message if any required info is missing
+    private func shouldReceiveMessage(_ message: ChannelMessage, channelType: ChannelType) -> Bool {
+        // Rule 1: Private channels (walkie, camp, satellite) - always show
+        // Only apply distance filtering to public channels
+        guard channelType == .publicChannel else {
+            return true
+        }
+
+        // Rule 2: Conservative strategy - if sender location missing, show message
+        guard let senderLocation = message.senderLocation else {
+            print("[DistanceFilter] No sender location, showing message (conservative)")
+            return true
+        }
+
+        // Rule 3: Conservative strategy - if sender device type missing, show message
+        guard let senderDevice = message.senderDeviceType else {
+            print("[DistanceFilter] No sender device type, showing message (conservative)")
+            return true
+        }
+
+        // Rule 4: Conservative strategy - if my device missing, show message
+        guard let myDevice = currentDevice?.deviceType else {
+            print("[DistanceFilter] No current device, showing message (conservative)")
+            return true
+        }
+
+        // Calculate distance
+        let myLocation = getCurrentLocation()
+        let distance = calculateDistance(from: senderLocation, to: myLocation)
+
+        // Check if within range
+        let canReceive = canReceiveMessage(senderDevice: senderDevice, myDevice: myDevice, distance: distance)
+
+        if canReceive {
+            print("[DistanceFilter] ✅ Pass: sender=\(senderDevice.rawValue), my=\(myDevice.rawValue), distance=\(String(format: "%.2f", distance))km")
+        } else {
+            let effectiveRange = getEffectiveRange(senderDevice: senderDevice, myDevice: myDevice)
+            print("[DistanceFilter] 🚫 Filtered: distance=\(String(format: "%.2f", distance))km > range=\(effectiveRange)km, sender=\(senderDevice.rawValue), my=\(myDevice.rawValue)")
+        }
+
+        return canReceive
+    }
+
     // MARK: - Realtime Subscription (Day 34)
 
     /// Start Realtime message subscription
@@ -468,6 +601,15 @@ final class CommunicationManager: ObservableObject {
                 print("[Realtime] Ignoring message from non-subscribed channel: \(message.channelId)")
                 return
             }
+
+            // Day 35-A: Apply distance filtering for public channels
+            if let channel = getChannel(byId: message.channelId) {
+                guard shouldReceiveMessage(message, channelType: channel.channelType) else {
+                    print("[Realtime] Message filtered by distance: \(message.content.prefix(20))...")
+                    return
+                }
+            }
+            // Conservative: if channel not found, show message anyway
 
             await MainActor.run {
                 if channelMessages[message.channelId] != nil {

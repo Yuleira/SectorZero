@@ -383,4 +383,10 @@ struct ChannelMessage: Codable, Identifiable {
     var deviceType: String? {
         metadata?.deviceType
     }
+
+    /// Sender device type (parsed from metadata)
+    var senderDeviceType: DeviceType? {
+        guard let deviceTypeString = metadata?.deviceType else { return nil }
+        return DeviceType(rawValue: deviceTypeString)
+    }
 }

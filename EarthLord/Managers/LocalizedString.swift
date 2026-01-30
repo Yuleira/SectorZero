@@ -1018,6 +1018,20 @@ enum LocalizedString {
     /// Enter chat (enter_chat)
     static let enterChat: LocalizedStringResource = "enter_chat"
 
+    // MARK: - Distance Filtering (Day 35-A, 4 keys)
+
+    /// Message out of range (distance_out_of_range)
+    static let distanceOutOfRange: LocalizedStringResource = "distance_out_of_range"
+
+    /// Distance in km format (distance_km_format)
+    static let distanceKmFormat: LocalizedStringResource = "distance_km_format"
+
+    /// Message filtered by distance (distance_message_filtered)
+    static let distanceMessageFiltered: LocalizedStringResource = "distance_message_filtered"
+
+    /// Sender too far format (distance_sender_too_far_format)
+    static let distanceSenderTooFarFormat: LocalizedStringResource = "distance_sender_too_far_format"
+
     // MARK: - Display Format (2 keys)
 
     /// ID 显示格式 (id_display_format)
