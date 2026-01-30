@@ -301,11 +301,22 @@ struct ChannelMessage: Codable, Identifiable {
     let senderId: UUID?
     let senderCallsign: String?
     let content: String
-    let senderLocation: LocationPoint?
     let metadata: MessageMetadata?
     let createdAt: Date
 
+    // Day 35-C: Numerical coordinates (bypass PostGIS hex parsing)
+    let senderLatitude: Double?
+    let senderLongitude: Double?
+
     var id: UUID { messageId }
+
+    /// Computed LocationPoint from numerical coordinates
+    var senderLocation: LocationPoint? {
+        guard let lat = senderLatitude, let lon = senderLongitude else {
+            return nil
+        }
+        return LocationPoint(latitude: lat, longitude: lon)
+    }
 
     enum CodingKeys: String, CodingKey {
         case messageId = "message_id"
@@ -313,12 +324,13 @@ struct ChannelMessage: Codable, Identifiable {
         case senderId = "sender_id"
         case senderCallsign = "sender_callsign"
         case content
-        case senderLocation = "sender_location"
         case metadata
         case createdAt = "created_at"
+        case senderLatitude = "sender_latitude"
+        case senderLongitude = "sender_longitude"
     }
 
-    // Custom decoder for PostGIS POINT format
+    // Custom decoder for numerical coordinates
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -329,11 +341,15 @@ struct ChannelMessage: Codable, Identifiable {
         content = try container.decode(String.self, forKey: .content)
         metadata = try container.decodeIfPresent(MessageMetadata.self, forKey: .metadata)
 
-        // Parse location (may be PostGIS WKT string or object)
-        if let locationString = try? container.decode(String.self, forKey: .senderLocation) {
-            senderLocation = LocationPoint.fromPostGIS(locationString)
+        // Day 35-C: Direct numerical coordinate parsing (NO PostGIS)
+        senderLatitude = try container.decodeIfPresent(Double.self, forKey: .senderLatitude)
+        senderLongitude = try container.decodeIfPresent(Double.self, forKey: .senderLongitude)
+
+        // VERIFICATION LOG - Remove after testing
+        if let lat = senderLatitude, let lon = senderLongitude {
+            print("[Decoder] ✅ NUMERICAL COORDS: lat=\(lat), lon=\(lon)")
         } else {
-            senderLocation = try container.decodeIfPresent(LocationPoint.self, forKey: .senderLocation)
+            print("[Decoder] ⚠️ NO NUMERICAL COORDS - will use Conservative Strategy")
         }
 
         // Parse date (multiple formats support)

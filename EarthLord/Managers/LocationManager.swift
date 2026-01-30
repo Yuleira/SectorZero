@@ -12,12 +12,136 @@ import Foundation
 import CoreLocation
 import Combine
 
+// MARK: - Location Provider System (Day 35 Testing Support)
+// Allows switching between Real GPS and Mock locations via Environment Variables
+// Usage: Edit Scheme → Run → Arguments → Environment Variables
+//        Add: MOCK_LOCATION = OSLO / TOKYO / PARIS / NEWYORK / SYDNEY / BEIJING / LONDON
+
+#if DEBUG
+
+/// Protocol for location providers (real GPS or mock)
+protocol LocationProvider {
+    var currentLocation: CLLocation? { get }
+    var locationName: String { get }
+}
+
+/// Predefined mock locations for testing distance filtering
+enum MockLocation: String, CaseIterable {
+    case oslo = "OSLO"
+    case tokyo = "TOKYO"
+    case paris = "PARIS"
+    case newyork = "NEWYORK"
+    case sydney = "SYDNEY"
+    case beijing = "BEIJING"
+    case london = "LONDON"
+
+    var coordinate: CLLocationCoordinate2D {
+        switch self {
+        case .oslo:     return CLLocationCoordinate2D(latitude: 59.91, longitude: 10.75)
+        case .tokyo:    return CLLocationCoordinate2D(latitude: 35.67, longitude: 139.65)
+        case .paris:    return CLLocationCoordinate2D(latitude: 48.85, longitude: 2.35)
+        case .newyork:  return CLLocationCoordinate2D(latitude: 40.71, longitude: -74.01)
+        case .sydney:   return CLLocationCoordinate2D(latitude: -33.87, longitude: 151.21)
+        case .beijing:  return CLLocationCoordinate2D(latitude: 39.90, longitude: 116.40)
+        case .london:   return CLLocationCoordinate2D(latitude: 51.51, longitude: -0.13)
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .oslo:     return "Oslo, Norway"
+        case .tokyo:    return "Tokyo, Japan"
+        case .paris:    return "Paris, France"
+        case .newyork:  return "New York, USA"
+        case .sydney:   return "Sydney, Australia"
+        case .beijing:  return "Beijing, China"
+        case .london:   return "London, UK"
+        }
+    }
+}
+
+/// Real GPS location provider - wraps LocationManager's actual GPS
+final class RealLocationProvider: LocationProvider {
+    private weak var locationManager: LocationManager?
+
+    init(locationManager: LocationManager) {
+        self.locationManager = locationManager
+    }
+
+    var currentLocation: CLLocation? {
+        guard let coordinate = locationManager?.userLocation else { return nil }
+        return CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+    }
+
+    var locationName: String { "Real GPS" }
+}
+
+/// Mock location provider for testing - returns fixed coordinates
+final class MockLocationProvider: LocationProvider {
+    let mockLocation: MockLocation
+
+    init(mockLocation: MockLocation) {
+        self.mockLocation = mockLocation
+        print("🧪 [MockLocationProvider] Initialized: \(mockLocation.displayName)")
+        print("🧪 [MockLocationProvider] Coords: \(mockLocation.coordinate.latitude), \(mockLocation.coordinate.longitude)")
+    }
+
+    var currentLocation: CLLocation? {
+        CLLocation(latitude: mockLocation.coordinate.latitude, longitude: mockLocation.coordinate.longitude)
+    }
+
+    var locationName: String { "Mock: \(mockLocation.rawValue)" }
+}
+
+/// Factory to create the appropriate location provider based on environment
+enum LocationProviderFactory {
+    static func createProvider(locationManager: LocationManager) -> LocationProvider {
+        if let mockKey = ProcessInfo.processInfo.environment["MOCK_LOCATION"],
+           let mock = MockLocation(rawValue: mockKey.uppercased()) {
+            print("🧪 [LocationProviderFactory] MOCK_LOCATION=\(mockKey) detected")
+            return MockLocationProvider(mockLocation: mock)
+        }
+        print("📍 [LocationProviderFactory] Using Real GPS provider")
+        return RealLocationProvider(locationManager: locationManager)
+    }
+
+    static var isMockMode: Bool {
+        ProcessInfo.processInfo.environment["MOCK_LOCATION"] != nil
+    }
+}
+
+#endif
+
+// MARK: - Location Manager
+
 /// GPS 定位管理器
 /// 负责管理用户定位权限和实时位置更新
 final class LocationManager: NSObject, ObservableObject {
 
     // MARK: - 单例
     static let shared = LocationManager()
+
+    // MARK: - Location Provider (Day 35 Testing Support)
+
+    #if DEBUG
+    /// Location provider for abstracted location access (supports mock locations)
+    private(set) lazy var provider: LocationProvider = LocationProviderFactory.createProvider(locationManager: self)
+
+    /// Get current location via provider (respects MOCK_LOCATION environment variable)
+    var providerLocation: CLLocation? {
+        return provider.currentLocation
+    }
+
+    /// Check if using mock location
+    var isUsingMockLocation: Bool {
+        return LocationProviderFactory.isMockMode
+    }
+
+    /// Current location mode name (for debug UI)
+    var locationModeName: String {
+        return provider.locationName
+    }
+    #endif
 
     // MARK: - 发布属性
 

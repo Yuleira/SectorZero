@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 internal import Auth
 
 struct ChannelChatView: View {
@@ -31,16 +32,23 @@ struct ChannelChatView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Message list
-            messageListView
+        ZStack(alignment: .topTrailing) {
+            VStack(spacing: 0) {
+                // Message list
+                messageListView
 
-            // Input bar or radio mode hint
-            if canSend {
-                inputBar
-            } else {
-                radioModeHint
+                // Input bar or radio mode hint
+                if canSend {
+                    inputBar
+                } else {
+                    radioModeHint
+                }
             }
+
+            // Debug overlay showing location mode
+            #if DEBUG
+            locationModeOverlay
+            #endif
         }
         .background(ApocalypseTheme.background)
         .navigationTitle(channel.name)
@@ -160,6 +168,30 @@ struct ChannelChatView: View {
         .background(ApocalypseTheme.cardBackground)
     }
 
+    // MARK: - Debug Location Overlay
+
+    #if DEBUG
+    private var locationModeOverlay: some View {
+        let isMock = LocationManager.shared.isUsingMockLocation
+        let modeName = LocationManager.shared.locationModeName
+
+        return HStack(spacing: 4) {
+            Image(systemName: isMock ? "location.slash.fill" : "location.fill")
+                .font(.caption2)
+            Text(modeName)
+                .font(.caption2)
+                .fontWeight(.medium)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(isMock ? Color.orange.opacity(0.9) : Color.green.opacity(0.9))
+        .foregroundColor(.white)
+        .cornerRadius(8)
+        .padding(.top, 8)
+        .padding(.trailing, 8)
+    }
+    #endif
+
     // MARK: - Actions
 
     private func loadMessages() async {
@@ -172,10 +204,39 @@ struct ChannelChatView: View {
 
         let deviceType = communicationManager.getCurrentDeviceType().rawValue
 
+        // Day 35-B: Get location via provider (supports MOCK_LOCATION env var)
+        let latitude: Double?
+        let longitude: Double?
+
+        #if DEBUG
+        if let location = LocationManager.shared.providerLocation {
+            latitude = location.coordinate.latitude
+            longitude = location.coordinate.longitude
+            print("📡 [SENDER] Location via provider (\(LocationManager.shared.locationModeName)): lat=\(latitude!), lon=\(longitude!)")
+        } else {
+            latitude = nil
+            longitude = nil
+            print("⚠️ [SENDER] WARNING: Provider returned NIL location!")
+        }
+        #else
+        // Production: use real GPS only
+        if let coord = LocationManager.shared.userLocation {
+            latitude = coord.latitude
+            longitude = coord.longitude
+        } else {
+            latitude = nil
+            longitude = nil
+        }
+        #endif
+
+        print("📡 [SENDER] Sending message - device=\(deviceType), hasLocation=\(latitude != nil)")
+
         Task {
             let success = await communicationManager.sendChannelMessage(
                 channelId: channel.id,
                 content: content,
+                latitude: latitude,
+                longitude: longitude,
                 deviceType: deviceType
             )
 

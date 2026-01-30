@@ -17,6 +17,7 @@
 		7CEEAC80B0C02A773782A265 /* ChannelChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9837E678A4B84A48F946933C /* ChannelChatView.swift */; };
 		8DB5513183F1830AC31DF510 /* ChannelCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167B01229078B7FF37507795 /* ChannelCenterView.swift */; };
 		9CC3F860DB8F8CF9825F10DD /* PlayerPresenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */; };
+		AD0AE0AE9B96B4DD9D657815 /* MessageDistanceFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09CE99C72797BC0211D7466 /* MessageDistanceFilter.swift */; };
 		B3AF75D4EBA04AC381C94C25 /* DensityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA4B57D86AA4709948D4FF9 /* DensityLevel.swift */; };
 		BB3433424D632A4571EFCBD6 /* ChannelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430F4CC11133F2D3E69DD09D /* ChannelListView.swift */; };
 		BB9574D75C92F777BD307A14 /* AIItemGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DD4FD11BCB70FADC5ED58B /* AIItemGenerator.swift */; };
@@ -113,6 +114,7 @@
 		90D675FCD7251DE2CB147DEA /* CommunicationModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CommunicationModels.swift; sourceTree = "<group>"; };
 		9837E678A4B84A48F946933C /* ChannelChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChannelChatView.swift; sourceTree = "<group>"; };
 		A4DD4FD11BCB70FADC5ED58B /* AIItemGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIItemGenerator.swift; sourceTree = "<group>"; };
+		B09CE99C72797BC0211D7466 /* MessageDistanceFilter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageDistanceFilter.swift; sourceTree = "<group>"; };
 		BB0A50F7171387A7E2643C5F /* DeviceManagementView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceManagementView.swift; sourceTree = "<group>"; };
 		C197EF10A33EBA4FDAD5EDC7 /* CommunicationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CommunicationManager.swift; sourceTree = "<group>"; };
 		CA4D321796A6FFFE6C2C4246 /* OfficialChannelDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OfficialChannelDetailView.swift; sourceTree = "<group>"; };
@@ -324,6 +326,7 @@
 				0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */,
 				E6C00C0E2F28D1C000C6AB01 /* SupabaseService.swift */,
 				C197EF10A33EBA4FDAD5EDC7 /* CommunicationManager.swift */,
+				B09CE99C72797BC0211D7466 /* MessageDistanceFilter.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -624,6 +627,7 @@
 				647822728B82DE7BD51B1562 /* CommunicationTabView.swift in Sources */,
 				E12826C2630064A684075057 /* CommunicationModels.swift in Sources */,
 				37F8CADDFEAFDEE2CD885F99 /* CommunicationManager.swift in Sources */,
+				AD0AE0AE9B96B4DD9D657815 /* MessageDistanceFilter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

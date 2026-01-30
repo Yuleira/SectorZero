@@ -357,12 +357,18 @@ final class CommunicationManager: ObservableObject {
                 .value
 
             // Day 35-A: Apply distance filtering for public channels
-            let filteredMessages: [ChannelMessage]
-            if let channel = getChannel(byId: channelId) {
-                filteredMessages = messages.filter { shouldReceiveMessage($0, channelType: channel.channelType) }
-            } else {
-                // Conservative: if channel not found, show all messages
-                filteredMessages = messages
+            let channelType = getChannel(byId: channelId)?.channelType ?? .publicChannel
+            let myDevice = currentDevice?.deviceType
+            let myLocation = getCurrentLocation()
+            
+            let filteredMessages = messages.filter { message in
+                let (shouldReceive, _) = MessageDistanceFilter.shared.shouldReceive(
+                    message: message,
+                    channelType: channelType,
+                    myDevice: myDevice,
+                    myLocation: myLocation
+                )
+                return shouldReceive
             }
 
             await MainActor.run {
@@ -395,6 +401,8 @@ final class CommunicationManager: ObservableObject {
         }
 
         do {
+            print("📤 [SendMessage] Preparing to send - lat: \(latitude ?? -999), lon: \(longitude ?? -999), device: \(deviceType ?? "nil")")
+
             let params: [String: AnyJSON] = [
                 "p_channel_id": .string(channelId.uuidString),
                 "p_content": .string(content),
@@ -403,10 +411,14 @@ final class CommunicationManager: ObservableObject {
                 "p_device_type": deviceType.map { .string($0) } ?? .null
             ]
 
+            print("📤 [SendMessage] RPC params: \(params)")
+
             let _: UUID = try await client
                 .rpc("send_channel_message", params: params)
                 .execute()
                 .value
+
+            print("📤 [SendMessage] Message sent successfully!")
 
             await MainActor.run {
                 isSendingMessage = false
@@ -426,70 +438,25 @@ final class CommunicationManager: ObservableObject {
         channelMessages[channelId] ?? []
     }
 
-    // MARK: - Distance Filtering (Day 35-B)
+    // MARK: - Distance Filtering Helper (Day 35-B)
 
     /// Get current user location from GPS via LocationManager
+    /// In DEBUG mode, respects MOCK_LOCATION environment variable for testing
     /// Returns nil if GPS not available (conservative strategy will show message)
     private func getCurrentLocation() -> LocationPoint? {
+        #if DEBUG
+        // Use provider for mock location support
+        if let location = LocationManager.shared.providerLocation {
+            return LocationPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        }
+        return nil
+        #else
+        // Production: use real GPS only
         guard let coordinate = LocationManager.shared.userLocation else {
             return nil
         }
         return LocationPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
-    }
-
-    /// Calculate distance between two LocationPoints in kilometers
-    private func calculateDistance(from point1: LocationPoint, to point2: LocationPoint) -> Double {
-        let location1 = CLLocation(latitude: point1.latitude, longitude: point1.longitude)
-        let location2 = CLLocation(latitude: point2.latitude, longitude: point2.longitude)
-        // CLLocation.distance returns meters, convert to kilometers
-        return location1.distance(from: location2) / 1000.0
-    }
-
-    /// Get effective communication range between sender and receiver devices
-    /// Returns the maximum distance in km at which communication is possible
-    private func getEffectiveRange(senderDevice: DeviceType, myDevice: DeviceType) -> Double {
-        // Radio receiver: unlimited range (always receive)
-        if myDevice == .radio {
-            return Double.infinity
-        }
-
-        // Radio cannot send
-        if senderDevice == .radio {
-            return 0  // Should never happen, but handle defensively
-        }
-
-        // Device matrix based on requirements:
-        // - Walkie-Talkie to Walkie-Talkie: 3km
-        // - Walkie-Talkie to Camp Radio: 30km
-        // - Walkie-Talkie to Satellite: 100km
-        // - Camp Radio to any: 30km
-        // - Satellite to any: 100km
-
-        switch senderDevice {
-        case .radio:
-            return 0  // Radio cannot send
-        case .walkieTalkie:
-            switch myDevice {
-            case .radio:
-                return Double.infinity  // Already handled above
-            case .walkieTalkie:
-                return 3.0
-            case .campRadio:
-                return 30.0
-            case .satellite:
-                return 100.0
-            }
-        case .campRadio:
-            return 30.0  // Camp radio: 30km to any device
-        case .satellite:
-            return 100.0  // Satellite: 100km to any device
-        }
-    }
-
-    /// Check if a message can be received based on device types and distance
-    private func canReceiveMessage(senderDevice: DeviceType, myDevice: DeviceType, distance: Double) -> Bool {
-        let effectiveRange = getEffectiveRange(senderDevice: senderDevice, myDevice: myDevice)
-        return distance <= effectiveRange
+        #endif
     }
 
     /// Get channel by ID from local cache
@@ -500,55 +467,6 @@ final class CommunicationManager: ObservableObject {
         }
         // Then check public channels list
         return channels.first(where: { $0.id == channelId })
-    }
-
-    /// Determine if a message should be received based on distance filtering
-    /// Conservative strategy: show message if any required info is missing
-    private func shouldReceiveMessage(_ message: ChannelMessage, channelType: ChannelType) -> Bool {
-        // Rule 1: Distance filtering applies ONLY to public channels
-        // Private/subscription channels (official, walkie, camp, satellite) always show messages
-        guard channelType == .publicChannel else {
-            return true  // Skip distance filtering entirely for non-public channels
-        }
-
-        // Rule 2: Conservative strategy - if sender location missing, show message
-        guard let senderLocation = message.senderLocation else {
-            print("[DistanceFilter] No sender location, showing message (conservative)")
-            return true
-        }
-
-        // Rule 3: Conservative strategy - if sender device type missing, show message
-        guard let senderDevice = message.senderDeviceType else {
-            print("[DistanceFilter] No sender device type, showing message (conservative)")
-            return true
-        }
-
-        // Rule 4: Conservative strategy - if my device missing, show message
-        guard let myDevice = currentDevice?.deviceType else {
-            print("[DistanceFilter] No current device, showing message (conservative)")
-            return true
-        }
-
-        // Rule 5: Conservative strategy - if GPS not available, show message
-        guard let myLocation = getCurrentLocation() else {
-            print("[DistanceFilter] GPS not available, showing message (conservative)")
-            return true
-        }
-
-        // Calculate distance
-        let distance = calculateDistance(from: senderLocation, to: myLocation)
-
-        // Check if within range
-        let canReceive = canReceiveMessage(senderDevice: senderDevice, myDevice: myDevice, distance: distance)
-
-        if canReceive {
-            print("[DistanceFilter] ✅ Pass: sender=\(senderDevice.rawValue), my=\(myDevice.rawValue), distance=\(String(format: "%.2f", distance))km")
-        } else {
-            let effectiveRange = getEffectiveRange(senderDevice: senderDevice, myDevice: myDevice)
-            print("[DistanceFilter] 🚫 Filtered: distance=\(String(format: "%.2f", distance))km > range=\(effectiveRange)km, sender=\(senderDevice.rawValue), my=\(myDevice.rawValue)")
-        }
-
-        return canReceive
     }
 
     // MARK: - Realtime Subscription (Day 34)
@@ -596,22 +514,44 @@ final class CommunicationManager: ObservableObject {
     /// Handle new message from Realtime
     private func handleNewMessage(insertion: InsertAction) async {
         do {
+            // DEBUG: Print raw payload to verify numerical coordinates
+            if let rawData = try? JSONSerialization.data(withJSONObject: insertion.record, options: .prettyPrinted),
+               let rawString = String(data: rawData, encoding: .utf8) {
+                print("═══════════════════════════════════════════════════════════════")
+                print("[Realtime] RAW PAYLOAD:")
+                print(rawString)
+                print("═══════════════════════════════════════════════════════════════")
+            }
+
             let decoder = JSONDecoder()
             let message = try insertion.decodeRecord(as: ChannelMessage.self, decoder: decoder)
 
+            print("🔔 [Realtime] 收到消息 - channelId: \(message.channelId)")
+
             guard subscribedMessageChannelIds.contains(message.channelId) else {
-                print("[Realtime] Ignoring message from non-subscribed channel: \(message.channelId)")
+                print("[Realtime] 忽略非订阅频道消息: \(message.channelId)")
                 return
             }
 
-            // Day 35-A: Apply distance filtering for public channels
-            if let channel = getChannel(byId: message.channelId) {
-                guard shouldReceiveMessage(message, channelType: channel.channelType) else {
-                    print("[Realtime] Message filtered by distance: \(message.content.prefix(20))...")
-                    return
-                }
+            // Day 35-B: 使用集中式距离过滤器
+            let channelType = getChannel(byId: message.channelId)?.channelType ?? .publicChannel
+            let myDevice = currentDevice?.deviceType
+            let myLocation = getCurrentLocation()
+
+            let (shouldReceive, filterResult) = MessageDistanceFilter.shared.shouldReceive(
+                message: message,
+                channelType: channelType,
+                myDevice: myDevice,
+                myLocation: myLocation
+            )
+
+            // 输出规范化日志
+            MessageDistanceFilter.shared.logResult(filterResult)
+
+            guard shouldReceive else {
+                print("🚫 [Realtime] 消息被过滤: \(message.content.prefix(20))...")
+                return
             }
-            // Conservative: if channel not found, show message anyway
 
             await MainActor.run {
                 if channelMessages[message.channelId] != nil {
@@ -621,9 +561,9 @@ final class CommunicationManager: ObservableObject {
                 }
             }
 
-            print("[Realtime] Received new message: \(message.content.prefix(20))...")
+            print("✅ [Realtime] 消息已接收: \(message.content.prefix(20))...")
         } catch {
-            print("[Realtime] Failed to parse message: \(error)")
+            print("❌ [Realtime] 消息解析失败: \(error)")
         }
     }
 
