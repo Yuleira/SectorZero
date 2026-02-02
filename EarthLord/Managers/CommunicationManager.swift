@@ -13,14 +13,14 @@ import Realtime
 import CoreLocation
 
 // 🚀 终极修复：使用 nonisolated 彻底切断与主线程的联系
-// 这样它的 Encodable 协议实现就是“非隔离”的，完美符合 Sendable 要求
+// 这样它的 Encodable 协议实现就是"非隔离"的，完美符合 Sendable 要求
 nonisolated struct ChannelSendMessageParams: Encodable, Sendable {
     let p_channel_id: String
     let p_content: String
     let p_latitude: Double?
     let p_longitude: Double?
     let p_device_type: String?
-    
+
     // 明确告诉编译器这个 init 也是非隔离的
     nonisolated init(p_channel_id: String, p_content: String, p_latitude: Double?, p_longitude: Double?, p_device_type: String?) {
         self.p_channel_id = p_channel_id
@@ -30,10 +30,24 @@ nonisolated struct ChannelSendMessageParams: Encodable, Sendable {
         self.p_device_type = p_device_type
     }
 }
+
+// Day 36: Official channel subscription params (nonisolated for Sendable compliance)
+nonisolated struct OfficialChannelSubscribeParams: Encodable, Sendable {
+    let p_channel_id: String
+
+    nonisolated init(p_channel_id: String) {
+        self.p_channel_id = p_channel_id
+    }
+}
 ///
 @MainActor
 final class CommunicationManager: ObservableObject {
     static let shared = CommunicationManager()
+
+    // MARK: - Day 36: Official Channel Constants
+
+    /// Official channel fixed UUID
+    static let officialChannelId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
 
     @Published private(set) var devices: [CommunicationDevice] = []
     @Published private(set) var currentDevice: CommunicationDevice?
@@ -336,8 +350,8 @@ final class CommunicationManager: ObservableObject {
         isLoading = false
     }
 
-    /// 删除频道
-    func deleteChannel(channelId: UUID) async {
+    /// 删除频道 (returns success status)
+    func deleteChannel(channelId: UUID) async -> Bool {
         isLoading = true
         errorMessage = nil
 
@@ -349,16 +363,199 @@ final class CommunicationManager: ObservableObject {
             channels.removeAll { $0.id == channelId }
             subscribedChannels.removeAll { $0.channel.id == channelId }
             mySubscriptions.removeAll { $0.channelId == channelId }
+            channelMessages.removeValue(forKey: channelId)
+
+            isLoading = false
+            print("✅ [Channel] Deleted: \(channelId)")
+            return true
         } catch {
             errorMessage = "删除频道失败: \(error.localizedDescription)"
+            isLoading = false
+            print("❌ [Channel] Delete failed: \(error)")
+            return false
+        }
+    }
+
+    /// 更新频道名称和描述
+    func updateChannel(channelId: UUID, newName: String, newDescription: String? = nil) async -> Bool {
+        guard !newName.trimmingCharacters(in: .whitespaces).isEmpty else {
+            errorMessage = "频道名称不能为空"
+            return false
         }
 
-        isLoading = false
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            // Build update data
+            var updateData: [String: AnyJSON] = [
+                "name": .string(newName),
+                "updated_at": .string(ISO8601DateFormatter().string(from: Date()))
+            ]
+
+            if let desc = newDescription {
+                updateData["description"] = .string(desc)
+            }
+
+            try await client
+                .from("communication_channels")
+                .update(updateData)
+                .eq("id", value: channelId.uuidString)
+                .execute()
+
+            // Update local state immediately
+            await MainActor.run {
+                // Update in channels array
+                if let index = channels.firstIndex(where: { $0.id == channelId }) {
+                    let old = channels[index]
+                    let updated = CommunicationChannel(
+                        id: old.id,
+                        creatorId: old.creatorId,
+                        channelType: old.channelType,
+                        channelCode: old.channelCode,
+                        name: newName,
+                        description: newDescription ?? old.description,
+                        isActive: old.isActive,
+                        memberCount: old.memberCount,
+                        createdAt: old.createdAt,
+                        updatedAt: Date()
+                    )
+                    channels[index] = updated
+                }
+
+                // Update in subscribedChannels array
+                if let index = subscribedChannels.firstIndex(where: { $0.channel.id == channelId }) {
+                    let old = subscribedChannels[index]
+                    let updatedChannel = CommunicationChannel(
+                        id: old.channel.id,
+                        creatorId: old.channel.creatorId,
+                        channelType: old.channel.channelType,
+                        channelCode: old.channel.channelCode,
+                        name: newName,
+                        description: newDescription ?? old.channel.description,
+                        isActive: old.channel.isActive,
+                        memberCount: old.channel.memberCount,
+                        createdAt: old.channel.createdAt,
+                        updatedAt: Date()
+                    )
+                    subscribedChannels[index] = SubscribedChannel(
+                        channel: updatedChannel,
+                        subscription: old.subscription
+                    )
+                }
+            }
+
+            isLoading = false
+            print("✅ [Channel] Updated: \(channelId) -> \(newName)")
+            return true
+        } catch {
+            errorMessage = "更新频道失败: \(error.localizedDescription)"
+            isLoading = false
+            print("❌ [Channel] Update failed: \(error)")
+            return false
+        }
     }
 
     /// 检查是否已订阅某频道
     func isSubscribed(channelId: UUID) -> Bool {
         mySubscriptions.contains { $0.channelId == channelId }
+    }
+
+    // MARK: - Day 36: Official Channel Methods
+
+    /// Check if a channel is the official channel
+    func isOfficialChannel(_ channelId: UUID) -> Bool {
+        channelId == CommunicationManager.officialChannelId
+    }
+
+    /// Ensure user is subscribed to the official channel (forced subscription)
+    func ensureOfficialChannelSubscribed(userId: UUID) async {
+        let officialId = CommunicationManager.officialChannelId
+
+        // Check if already subscribed
+        if subscribedChannels.contains(where: { $0.channel.id == officialId }) {
+            print("✅ [官方频道] 已订阅")
+            return
+        }
+
+        // Force subscribe to official channel
+        do {
+            let params = OfficialChannelSubscribeParams(p_channel_id: officialId.uuidString)
+
+            try await client.rpc("subscribe_to_channel", params: params).execute()
+
+            // Refresh subscription list
+            await loadSubscribedChannels(userId: userId)
+            print("✅ [官方频道] 已自动订阅")
+        } catch {
+            print("❌ [官方频道] 订阅失败: \(error)")
+        }
+    }
+
+    // MARK: - Day 36: Message Aggregation
+
+    /// Channel summary for message center (latest message + unread count)
+    struct ChannelSummary: Identifiable {
+        let channel: CommunicationChannel
+        let lastMessage: ChannelMessage?
+        let unreadCount: Int
+
+        var id: UUID { channel.id }
+    }
+
+    /// Get summaries for all subscribed channels (sorted: official first, then by latest message)
+    func getChannelSummaries() -> [ChannelSummary] {
+        return subscribedChannels.map { subscribedChannel in
+            let messages = channelMessages[subscribedChannel.channel.id] ?? []
+            let lastMessage = messages.last
+
+            return ChannelSummary(
+                channel: subscribedChannel.channel,
+                lastMessage: lastMessage,
+                unreadCount: 0  // Placeholder: real unread count can be added later
+            )
+        }.sorted { summary1, summary2 in
+            // Official channel always on top
+            if summary1.channel.channelType == .official && summary2.channel.channelType != .official {
+                return true
+            }
+            if summary1.channel.channelType != .official && summary2.channel.channelType == .official {
+                return false
+            }
+            // Sort by latest message time
+            let time1 = summary1.lastMessage?.createdAt ?? summary1.channel.createdAt
+            let time2 = summary2.lastMessage?.createdAt ?? summary2.channel.createdAt
+            return time1 > time2
+        }
+    }
+
+    /// Load latest message for all subscribed channels (for message center preview)
+    func loadAllChannelLatestMessages() async {
+        for subscribedChannel in subscribedChannels {
+            let channelId = subscribedChannel.channel.id
+
+            do {
+                let messages: [ChannelMessage] = try await client
+                    .from("channel_messages")
+                    .select()
+                    .eq("channel_id", value: channelId.uuidString)
+                    .order("created_at", ascending: false)
+                    .limit(1)
+                    .execute()
+                    .value
+
+                if let lastMessage = messages.first {
+                    if channelMessages[channelId] == nil {
+                        channelMessages[channelId] = [lastMessage]
+                    } else if !channelMessages[channelId]!.contains(where: { $0.id == lastMessage.id }) {
+                        channelMessages[channelId]?.append(lastMessage)
+                    }
+                }
+            } catch {
+                print("❌ [消息聚合] 加载频道 \(channelId) 最新消息失败: \(error)")
+            }
+        }
+        print("✅ [消息聚合] 加载所有频道最新消息完成")
     }
 
     // MARK: - Message Methods (Day 34)
@@ -449,6 +646,31 @@ final class CommunicationManager: ObservableObject {
     /// Get messages for a channel
     func getMessages(for channelId: UUID) -> [ChannelMessage] {
         channelMessages[channelId] ?? []
+    }
+
+    /// Delete a message (only sender can delete their own message)
+    func deleteMessage(messageId: UUID, channelId: UUID) async -> Bool {
+        do {
+            try await client
+                .from("channel_messages")
+                .delete()
+                .eq("message_id", value: messageId.uuidString)
+                .execute()
+
+            // Remove from local cache
+            await MainActor.run {
+                channelMessages[channelId]?.removeAll { $0.messageId == messageId }
+            }
+
+            print("✅ [Message] Deleted: \(messageId)")
+            return true
+        } catch {
+            print("❌ [Message] Delete failed: \(error)")
+            await MainActor.run {
+                errorMessage = "删除失败: \(error.localizedDescription)"
+            }
+            return false
+        }
     }
 
     // MARK: - Distance Filtering Helper (Day 35-B)

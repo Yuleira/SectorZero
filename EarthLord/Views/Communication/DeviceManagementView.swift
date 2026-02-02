@@ -14,6 +14,7 @@ struct DeviceManagementView: View {
     @ObservedObject var communicationManager: CommunicationManager
     @State private var showUnlockAlert = false
     @State private var selectedDeviceForUnlock: DeviceType?
+    @State private var showingCallsignSettings = false  // Day 36: Callsign settings
 
     var body: some View {
         ScrollView {
@@ -38,10 +39,20 @@ struct DeviceManagementView: View {
                         deviceCard(deviceType)
                     }
                 }
+
+                // Day 36: Callsign settings entry
+                Divider()
+                    .background(ApocalypseTheme.textSecondary.opacity(0.3))
+                    .padding(.vertical, 8)
+
+                callsignSettingsEntry
             }
             .padding(16)
         }
         .background(ApocalypseTheme.background)
+        .sheet(isPresented: $showingCallsignSettings) {
+            CallsignSettingsSheet()
+        }
         .alert(LocalizedString.deviceNotUnlocked, isPresented: $showUnlockAlert) {
             Button(LocalizedString.confirm, role: .cancel) {}
         } message: {
@@ -122,6 +133,44 @@ struct DeviceManagementView: View {
         }
         guard let userId = authManager.currentUser?.id else { return }
         Task { await communicationManager.switchDevice(userId: userId, to: deviceType) }
+    }
+
+    // MARK: - Day 36: Callsign Settings Entry
+
+    private var callsignSettingsEntry: some View {
+        Button(action: {
+            showingCallsignSettings = true
+        }) {
+            HStack {
+                Image(systemName: "person.text.rectangle")
+                    .font(.system(size: 20))
+                    .foregroundColor(ApocalypseTheme.primary)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(LocalizedString.callsignSettings)
+                        .font(.headline)
+                        .foregroundColor(ApocalypseTheme.textPrimary)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+
+                    Text(LocalizedString.notSet)
+                        .font(.caption)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(ApocalypseTheme.textSecondary)
+            }
+            .padding(16)
+            .background(ApocalypseTheme.cardBackground)
+            .cornerRadius(12)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

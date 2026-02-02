@@ -77,7 +77,11 @@ struct CommunicationTabView: View {
         }
         .onAppear {
             if let userId = authManager.currentUser?.id {
-                Task { await communicationManager.loadDevices(userId: userId) }
+                Task {
+                    await communicationManager.loadDevices(userId: userId)
+                    // Day 36: Ensure official channel is subscribed
+                    await communicationManager.ensureOfficialChannelSubscribed(userId: userId)
+                }
             }
         }
     }

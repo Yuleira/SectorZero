@@ -14,6 +14,7 @@
 		3FCA99A3E75C61CE4DD6A1E0 /* CreateChannelSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD338B4F101D81EC4F14990 /* CreateChannelSheet.swift */; };
 		44ACA1E4B2F68AAF641B3C3E /* POISearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D07D29FC143CD40F1E2317 /* POISearchManager.swift */; };
 		647822728B82DE7BD51B1562 /* CommunicationTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4783E3E71E6AFA46A31FA8 /* CommunicationTabView.swift */; };
+		75343A821E6D9B9EB1327ADD /* MessageRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FD5BA2B77298E792E230915 /* MessageRowView.swift */; };
 		7CEEAC80B0C02A773782A265 /* ChannelChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9837E678A4B84A48F946933C /* ChannelChatView.swift */; };
 		8DB5513183F1830AC31DF510 /* ChannelCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167B01229078B7FF37507795 /* ChannelCenterView.swift */; };
 		9CC3F860DB8F8CF9825F10DD /* PlayerPresenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */; };
@@ -98,13 +99,16 @@
 		E6E50DDA2F1298D60096D2BB /* ExplorationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DD92F1298D60096D2BB /* ExplorationModels.swift */; };
 		E6E50DDC2F1299070096D2BB /* MockExplorationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DDB2F1299070096D2BB /* MockExplorationData.swift */; };
 		E6E50E012F12898D0096D2BB /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50E002F12898D0096D2BB /* LocalizedString.swift */; };
+		F744270E89F30AA0AFD83D5A /* CallsignSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */; };
 		F9D30270753ADA4325F4A2FD /* AIGeneratedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C987D042E72C465043FA761 /* AIGeneratedItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		00D07D29FC143CD40F1E2317 /* POISearchManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = POISearchManager.swift; sourceTree = "<group>"; };
 		0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlayerPresenceManager.swift; sourceTree = "<group>"; };
+		0FD5BA2B77298E792E230915 /* MessageRowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageRowView.swift; sourceTree = "<group>"; };
 		167B01229078B7FF37507795 /* ChannelCenterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChannelCenterView.swift; sourceTree = "<group>"; };
+		2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallsignSettingsSheet.swift; sourceTree = "<group>"; };
 		3D9F15ACD7490D3FAD1398D9 /* ChannelDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChannelDetailView.swift; sourceTree = "<group>"; };
 		430F4CC11133F2D3E69DD09D /* ChannelListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChannelListView.swift; sourceTree = "<group>"; };
 		5C987D042E72C465043FA761 /* AIGeneratedItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIGeneratedItem.swift; sourceTree = "<group>"; };
@@ -452,6 +456,8 @@
 				3D9F15ACD7490D3FAD1398D9 /* ChannelDetailView.swift */,
 				9837E678A4B84A48F946933C /* ChannelChatView.swift */,
 				CA4D321796A6FFFE6C2C4246 /* OfficialChannelDetailView.swift */,
+				0FD5BA2B77298E792E230915 /* MessageRowView.swift */,
+				2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */,
 			);
 			name = Communication;
 			path = Communication;
@@ -628,6 +634,8 @@
 				E12826C2630064A684075057 /* CommunicationModels.swift in Sources */,
 				37F8CADDFEAFDEE2CD885F99 /* CommunicationManager.swift in Sources */,
 				AD0AE0AE9B96B4DD9D657815 /* MessageDistanceFilter.swift in Sources */,
+				75343A821E6D9B9EB1327ADD /* MessageRowView.swift in Sources */,
+				F744270E89F30AA0AFD83D5A /* CallsignSettingsSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

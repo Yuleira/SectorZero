@@ -435,6 +435,9 @@ enum LocalizedString {
     /// 通用错误 (common_error)
     static let commonError: LocalizedStringResource = "common_error"
 
+    /// 删除 (common_delete)
+    static let commonDelete: LocalizedStringResource = "common_delete"
+
     // MARK: - Tabs (4 keys)
 
     /// 地图 (tab_map)
@@ -808,6 +811,23 @@ enum LocalizedString {
     /// 设备导航标签 (nav_devices)
     static let navDevices: LocalizedStringResource = "nav_devices"
 
+    // MARK: - Channel Management (5 keys)
+
+    /// 重命名频道 (action_rename_channel)
+    static let actionRenameChannel: LocalizedStringResource = "action_rename_channel"
+
+    /// 删除频道 (action_delete_channel)
+    static let actionDeleteChannel: LocalizedStringResource = "action_delete_channel"
+
+    /// 请输入新名称 (rename_alert_title)
+    static let renameAlertTitle: LocalizedStringResource = "rename_alert_title"
+
+    /// 保存 (common_save)
+    static let commonSave: LocalizedStringResource = "common_save"
+
+    /// 确认删除频道 (delete_channel_confirm)
+    static let deleteChannelConfirm: LocalizedStringResource = "delete_channel_confirm"
+
     // MARK: - Communication Devices (4 keys)
 
     /// 对讲机 (device_walkie_talkie)
@@ -1017,6 +1037,112 @@ enum LocalizedString {
 
     /// Enter chat (enter_chat)
     static let enterChat: LocalizedStringResource = "enter_chat"
+
+    // MARK: - Day 36: Message Categories (4 keys)
+
+    /// Survival Guide category (category_survival_guide)
+    static let categorySurvivalGuide: LocalizedStringResource = "category_survival_guide"
+
+    /// Game News category (category_game_news)
+    static let categoryGameNews: LocalizedStringResource = "category_game_news"
+
+    /// Mission Release category (category_mission_release)
+    static let categoryMissionRelease: LocalizedStringResource = "category_mission_release"
+
+    /// Emergency Alert category (category_emergency_alert)
+    static let categoryEmergencyAlert: LocalizedStringResource = "category_emergency_alert"
+
+    /// All categories (category_all)
+    static let categoryAll: LocalizedStringResource = "category_all"
+
+    // MARK: - Day 36: Official Channel UI (5 keys)
+
+    /// Official Announcement (official_announcement)
+    static let officialAnnouncement: LocalizedStringResource = "official_announcement"
+
+    /// Global Coverage (global_coverage)
+    static let globalCoverage: LocalizedStringResource = "global_coverage"
+
+    /// No Announcements (no_announcements)
+    static let noAnnouncements: LocalizedStringResource = "no_announcements"
+
+    /// No category messages format (no_category_messages_format)
+    static let noCategoryMessagesFormat: LocalizedStringResource = "no_category_messages_format"
+
+    // MARK: - Day 36: PTT Call (8 keys)
+
+    /// PTT Call title (ptt_call_title)
+    static let pttCallTitle: LocalizedStringResource = "ptt_call_title"
+
+    /// Call Content (call_content)
+    static let callContent: LocalizedStringResource = "call_content"
+
+    /// Call content placeholder (call_content_placeholder)
+    static let callContentPlaceholder: LocalizedStringResource = "call_content_placeholder"
+
+    /// Press to Send (press_to_send)
+    static let pressToSend: LocalizedStringResource = "press_to_send"
+
+    /// Sending (sending)
+    static let sending: LocalizedStringResource = "sending"
+
+    /// Message Sent (message_sent)
+    static let messageSent: LocalizedStringResource = "message_sent"
+
+    /// Hold to call hint (hold_to_call_hint)
+    static let holdToCallHint: LocalizedStringResource = "hold_to_call_hint"
+
+    // MARK: - Day 36: Callsign Settings (12 keys)
+
+    /// Callsign Settings (callsign_settings)
+    static let callsignSettings: LocalizedStringResource = "callsign_settings"
+
+    /// What is Callsign (what_is_callsign)
+    static let whatIsCallsign: LocalizedStringResource = "what_is_callsign"
+
+    /// Callsign explanation (callsign_explanation)
+    static let callsignExplanation: LocalizedStringResource = "callsign_explanation"
+
+    /// Recommended Format (recommended_format)
+    static let recommendedFormat: LocalizedStringResource = "recommended_format"
+
+    /// Your Callsign (your_callsign)
+    static let yourCallsign: LocalizedStringResource = "your_callsign"
+
+    /// Callsign placeholder (callsign_placeholder)
+    static let callsignPlaceholder: LocalizedStringResource = "callsign_placeholder"
+
+    /// Callsign format hint (callsign_format_hint)
+    static let callsignFormatHint: LocalizedStringResource = "callsign_format_hint"
+
+    /// Save Callsign (save_callsign)
+    static let saveCallsign: LocalizedStringResource = "save_callsign"
+
+    /// Callsign Saved (callsign_saved)
+    static let callsignSaved: LocalizedStringResource = "callsign_saved"
+
+    /// Callsign updated format (callsign_updated_format)
+    static let callsignUpdatedFormat: LocalizedStringResource = "callsign_updated_format"
+
+    /// Callsign invalid format error (callsign_invalid_format)
+    static let callsignInvalidFormat: LocalizedStringResource = "callsign_invalid_format"
+
+    /// Not Set (not_set)
+    static let notSet: LocalizedStringResource = "not_set"
+
+    // MARK: - Day 36: Message Center (4 keys)
+
+    /// No Messages (no_messages)
+    static let noMessages: LocalizedStringResource = "no_messages"
+
+    /// Subscribe to see messages hint (subscribe_to_see_messages)
+    static let subscribeToSeeMessages: LocalizedStringResource = "subscribe_to_see_messages"
+
+    /// Refresh (refresh)
+    static let refresh: LocalizedStringResource = "refresh"
+
+    /// Official badge (official_badge)
+    static let officialBadge: LocalizedStringResource = "official_badge"
 
     // MARK: - Distance Filtering (Day 35-A, 4 keys)
 

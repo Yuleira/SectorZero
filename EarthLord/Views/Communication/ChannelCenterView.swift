@@ -156,20 +156,34 @@ struct ChannelCenterView: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(communicationManager.subscribedChannels) { subscribedChannel in
-                            NavigationLink {
-                                ChannelChatView(
-                                    channel: subscribedChannel.channel,
-                                    authManager: authManager,
-                                    communicationManager: communicationManager
-                                )
-                            } label: {
-                                ChannelRowView(
-                                    channel: subscribedChannel.channel,
-                                    isSubscribed: true,
-                                    showEnterChat: true
-                                )
+                            // Day 36: Route official channels to OfficialChannelDetailView
+                            if subscribedChannel.channel.channelType == .official {
+                                NavigationLink {
+                                    OfficialChannelDetailView(channel: subscribedChannel.channel)
+                                } label: {
+                                    ChannelRowView(
+                                        channel: subscribedChannel.channel,
+                                        isSubscribed: true,
+                                        showEnterChat: true
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            } else {
+                                NavigationLink {
+                                    ChannelChatView(
+                                        channel: subscribedChannel.channel,
+                                        authManager: authManager,
+                                        communicationManager: communicationManager
+                                    )
+                                } label: {
+                                    ChannelRowView(
+                                        channel: subscribedChannel.channel,
+                                        isSubscribed: true,
+                                        showEnterChat: true
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                     .padding()
@@ -329,7 +343,19 @@ struct ChannelRowView: View {
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
 
-                    if isSubscribed {
+                    // Day 36: Official badge for official channels
+                    if channel.channelType == .official {
+                        Text(LocalizedString.officialBadge)
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.red)
+                            .cornerRadius(4)
+                    }
+
+                    if isSubscribed && channel.channelType != .official {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption)
                             .foregroundColor(.green)

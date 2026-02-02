@@ -7,6 +7,47 @@
 //
 
 import Foundation
+import SwiftUI
+
+// MARK: - 消息分类（官方频道专用）
+
+/// Message categories for official channel announcements
+enum MessageCategory: String, Codable, CaseIterable {
+    case survival = "survival"   // 生存指南
+    case news = "news"           // 游戏资讯
+    case mission = "mission"     // 任务发布
+    case alert = "alert"         // 紧急广播
+
+    /// Localized display name
+    var displayName: String {
+        switch self {
+        case .survival: return String(localized: LocalizedString.categorySurvivalGuide)
+        case .news: return String(localized: LocalizedString.categoryGameNews)
+        case .mission: return String(localized: LocalizedString.categoryMissionRelease)
+        case .alert: return String(localized: LocalizedString.categoryEmergencyAlert)
+        }
+    }
+
+    /// Category color
+    var color: Color {
+        switch self {
+        case .survival: return .green
+        case .news: return .blue
+        case .mission: return .orange
+        case .alert: return .red
+        }
+    }
+
+    /// SF Symbol icon name
+    var iconName: String {
+        switch self {
+        case .survival: return "leaf.fill"
+        case .news: return "newspaper.fill"
+        case .mission: return "target"
+        case .alert: return "exclamationmark.triangle.fill"
+        }
+    }
+}
 
 // MARK: - 设备类型
 
@@ -208,7 +249,7 @@ enum ChannelType: String, Codable, CaseIterable {
 // MARK: - 频道模型
 
 /// 通讯频道数据模型
-struct CommunicationChannel: Codable, Identifiable {
+struct CommunicationChannel: Codable, Identifiable, Hashable {
     let id: UUID
     let creatorId: UUID
     let channelType: ChannelType
@@ -231,6 +272,16 @@ struct CommunicationChannel: Codable, Identifiable {
         case memberCount = "member_count"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+    }
+
+    // MARK: - Hashable (Day 36: for NavigationStack navigation)
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: CommunicationChannel, rhs: CommunicationChannel) -> Bool {
+        lhs.id == rhs.id
     }
 }
 
@@ -288,9 +339,17 @@ struct LocationPoint: Codable {
 /// Message metadata
 struct MessageMetadata: Codable {
     let deviceType: String?
+    let category: String?  // Day 36: Message category for official channel
 
     enum CodingKeys: String, CodingKey {
         case deviceType = "device_type"
+        case category
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        deviceType = try container.decodeIfPresent(String.self, forKey: .deviceType)
+        category = try container.decodeIfPresent(String.self, forKey: .category)
     }
 }
 
@@ -404,5 +463,30 @@ struct ChannelMessage: Codable, Identifiable {
     var senderDeviceType: DeviceType? {
         guard let deviceTypeString = metadata?.deviceType else { return nil }
         return DeviceType(rawValue: deviceTypeString)
+    }
+
+    /// Day 36: Message category (for official channel messages)
+    var category: MessageCategory? {
+        guard let categoryString = metadata?.category else { return nil }
+        return MessageCategory(rawValue: categoryString)
+    }
+
+    /// Day 36: Formatted callsign with fallback for unregistered users
+    /// Returns callsign if set, otherwise generates "R-XXX (Unregistered)" format
+    var formattedCallsign: String {
+        if let callsign = senderCallsign, callsign != "Anonymous", !callsign.isEmpty {
+            return callsign
+        }
+        // Generate pseudo-random ID from sender UUID (last 3 chars)
+        let shortId = senderId?.uuidString.suffix(3).uppercased() ?? "???"
+        return "R-\(shortId)"
+    }
+
+    /// Check if sender has a registered callsign
+    var hasRegisteredCallsign: Bool {
+        if let callsign = senderCallsign, callsign != "Anonymous", !callsign.isEmpty {
+            return true
+        }
+        return false
     }
 }

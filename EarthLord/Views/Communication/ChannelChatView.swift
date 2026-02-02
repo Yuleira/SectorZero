@@ -77,7 +77,10 @@ struct ChannelChatView: View {
                         ForEach(messages) { message in
                             MessageBubbleView(
                                 message: message,
-                                isOwnMessage: message.senderId == currentUserId
+                                isOwnMessage: message.senderId == currentUserId,
+                                onDelete: message.senderId == currentUserId ? {
+                                    deleteMessage(message)
+                                } : nil
                             )
                             .id(message.id)
                         }
@@ -263,6 +266,18 @@ struct ChannelChatView: View {
             }
         }
     }
+
+    private func deleteMessage(_ message: ChannelMessage) {
+        Task {
+            let success = await communicationManager.deleteMessage(
+                messageId: message.messageId,
+                channelId: channel.id
+            )
+            if success {
+                print("✅ [ChannelChatView] Message deleted: \(message.messageId)")
+            }
+        }
+    }
 }
 
 // MARK: - Message Bubble View
@@ -270,6 +285,7 @@ struct ChannelChatView: View {
 struct MessageBubbleView: View {
     let message: ChannelMessage
     let isOwnMessage: Bool
+    var onDelete: (() -> Void)?
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
@@ -278,13 +294,20 @@ struct MessageBubbleView: View {
             }
 
             VStack(alignment: isOwnMessage ? .trailing : .leading, spacing: 4) {
-                // Callsign (for others' messages)
-                if !isOwnMessage, let callsign = message.senderCallsign {
+                // Callsign (for others' messages) - Day 36: Always show with fallback
+                if !isOwnMessage {
                     HStack(spacing: 4) {
-                        Text(callsign)
+                        Text(message.formattedCallsign)
                             .font(.caption)
                             .fontWeight(.medium)
-                            .foregroundColor(ApocalypseTheme.primary)
+                            .foregroundColor(message.hasRegisteredCallsign ? ApocalypseTheme.primary : ApocalypseTheme.textSecondary)
+
+                        // Unregistered indicator
+                        if !message.hasRegisteredCallsign {
+                            Text("(\(String(localized: LocalizedString.notSet)))")
+                                .font(.caption2)
+                                .foregroundColor(ApocalypseTheme.textMuted)
+                        }
 
                         // Device type icon
                         if let deviceType = message.deviceType {
@@ -293,27 +316,40 @@ struct MessageBubbleView: View {
                     }
                 }
 
-                // Message content
-                HStack(alignment: .bottom, spacing: 6) {
-                    Text(message.content)
-                        .font(.body)
-                        .foregroundColor(isOwnMessage ? .white : ApocalypseTheme.textPrimary)
-
-                    // Time
-                    Text(message.timeAgo)
-                        .font(.caption2)
-                        .foregroundColor(isOwnMessage ? .white.opacity(0.7) : ApocalypseTheme.textSecondary)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(isOwnMessage ? ApocalypseTheme.primary : ApocalypseTheme.cardBackground)
-                .cornerRadius(18)
+                // Message content bubble
+                messageBubble
+                    .contextMenu {
+                        if isOwnMessage {
+                            Button(role: .destructive) {
+                                onDelete?()
+                            } label: {
+                                Label(String(localized: LocalizedString.commonDelete), systemImage: "trash")
+                            }
+                        }
+                    }
             }
 
             if !isOwnMessage {
                 Spacer(minLength: 60)
             }
         }
+    }
+
+    private var messageBubble: some View {
+        HStack(alignment: .bottom, spacing: 6) {
+            Text(message.content)
+                .font(.body)
+                .foregroundColor(isOwnMessage ? .white : ApocalypseTheme.textPrimary)
+
+            // Time
+            Text(message.timeAgo)
+                .font(.caption2)
+                .foregroundColor(isOwnMessage ? .white.opacity(0.7) : ApocalypseTheme.textSecondary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(isOwnMessage ? ApocalypseTheme.primary : ApocalypseTheme.cardBackground)
+        .cornerRadius(18)
     }
 
     @ViewBuilder
