@@ -649,12 +649,14 @@ final class CommunicationManager: ObservableObject {
     }
 
     /// Delete a message (only sender can delete their own message)
-    func deleteMessage(messageId: UUID, channelId: UUID) async -> Bool {
+    func deleteMessage(messageId: UUID, channelId: UUID, senderId: UUID) async -> Bool {
         do {
+            // Double-check: filter by both message_id AND sender_id for safety
             try await client
                 .from("channel_messages")
                 .delete()
                 .eq("message_id", value: messageId.uuidString)
+                .eq("sender_id", value: senderId.uuidString)
                 .execute()
 
             // Remove from local cache

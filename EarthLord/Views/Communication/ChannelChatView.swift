@@ -268,10 +268,16 @@ struct ChannelChatView: View {
     }
 
     private func deleteMessage(_ message: ChannelMessage) {
+        guard let senderId = message.senderId else {
+            print("❌ [ChannelChatView] Cannot delete: message has no senderId")
+            return
+        }
+
         Task {
             let success = await communicationManager.deleteMessage(
                 messageId: message.messageId,
-                channelId: channel.id
+                channelId: channel.id,
+                senderId: senderId
             )
             if success {
                 print("✅ [ChannelChatView] Message deleted: \(message.messageId)")
