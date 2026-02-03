@@ -1,0 +1,226 @@
+{
+  "identifier" : "com.sectorzero.products",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "storage_large_001",
+      "localizations" : [
+        {
+          "description" : "Permanently unlock 500 extra inventory slots",
+          "displayName" : "Large Storage Expansion",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "永久解锁500格额外背包空间",
+          "displayName" : "大型仓库扩展",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.item.storage_large",
+      "referenceName" : "Large Storage Expansion",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "shards_100_001",
+      "localizations" : [
+        {
+          "description" : "100 Aether Shards - Premium currency for special items",
+          "displayName" : "100 Aether Shards",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "100枚以太碎片 - 用于购买特殊物品的高级货币",
+          "displayName" : "100以太碎片",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.shards.100",
+      "referenceName" : "100 Aether Shards",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "sectorzero_app_001",
+    "_developerTeamID" : "TEAM_ID_PLACEHOLDER",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 749779200,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "com.sectorzero.subscription.group",
+      "localizations" : [
+        {
+          "description" : "SectorZero Membership Tiers",
+          "displayName" : "SectorZero Membership",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "零号区域会员等级",
+          "displayName" : "零号区域会员",
+          "locale" : "zh_CN"
+        }
+      ],
+      "name" : "SectorZero Membership",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "sub_scavenger_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Basic survivor benefits: Daily bonus, +50 storage, no ads",
+              "displayName" : "Scavenger",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "基础幸存者福利：每日奖励、+50背包、无广告",
+              "displayName" : "拾荒者",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sectorzero.sub.scavenger",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Scavenger Tier",
+          "subscriptionGroupID" : "com.sectorzero.subscription.group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "5.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "sub_pioneer_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Enhanced explorer perks: 2x daily bonus, +200 storage, no ads, priority trade",
+              "displayName" : "Pioneer",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "增强探索者福利：双倍每日奖励、+200背包、无广告、优先交易",
+              "displayName" : "先驱者",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sectorzero.sub.pioneer",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Pioneer Tier",
+          "subscriptionGroupID" : "com.sectorzero.subscription.group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "12.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "sub_archon_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Ultimate commander benefits: 3x daily bonus, +500 storage, no ads, priority trade, exclusive items, territory bonus",
+              "displayName" : "Archon",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "终极指挥官福利：三倍每日奖励、+500背包、无广告、优先交易、专属物品、领地加成",
+              "displayName" : "执政官",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sectorzero.sub.archon",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Archon Tier",
+          "subscriptionGroupID" : "com.sectorzero.subscription.group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

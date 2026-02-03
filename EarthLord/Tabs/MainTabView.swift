@@ -42,12 +42,19 @@ struct MainTabView: View {
                 }
                 .tag(3)
 
+            StoreView()
+                .tabItem {
+                    Image(systemName: "bag.fill")
+                    Text(LocalizedString.tabStore)
+                }
+                .tag(4)
+
             ProfileTabView()
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text(LocalizedString.tabProfile)
                 }
-                .tag(4)
+                .tag(5)
 
         }
         .tint(ApocalypseTheme.primary)

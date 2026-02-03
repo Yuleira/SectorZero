@@ -452,6 +452,9 @@ enum LocalizedString {
     /// 个人 (tab_profile)
     static let tabProfile: LocalizedStringResource = "tab_profile"
 
+    /// 商店 (tab_store)
+    static let tabStore: LocalizedStringResource = "tab_store"
+
     // MARK: - Resources & Segments
 
     /// 背包资源 (inventory_resources)
@@ -1165,6 +1168,128 @@ enum LocalizedString {
 
     /// 添加材料（调试）(debug_add_materials)
     static let debugAddMaterials: LocalizedStringResource = "debug_add_materials"
+
+    // MARK: - Store & IAP (30 keys)
+
+    /// Store tab title (store_title)
+    static let storeTitle: LocalizedStringResource = "store_title"
+
+    /// Subscriptions section header (store_subscriptions)
+    static let storeSubscriptions: LocalizedStringResource = "store_subscriptions"
+
+    /// Items section header (store_items)
+    static let storeItems: LocalizedStringResource = "store_items"
+
+    /// Premium currency section header (store_premium_currency)
+    static let storePremiumCurrency: LocalizedStringResource = "store_premium_currency"
+
+    /// Restore Purchases button (store_restore_purchases)
+    static let storeRestorePurchases: LocalizedStringResource = "store_restore_purchases"
+
+    /// Purchase successful message (store_purchase_successful)
+    static let storePurchaseSuccessful: LocalizedStringResource = "store_purchase_successful"
+
+    /// Purchase failed error (store_purchase_failed)
+    static let storePurchaseFailed: LocalizedStringResource = "store_purchase_failed"
+
+    /// Verification failed error (store_verification_failed)
+    static let storeVerificationFailed: LocalizedStringResource = "store_verification_failed"
+
+    /// Network error (store_network_error)
+    static let storeNetworkError: LocalizedStringResource = "store_network_error"
+
+    /// Current plan badge (store_current_plan)
+    static let storeCurrentPlan: LocalizedStringResource = "store_current_plan"
+
+    /// Upgrade button (store_upgrade)
+    static let storeUpgrade: LocalizedStringResource = "store_upgrade"
+
+    /// Subscribe button (store_subscribe)
+    static let storeSubscribe: LocalizedStringResource = "store_subscribe"
+
+    /// Already purchased badge (store_already_purchased)
+    static let storeAlreadyPurchased: LocalizedStringResource = "store_already_purchased"
+
+    /// Purchased badge (store_purchased)
+    static let storePurchased: LocalizedStringResource = "store_purchased"
+
+    /// Best value badge (store_best_value)
+    static let storeBestValue: LocalizedStringResource = "store_best_value"
+
+    /// Popular badge (store_popular)
+    static let storePopular: LocalizedStringResource = "store_popular"
+
+    /// Per month suffix (store_per_month)
+    static let storePerMonth: LocalizedStringResource = "store_per_month"
+
+    /// Loading products indicator (store_loading_products)
+    static let storeLoadingProducts: LocalizedStringResource = "store_loading_products"
+
+    /// No products available message (store_no_products)
+    static let storeNoProducts: LocalizedStringResource = "store_no_products"
+
+    /// Restore completed message (store_restore_completed)
+    static let storeRestoreCompleted: LocalizedStringResource = "store_restore_completed"
+
+    // MARK: - Subscription Tier Names (4 keys)
+
+    /// Free tier name (tier_free)
+    static let tierFree: LocalizedStringResource = "tier_free"
+
+    /// Scavenger tier name (tier_scavenger)
+    static let tierScavenger: LocalizedStringResource = "tier_scavenger"
+
+    /// Pioneer tier name (tier_pioneer)
+    static let tierPioneer: LocalizedStringResource = "tier_pioneer"
+
+    /// Archon tier name (tier_archon)
+    static let tierArchon: LocalizedStringResource = "tier_archon"
+
+    // MARK: - Subscription Benefits (10 keys)
+
+    /// Daily bonus benefit (store_benefit_daily_bonus)
+    static let storeBenefitDailyBonus: LocalizedStringResource = "store_benefit_daily_bonus"
+
+    /// Double daily bonus benefit (store_benefit_daily_bonus_double)
+    static let storeBenefitDailyBonusDouble: LocalizedStringResource = "store_benefit_daily_bonus_double"
+
+    /// Triple daily bonus benefit (store_benefit_daily_bonus_triple)
+    static let storeBenefitDailyBonusTriple: LocalizedStringResource = "store_benefit_daily_bonus_triple"
+
+    /// Extra storage 50 slots (store_benefit_extra_storage_50)
+    static let storeBenefitExtraStorage50: LocalizedStringResource = "store_benefit_extra_storage_50"
+
+    /// Extra storage 200 slots (store_benefit_extra_storage_200)
+    static let storeBenefitExtraStorage200: LocalizedStringResource = "store_benefit_extra_storage_200"
+
+    /// Extra storage 500 slots (store_benefit_extra_storage_500)
+    static let storeBenefitExtraStorage500: LocalizedStringResource = "store_benefit_extra_storage_500"
+
+    /// No ads benefit (store_benefit_no_ads)
+    static let storeBenefitNoAds: LocalizedStringResource = "store_benefit_no_ads"
+
+    /// Priority trade benefit (store_benefit_priority_trade)
+    static let storeBenefitPriorityTrade: LocalizedStringResource = "store_benefit_priority_trade"
+
+    /// Exclusive items benefit (store_benefit_exclusive_items)
+    static let storeBenefitExclusiveItems: LocalizedStringResource = "store_benefit_exclusive_items"
+
+    /// Territory bonus benefit (store_benefit_territory_bonus)
+    static let storeBenefitTerritoryBonus: LocalizedStringResource = "store_benefit_territory_bonus"
+
+    // MARK: - Product Names (4 keys)
+
+    /// Large storage product (product_storage_large)
+    static let productStorageLarge: LocalizedStringResource = "product_storage_large"
+
+    /// Large storage description (product_storage_large_desc)
+    static let productStorageLargeDesc: LocalizedStringResource = "product_storage_large_desc"
+
+    /// 100 Shards product (product_shards_100)
+    static let productShards100: LocalizedStringResource = "product_shards_100"
+
+    /// Shards balance format (shards_balance_format)
+    static let shardsBalanceFormat: LocalizedStringResource = "shards_balance_format"
 
     // MARK: - Key Strings (for statusKey parameters)
 

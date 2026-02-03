@@ -101,6 +101,10 @@
 		E6E50E012F12898D0096D2BB /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50E002F12898D0096D2BB /* LocalizedString.swift */; };
 		F744270E89F30AA0AFD83D5A /* CallsignSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */; };
 		F9D30270753ADA4325F4A2FD /* AIGeneratedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C987D042E72C465043FA761 /* AIGeneratedItem.swift */; };
+		STORE005A2F03000000000005 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE001A2F03000000000001 /* StoreKitManager.swift */; };
+		STORE006A2F03000000000006 /* StoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE002A2F03000000000002 /* StoreView.swift */; };
+		STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE003A2F03000000000003 /* SubscriptionCard.swift */; };
+		STORE008A2F03000000000008 /* ProductRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE004A2F03000000000004 /* ProductRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -198,6 +202,10 @@
 		E6E50DDB2F1299070096D2BB /* MockExplorationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExplorationData.swift; sourceTree = "<group>"; };
 		E6E50E002F12898D0096D2BB /* LocalizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		EBA4B57D86AA4709948D4FF9 /* DensityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DensityLevel.swift; sourceTree = "<group>"; };
+		STORE001A2F03000000000001 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
+		STORE002A2F03000000000002 /* StoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreView.swift; sourceTree = "<group>"; };
+		STORE003A2F03000000000003 /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
+		STORE004A2F03000000000004 /* ProductRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -331,6 +339,7 @@
 				E6C00C0E2F28D1C000C6AB01 /* SupabaseService.swift */,
 				C197EF10A33EBA4FDAD5EDC7 /* CommunicationManager.swift */,
 				B09CE99C72797BC0211D7466 /* MessageDistanceFilter.swift */,
+				STORE001A2F03000000000001 /* StoreKitManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -391,6 +400,7 @@
 			children = (
 				E6C00BD32F28CE7F00C6AB01 /* Trade */,
 				E6AFAD822F22BD100058275D /* Building */,
+				STORE009A2F03000000000009 /* Store */,
 				E6AFAD752F22B31B0058275D /* RootView.swift */,
 				E6C38A9E2F12E046001005E9 /* EmptyStateView.swift */,
 				E6E50DA82F12898D0096D2BB /* PlaceholderView.swift */,
@@ -400,6 +410,16 @@
 				0018900ACD06501D2B3FB6E4 /* Tabs */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		STORE009A2F03000000000009 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				STORE002A2F03000000000002 /* StoreView.swift */,
+				STORE003A2F03000000000003 /* SubscriptionCard.swift */,
+				STORE004A2F03000000000004 /* ProductRow.swift */,
+			);
+			path = Store;
 			sourceTree = "<group>";
 		};
 		E6E50DB42F12898D0096D2BB /* EarthLord */ = {
@@ -636,6 +656,10 @@
 				AD0AE0AE9B96B4DD9D657815 /* MessageDistanceFilter.swift in Sources */,
 				75343A821E6D9B9EB1327ADD /* MessageRowView.swift in Sources */,
 				F744270E89F30AA0AFD83D5A /* CallsignSettingsSheet.swift in Sources */,
+				STORE005A2F03000000000005 /* StoreKitManager.swift in Sources */,
+				STORE006A2F03000000000006 /* StoreView.swift in Sources */,
+				STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */,
+				STORE008A2F03000000000008 /* ProductRow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
