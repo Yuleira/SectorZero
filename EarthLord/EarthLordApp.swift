@@ -17,6 +17,8 @@ struct EarthLordApp: App {
     init() {
         // Validate configuration (DEBUG only)
         AppConfig.validateConfiguration()
+        // Start StoreKit 2 transaction listener at launch (for real-device IAP)
+        _ = StoreKitManager.shared
     }
 
     var body: some Scene {

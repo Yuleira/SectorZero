@@ -10,9 +10,10 @@ import SwiftUI
 import StoreKit
 
 struct StoreView: View {
-    @StateObject private var storeManager = StoreKitManager.shared
+    @ObservedObject private var storeManager = StoreKitManager.shared
     @State private var showRestoreAlert = false
     @State private var showPurchaseSuccessAlert = false
+    @State private var showFetchErrorAlert = false
     @State private var restoreMessage: String = ""
 
     var body: some View {
@@ -30,6 +31,21 @@ struct StoreView: View {
             }
             .navigationTitle(Text(LocalizedString.storeTitle))
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        Task {
+                            await storeManager.refreshStore()
+                            if storeManager.errorMessage != nil {
+                                showFetchErrorAlert = true
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(ApocalypseTheme.primary)
+                    }
+                    .disabled(storeManager.isLoading)
+                    .accessibilityLabel(LocalizedString.storeRefresh)
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         Task {
@@ -46,8 +62,13 @@ struct StoreView: View {
                 }
             }
             .task {
-                await storeManager.fetchProducts()
                 await storeManager.loadEntitlementsFromSupabase()
+                if storeManager.products.isEmpty {
+                    await storeManager.fetchProducts()
+                    if storeManager.errorMessage != nil && storeManager.products.isEmpty {
+                        showFetchErrorAlert = true
+                    }
+                }
             }
             .alert(Text(LocalizedString.storePurchaseSuccessful), isPresented: $showPurchaseSuccessAlert) {
                 Button(String(localized: LocalizedString.commonOk), role: .cancel) {}
@@ -56,6 +77,19 @@ struct StoreView: View {
                 Button(String(localized: LocalizedString.commonOk), role: .cancel) {}
             } message: {
                 Text(restoreMessage)
+            }
+            .alert(Text(LocalizedString.commonError), isPresented: $showFetchErrorAlert) {
+                Button(String(localized: LocalizedString.commonOk), role: .cancel) {}
+                Button(String(localized: LocalizedString.storeRefresh), role: .none) {
+                    Task {
+                        await storeManager.refreshStore()
+                        if storeManager.errorMessage != nil {
+                            showFetchErrorAlert = true
+                        }
+                    }
+                }
+            } message: {
+                Text(storeManager.errorMessage ?? String(localized: LocalizedString.storeNetworkError))
             }
         }
     }
@@ -81,13 +115,28 @@ struct StoreView: View {
             Text(LocalizedString.storeNoProducts)
                 .foregroundColor(ApocalypseTheme.textSecondary)
 
+            if let error = storeManager.errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(ApocalypseTheme.danger)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+
             Button {
                 Task {
                     await storeManager.fetchProducts()
                 }
             } label: {
-                Text(LocalizedString.refresh)
-                    .foregroundColor(ApocalypseTheme.primary)
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.clockwise")
+                    Text(LocalizedString.refresh)
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 10)
+                .background(ApocalypseTheme.primary)
+                .cornerRadius(8)
             }
         }
     }
@@ -95,7 +144,7 @@ struct StoreView: View {
     // MARK: - Products List
 
     private var productsList: some View {
-        ScrollView {
+        ScrollView(.vertical, showsIndicators: true) {
             LazyVStack(spacing: 24) {
                 // Current Tier Badge
                 currentTierBadge
@@ -116,7 +165,10 @@ struct StoreView: View {
                 }
             }
             .padding()
+            .padding(.bottom, 120) // Extra bottom padding so last items scroll above tab bar
         }
+        .scrollBounceBehavior(.basedOnSize)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Current Tier Badge

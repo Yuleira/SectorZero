@@ -1183,6 +1183,9 @@ enum LocalizedString {
     /// Premium currency section header (store_premium_currency)
     static let storePremiumCurrency: LocalizedStringResource = "store_premium_currency"
 
+    /// Refresh Store button (store_refresh)
+    static let storeRefresh: LocalizedStringResource = "store_refresh"
+
     /// Restore Purchases button (store_restore_purchases)
     static let storeRestorePurchases: LocalizedStringResource = "store_restore_purchases"
 

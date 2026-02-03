@@ -41,6 +41,7 @@
 		E69FA4382F1CEBB900E53528 /* POIListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4332F1CEBB900E53528 /* POIListView.swift */; };
 		E69FA4392F1CEBB900E53528 /* POIProximityPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4342F1CEBB900E53528 /* POIProximityPopup.swift */; };
 		E69FA43A2F1CEBB900E53528 /* ScavengeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4352F1CEBB900E53528 /* ScavengeResultView.swift */; };
+		E6AA77852F329C610083DE5C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6AA77842F329C610083DE5C /* StoreKit.framework */; };
 		E6AFAD6E2F22ACAC0058275D /* BuildingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */; };
 		E6AFAD702F22ACF50058275D /* BuildingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */; };
 		E6AFAD722F22B2870058275D /* TerritoryMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6AFAD712F22B2870058275D /* TerritoryMapView.swift */; };
@@ -141,6 +142,7 @@
 		E69FA4332F1CEBB900E53528 /* POIListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIListView.swift; sourceTree = "<group>"; };
 		E69FA4342F1CEBB900E53528 /* POIProximityPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POIProximityPopup.swift; sourceTree = "<group>"; };
 		E69FA4352F1CEBB900E53528 /* ScavengeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScavengeResultView.swift; sourceTree = "<group>"; };
+		E6AA77842F329C610083DE5C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		E6AFAD6D2F22ACAC0058275D /* BuildingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingModels.swift; sourceTree = "<group>"; };
 		E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingManager.swift; sourceTree = "<group>"; };
 		E6AFAD712F22B2870058275D /* TerritoryMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryMapView.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 		E6E50DDB2F1299070096D2BB /* MockExplorationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExplorationData.swift; sourceTree = "<group>"; };
 		E6E50E002F12898D0096D2BB /* LocalizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		EBA4B57D86AA4709948D4FF9 /* DensityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DensityLevel.swift; sourceTree = "<group>"; };
+		STORE000A2F03000000000000 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Products.storekit; sourceTree = "<group>"; };
 		STORE001A2F03000000000001 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		STORE002A2F03000000000002 /* StoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreView.swift; sourceTree = "<group>"; };
 		STORE003A2F03000000000003 /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
@@ -211,8 +214,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E6422F2E2F22422F00610E97 /* Docs */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Docs;
 			sourceTree = "<group>";
 		};
@@ -226,6 +227,7 @@
 				E605D1022F030AA3003D9861 /* GoogleSignInSwift in Frameworks */,
 				E60C1BC52EFEABE3005E0B24 /* Supabase in Frameworks */,
 				E605D1002F030AA3003D9861 /* GoogleSignIn in Frameworks */,
+				E6AA77852F329C610083DE5C /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,7 +239,6 @@
 			children = (
 				8D4783E3E71E6AFA46A31FA8 /* CommunicationTabView.swift */,
 			);
-			name = Tabs;
 			path = Tabs;
 			sourceTree = "<group>";
 		};
@@ -252,11 +253,21 @@
 		E62B8A5D2EFABFFF00FFC7A0 = {
 			isa = PBXGroup;
 			children = (
+				STORE000A2F03000000000000 /* Products.storekit */,
 				E66247742F250BC70094BEBF /* Localizable.xcstrings */,
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
 				E6422F2E2F22422F00610E97 /* Docs */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
+				E6AA77832F329C610083DE5C /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		E6AA77832F329C610083DE5C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E6AA77842F329C610083DE5C /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		E6AFAD822F22BD100058275D /* Building */ = {
@@ -412,16 +423,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		STORE009A2F03000000000009 /* Store */ = {
-			isa = PBXGroup;
-			children = (
-				STORE002A2F03000000000002 /* StoreView.swift */,
-				STORE003A2F03000000000003 /* SubscriptionCard.swift */,
-				STORE004A2F03000000000004 /* ProductRow.swift */,
-			);
-			path = Store;
-			sourceTree = "<group>";
-		};
 		E6E50DB42F12898D0096D2BB /* EarthLord */ = {
 			isa = PBXGroup;
 			children = (
@@ -479,8 +480,17 @@
 				0FD5BA2B77298E792E230915 /* MessageRowView.swift */,
 				2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */,
 			);
-			name = Communication;
 			path = Communication;
+			sourceTree = "<group>";
+		};
+		STORE009A2F03000000000009 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				STORE002A2F03000000000002 /* StoreView.swift */,
+				STORE003A2F03000000000003 /* SubscriptionCard.swift */,
+				STORE004A2F03000000000004 /* ProductRow.swift */,
+			);
+			path = Store;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

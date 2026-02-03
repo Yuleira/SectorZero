@@ -131,6 +131,19 @@ final class StoreKitManager: ObservableObject {
     private init() {
         print("💰 [StoreKit] Initializing StoreKitManager...")
         startTransactionListener()
+        Task { await logEnvironment() }
+    }
+
+    /// Log current StoreKit environment (Xcode local vs Sandbox) for real-device debugging
+    private func logEnvironment() async {
+        var env: String = "unknown (no transactions yet)"
+        for await result in Transaction.all {
+            if case .verified(let t) = result {
+                env = t.environment.rawValue
+                break
+            }
+        }
+        print("🛒 [StoreKit] Current environment is: \(env)")
     }
 
     deinit {
@@ -167,14 +180,31 @@ final class StoreKitManager: ObservableObject {
 
     /// Fetch all products from the App Store
     func fetchProducts() async {
-        guard !isLoading else { return }
+        guard !isLoading else {
+            print("🛒 [StoreKit] fetchProducts skipped — already loading")
+            return
+        }
 
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
 
+        let requestedIDs = StoreProductID.allProductIDs
+        print("🛒 [StoreKit] Requesting \(requestedIDs.count) product IDs: \(requestedIDs)")
+
         do {
-            let fetchedProducts = try await Product.products(for: StoreProductID.allProductIDs)
+            let fetchedProducts = try await Product.products(for: requestedIDs)
+
+            // ✅ CRITICAL DIAGNOSTIC LOG
+            print("🛒 [StoreKit] Fetched \(fetchedProducts.count) products")
+
+            if fetchedProducts.isEmpty {
+                print("🛒 [StoreKit] ⚠️ 0 products returned. Ensure Products.storekit is set in Scheme > Run > Options > StoreKit Configuration")
+            }
+
+            for p in fetchedProducts {
+                print("🛒 [StoreKit]   → \(p.id) | \(p.displayName) | \(p.displayPrice) | type=\(p.type)")
+            }
 
             // Store all products sorted by price
             products = fetchedProducts.sorted { $0.price < $1.price }
@@ -190,17 +220,36 @@ final class StoreKitManager: ObservableObject {
             consumableProducts = fetchedProducts
                 .filter { $0.type == .consumable }
 
-            print("💰 [StoreKit] Loaded \(products.count) products:")
-            print("   - Subscriptions: \(subscriptionProducts.count)")
-            print("   - Non-consumables: \(nonConsumableProducts.count)")
-            print("   - Consumables: \(consumableProducts.count)")
+            print("🛒 [StoreKit] Categorized — Subs: \(subscriptionProducts.count), NonConsumable: \(nonConsumableProducts.count), Consumable: \(consumableProducts.count)")
 
             // Update current entitlements
             await updatePurchasedProducts()
 
         } catch {
             errorMessage = error.localizedDescription
-            print("💰 [StoreKit] Error fetching products: \(error)")
+            print("🛒 [StoreKit] ❌ Error fetching products: \(error)")
+        }
+    }
+
+    // MARK: - Refresh Store
+
+    /// Manual refresh: sync with App Store and refetch products. Use when real device has cached state.
+    func refreshStore() async {
+        guard !isLoading else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            try await AppStore.sync()
+            print("🛒 [StoreKit] AppStore.sync completed")
+            await updatePurchasedProducts()
+            isLoading = false
+            await fetchProducts()
+        } catch {
+            isLoading = false
+            errorMessage = error.localizedDescription
+            print("🛒 [StoreKit] Refresh error: \(error)")
         }
     }
 
