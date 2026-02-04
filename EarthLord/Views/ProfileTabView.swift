@@ -113,6 +113,13 @@ struct ProfileTabView: View {
                         .fill(tierColor(for: storeKitManager.currentMembershipTier))
                 )
 
+            if storeKitManager.currentMembershipTier != .free,
+               let text = storeKitManager.formattedExpirationDate {
+                Text(text)
+                    .font(.caption2)
+                    .foregroundColor(ApocalypseTheme.textSecondary)
+            }
+
             // Summary Stats Row
             summaryStatsRow
 
@@ -206,9 +213,9 @@ struct ProfileTabView: View {
                 )
             }
 
-            // View Subscription
+            // View Subscription → Store subscriptions section only
             NavigationLink {
-                StoreView()
+                StoreView(initialSection: .subscriptions)
             } label: {
                 actionButtonLabel(
                     icon: "star.fill",
@@ -221,13 +228,13 @@ struct ProfileTabView: View {
                 )
             }
 
-            // Buy Resource Pack
+            // Buy Resource → Store items section only
             NavigationLink {
-                StoreView()
+                StoreView(initialSection: .items)
             } label: {
                 actionButtonLabel(
                     icon: "cart.fill",
-                    title: LocalizedString.profileBuyResourcePack,
+                    title: LocalizedString.profileBuyResource,
                     background: AnyShapeStyle(LinearGradient(
                         colors: [.green, .cyan],
                         startPoint: .leading,
@@ -239,15 +246,18 @@ struct ProfileTabView: View {
     }
 
     private func actionButtonLabel(icon: String, title: LocalizedStringResource, background: AnyShapeStyle) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             Image(systemName: icon)
+                .font(.subheadline.bold())
             Text(title)
                 .lineLimit(1)
+                .minimumScaleFactor(0.85)
         }
         .font(.subheadline.bold())
         .foregroundColor(.white)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
+        .padding(.horizontal, 8)
         .background(background)
         .cornerRadius(12)
     }

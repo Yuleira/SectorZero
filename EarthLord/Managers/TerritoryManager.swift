@@ -104,6 +104,20 @@ final class TerritoryManager: ObservableObject {
             throw TerritoryError.notAuthenticated
         }
 
+        // Entitlement: territory limit by membership tier (Pioneer/Archon get higher limits)
+        let maxAllowed = StoreKitManager.shared.currentMembershipTier.maxTerritories
+        struct TerritoryIdRow: Decodable { let id: String }
+        let existing: [TerritoryIdRow] = try await supabase
+            .from("territories")
+            .select("id")
+            .eq("user_id", value: userId.uuidString)
+            .eq("is_active", value: true)
+            .execute()
+            .value
+        if existing.count >= maxAllowed {
+            throw TerritoryError.territoryLimitReached(maxAllowed)
+        }
+
         // 转换数据格式
         let pathJSON = coordinatesToPathJSON(coordinates)
         let wktPolygon = coordinatesToWKT(coordinates)
@@ -532,6 +546,7 @@ enum TerritoryError: LocalizedError {
     case invalidCoordinates
     case uploadFailed(String)
     case loadFailed(String)
+    case territoryLimitReached(Int)
 
     var errorDescription: String? {
         switch self {
@@ -543,6 +558,8 @@ enum TerritoryError: LocalizedError {
             return String(format: NSLocalizedString("error_upload_failed_format", comment: ""), message)
         case .loadFailed(let message):
             return String(format: NSLocalizedString("error_load_failed_format", comment: ""), message)
+        case .territoryLimitReached(let max):
+            return String(format: NSLocalizedString("error_territory_limit_reached_format", comment: ""), max)
         }
     }
 }

@@ -42,19 +42,13 @@ struct MainTabView: View {
                 }
                 .tag(3)
 
-            StoreView()
-                .tabItem {
-                    Image(systemName: "bag.fill")
-                    Text(LocalizedString.tabStore)
-                }
-                .tag(4)
-
+            // Personal: direct entry to Survivor Profile dashboard (no intermediate More list)
             ProfileTabView()
                 .tabItem {
-                    Image(systemName: "person.fill")
-                    Text(LocalizedString.tabProfile)
+                    Image(systemName: "person.circle.fill")
+                    Text(LocalizedString.tabPersonal)
                 }
-                .tag(5)
+                .tag(4)
 
         }
         .tint(ApocalypseTheme.primary)

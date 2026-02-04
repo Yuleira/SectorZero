@@ -56,6 +56,9 @@ enum LocalizedString {
     /// 用法: String(format: String(localized: LocalizedString.territoryPointsFormat), count)
     static let territoryPointsFormat: LocalizedStringResource = "territory_points_format"
 
+    /// Territory limit reached format (error_territory_limit_reached_format)
+    static let errorTerritoryLimitReachedFormat: LocalizedStringResource = "error_territory_limit_reached_format"
+
     // MARK: - Building (28 keys)
 
     /// 建造按钮 (building_build)
@@ -435,6 +438,9 @@ enum LocalizedString {
     /// 购买资源包 (profile_buy_resource_pack)
     static let profileBuyResourcePack: LocalizedStringResource = "profile_buy_resource_pack"
 
+    /// 购买资源 — 仪表盘按钮短文案 (profile_buy_resource)
+    static let profileBuyResource: LocalizedStringResource = "profile_buy_resource"
+
     /// 统计 (profile_statistics)
     static let profileStatistics: LocalizedStringResource = "profile_statistics"
 
@@ -533,6 +539,9 @@ enum LocalizedString {
 
     /// 个人 (tab_profile)
     static let tabProfile: LocalizedStringResource = "tab_profile"
+
+    /// 个人仪表盘 (tab_personal) — Personal dashboard tab label
+    static let tabPersonal: LocalizedStringResource = "tab_personal"
 
     /// 商店 (tab_store)
     static let tabStore: LocalizedStringResource = "tab_store"
@@ -869,6 +878,9 @@ enum LocalizedString {
 
     /// 设备未解锁 (device_not_unlocked)
     static let deviceNotUnlocked: LocalizedStringResource = "device_not_unlocked"
+
+    /// Satellite requires Archon tier (device_requires_archon_tier)
+    static let deviceRequiresArchonTier: LocalizedStringResource = "device_requires_archon_tier"
 
     /// 设备管理 (device_management)
     static let deviceManagement: LocalizedStringResource = "device_management"
@@ -1315,6 +1327,18 @@ enum LocalizedString {
 
     /// Restore completed message (store_restore_completed)
     static let storeRestoreCompleted: LocalizedStringResource = "store_restore_completed"
+
+    /// Subscription renewal date format (subscription_renews_on)
+    static let subscriptionRenewsOn: LocalizedStringResource = "subscription_renews_on"
+
+    /// Subscription expired label (subscription_expired)
+    static let subscriptionExpired: LocalizedStringResource = "subscription_expired"
+
+    /// Subscription expires in N days format (subscription_expires_in_days_format)
+    static let subscriptionExpiresInDaysFormat: LocalizedStringResource = "subscription_expires_in_days_format"
+
+    /// Manage subscription button (manage_subscription)
+    static let manageSubscription: LocalizedStringResource = "manage_subscription"
 
     // MARK: - Subscription Tier Names (4 keys)
 

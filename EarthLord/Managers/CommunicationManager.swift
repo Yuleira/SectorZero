@@ -107,6 +107,14 @@ final class CommunicationManager: ObservableObject {
             return
         }
 
+        // Tier gate: satellite requires Archon subscription
+        if deviceType == .satellite {
+            guard StoreKitManager.shared.currentMembershipTier >= .archon else {
+                errorMessage = String(localized: LocalizedString.deviceRequiresArchonTier)
+                return
+            }
+        }
+
         if device.isCurrent { return }
 
         isLoading = true

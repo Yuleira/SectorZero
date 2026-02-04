@@ -9,7 +9,17 @@
 import SwiftUI
 import StoreKit
 
+/// When set, store opens focused on that section (e.g. from Profile "View Subscription" / "Buy Resource").
+enum StoreInitialSection {
+    case all
+    case subscriptions
+    case items
+}
+
 struct StoreView: View {
+    /// If set, only the corresponding section is shown (for deep link from Profile).
+    var initialSection: StoreInitialSection = .all
+
     @ObservedObject private var storeManager = StoreKitManager.shared
     @State private var showRestoreAlert = false
     @State private var showPurchaseSuccessAlert = false
@@ -63,6 +73,7 @@ struct StoreView: View {
             }
             .task {
                 await storeManager.loadEntitlementsFromSupabase()
+                await storeManager.updateSubscriptionStatus()
                 if storeManager.products.isEmpty {
                     await storeManager.fetchProducts()
                     if storeManager.errorMessage != nil && storeManager.products.isEmpty {
@@ -146,21 +157,27 @@ struct StoreView: View {
     private var productsList: some View {
         ScrollView(.vertical, showsIndicators: true) {
             LazyVStack(spacing: 24) {
-                // Current Tier Badge
-                currentTierBadge
-
-                // Subscriptions Section
-                if !storeManager.subscriptionProducts.isEmpty {
-                    subscriptionsSection
+                // Current Tier Badge (show when focused on subscriptions or all)
+                if initialSection == .all || initialSection == .subscriptions {
+                    currentTierBadge
                 }
 
-                // Non-Consumables Section
-                if !storeManager.nonConsumableProducts.isEmpty {
-                    itemsSection
+                // Subscriptions Section (only when showing all or subscriptions)
+                if initialSection == .all || initialSection == .subscriptions {
+                    if !storeManager.subscriptionProducts.isEmpty {
+                        subscriptionsSection
+                    }
                 }
 
-                // Consumables Section
-                if !storeManager.consumableProducts.isEmpty {
+                // Non-Consumables (Items) Section (only when showing all or items)
+                if initialSection == .all || initialSection == .items {
+                    if !storeManager.nonConsumableProducts.isEmpty {
+                        itemsSection
+                    }
+                }
+
+                // Consumables Section (only when showing all)
+                if initialSection == .all && !storeManager.consumableProducts.isEmpty {
                     currencySection
                 }
             }
@@ -186,6 +203,12 @@ struct StoreView: View {
                 Text(storeManager.currentMembershipTier.displayName)
                     .font(.headline)
                     .foregroundColor(ApocalypseTheme.textPrimary)
+                if storeManager.currentMembershipTier != .free,
+                   let text = storeManager.formattedExpirationDate {
+                    Text(text)
+                        .font(.caption2)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                }
             }
 
             Spacer()

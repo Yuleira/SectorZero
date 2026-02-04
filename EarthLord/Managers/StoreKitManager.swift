@@ -56,6 +56,15 @@ enum MembershipTier: Int, Comparable {
         case .archon: return LocalizedString.tierArchon
         }
     }
+
+    var maxTerritories: Int {
+        switch self {
+        case .free: return 3
+        case .scavenger: return 5
+        case .pioneer: return 10
+        case .archon: return 25
+        }
+    }
 }
 
 // MARK: - Store Errors
@@ -109,6 +118,9 @@ final class StoreKitManager: ObservableObject {
 
     /// Current membership tier
     @Published private(set) var currentMembershipTier: MembershipTier = .free
+
+    /// Subscription expiration/renewal date
+    @Published private(set) var subscriptionExpirationDate: Date?
 
     /// Aether Shards balance (consumable currency)
     @Published private(set) var shardsBalance: Int = 0
@@ -169,6 +181,8 @@ final class StoreKitManager: ObservableObject {
         case .verified(let transaction):
             print("💰 [StoreKit] Transaction update verified: \(transaction.productID)")
             await processTransaction(transaction)
+            await updatePurchasedProducts()      // recalculate tier (handles downgrade)
+            await syncEntitlementsWithSupabase()  // sync recalculated state
             await transaction.finish()
 
         case .unverified(let transaction, let error):
@@ -222,8 +236,10 @@ final class StoreKitManager: ObservableObject {
 
             print("🛒 [StoreKit] Categorized — Subs: \(subscriptionProducts.count), NonConsumable: \(nonConsumableProducts.count), Consumable: \(consumableProducts.count)")
 
-            // Update current entitlements
+            // Update current entitlements (handles expiry/downgrade)
             await updatePurchasedProducts()
+            // Sync to Supabase when tier may have changed (e.g. empty entitlements → tier 0)
+            await syncEntitlementsWithSupabase()
 
         } catch {
             errorMessage = error.localizedDescription
@@ -378,10 +394,19 @@ final class StoreKitManager: ObservableObject {
         }
     }
 
+    /// Recompute subscription status from Transaction.currentEntitlements and sync to Supabase.
+    /// Call on launch or when entitlements may have changed (e.g. after expiry, refund).
+    /// If currentEntitlements is empty, tier is set to .free and membership_tier 0 is synced.
+    func updateSubscriptionStatus() async {
+        await updatePurchasedProducts()
+        await syncEntitlementsWithSupabase()
+    }
+
     /// Update the set of purchased products from current entitlements
     private func updatePurchasedProducts() async {
         var purchased: Set<String> = []
         var highestTier: MembershipTier = .free
+        var expirationDate: Date? = nil
 
         // Iterate through all current entitlements
         for await result in Transaction.currentEntitlements {
@@ -392,6 +417,7 @@ final class StoreKitManager: ObservableObject {
             // Track highest subscription tier
             if let tier = membershipTier(for: transaction.productID), tier > highestTier {
                 highestTier = tier
+                expirationDate = transaction.expirationDate
             }
 
             // Track permanent unlocks
@@ -404,6 +430,7 @@ final class StoreKitManager: ObservableObject {
 
         purchasedProductIDs = purchased
         currentMembershipTier = highestTier
+        subscriptionExpirationDate = expirationDate
 
         print("💰 [StoreKit] Updated entitlements: \(purchased.count) items, tier: \(highestTier)")
     }
@@ -509,6 +536,22 @@ final class StoreKitManager: ObservableObject {
     /// Get product by ID
     func product(for id: StoreProductID) -> Product? {
         products.first { $0.id == id.rawValue }
+    }
+
+    /// Human-readable subscription date: "Renews on Feb 28" or "Expires in 5 days" / "Subscription Expired"
+    var formattedExpirationDate: String? {
+        guard let date = subscriptionExpirationDate else { return nil }
+        let now = Date()
+        if date <= now {
+            return String(localized: LocalizedString.subscriptionExpired)
+        }
+        let calendar = Calendar.current
+        let days = calendar.dateComponents([.day], from: now, to: date).day ?? 0
+        if days <= 7 {
+            return String(format: String(localized: LocalizedString.subscriptionExpiresInDaysFormat), days)
+        }
+        return String(format: String(localized: LocalizedString.subscriptionRenewsOn),
+                      date.formatted(date: .abbreviated, time: .omitted))
     }
 
     // MARK: - Debug Helpers

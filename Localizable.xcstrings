@@ -10398,6 +10398,23 @@
         }
       }
     },
+    "tab_personal" : {
+      "comment" : "Personal dashboard tab label (bottom-right tab)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "个人"
+          }
+        }
+      }
+    },
     "tab_resources" : {
       "comment" : "Resources tab label",
       "localizations" : {
@@ -13734,6 +13751,23 @@
         }
       }
     },
+    "profile_buy_resource" : {
+      "comment" : "Dashboard button: Buy Resource (short label)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buy Resource"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "购买资源"
+          }
+        }
+      }
+    },
     "profile_statistics" : {
       "comment" : "Statistics dashboard tab",
       "localizations" : {
@@ -13951,6 +13985,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "敬请期待"
+          }
+        }
+      }
+    },
+    "subscription_renews_on" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renews on %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "续订日期: %@"
+          }
+        }
+      }
+    },
+    "subscription_expired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription Expired"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅已过期"
+          }
+        }
+      }
+    },
+    "subscription_expires_in_days_format" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expires in %d days"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "剩余 %d 天"
+          }
+        }
+      }
+    },
+    "manage_subscription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Subscription"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理订阅"
+          }
+        }
+      }
+    },
+    "device_requires_archon_tier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satellite requires Archon subscription"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "卫星通讯需要执政官订阅等级"
+          }
+        }
+      }
+    },
+    "error_territory_limit_reached_format" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Territory limit reached (max %lld). Upgrade your subscription for more."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "领地数量已达上限（最多 %lld 个），升级订阅可解锁更多。"
           }
         }
       }
