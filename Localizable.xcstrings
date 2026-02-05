@@ -14090,6 +14090,244 @@
           }
         }
       }
+    },
+    "onboarding_title_protocol" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tactical Initiation"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "战术启动协议"
+          }
+        }
+      }
+    },
+    "onboarding_desc_protocol" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to SectorZero. Civilization has collapsed. You are one of the few survivors. Walk the real world to claim territory, scavenge resources, and rebuild."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎来到零号扇区。文明已经崩塌，你是少数幸存者之一。在现实世界中行走，占领领地、拾荒资源、重建家园。"
+          }
+        }
+      }
+    },
+    "onboarding_title_claiming" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Territory Claiming"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "领地宣告"
+          }
+        }
+      }
+    },
+    "onboarding_desc_claiming" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk outdoors to draw your territory boundaries using GPS. The land you walk becomes yours. Build structures to defend and develop your domain."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在户外行走，利用 GPS 描绘领地边界。你走过的土地将归你所有。建造设施来防御和发展你的领地。"
+          }
+        }
+      }
+    },
+    "onboarding_title_scavenging" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resource Scavenging"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "资源拾荒"
+          }
+        }
+      }
+    },
+    "onboarding_desc_scavenging" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore real-world locations to discover supply caches. Every point of interest is a potential goldmine. Collect water, food, medical supplies, and rare materials."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索现实世界中的地点来发现物资缓存。每一个兴趣点都可能是宝藏。收集水源、食物、医疗用品和稀有材料。"
+          }
+        }
+      }
+    },
+    "onboarding_title_comms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Survivor Comms"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幸存者通讯"
+          }
+        }
+      }
+    },
+    "onboarding_desc_comms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use radios and devices to communicate with nearby survivors. Upgrade your equipment to extend range. Form alliances through channels and coordinate survival."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用无线电和通讯设备与附近的幸存者联络。升级装备以扩展通讯范围。通过频道组建联盟，协调生存策略。"
+          }
+        }
+      }
+    },
+    "onboarding_title_economy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade & Economy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "贸易与经济"
+          }
+        }
+      }
+    },
+    "onboarding_desc_economy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No one survives alone. Trade resources with other survivors in the marketplace. Build your reputation and become the most powerful faction in the wasteland."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有人能独自生存。在交易市场与其他幸存者交换资源。建立你的声望，成为废土上最强大的势力。"
+          }
+        }
+      }
+    },
+    "onboarding_skip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跳过"
+          }
+        }
+      }
+    },
+    "onboarding_start_journey" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Begin Survival"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始生存"
+          }
+        }
+      }
+    },
+    "onboarding_manual" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operations Manual"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作手册"
+          }
+        }
+      }
+    },
+    "onboarding_headline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TACTICAL INITIATION PROTOCOL"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "战术启动协议"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

@@ -39,7 +39,10 @@ struct EarthLordApp: App {
 struct ContentView: View {
     /// Authentication manager - observe auth state changes
     @ObservedObject private var authManager = AuthManager.shared
-    
+
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showOnboarding = false
+
     var body: some View {
         Group {
             if authManager.isAuthenticated {
@@ -51,6 +54,14 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
+        .onChange(of: authManager.isAuthenticated) { _, isAuth in
+            if isAuth && !hasCompletedOnboarding {
+                showOnboarding = true
+            }
+        }
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView(isPresented: $showOnboarding)
+        }
         #if DEBUG
         .onAppear {
             print("🏠 [ContentView] Locale: \(LanguageManager.shared.currentLocale.identifier)")

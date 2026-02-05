@@ -1400,6 +1400,50 @@ enum LocalizedString {
     /// Shards balance format (shards_balance_format)
     static let shardsBalanceFormat: LocalizedStringResource = "shards_balance_format"
 
+    // MARK: - Onboarding (14 keys)
+
+    /// Onboarding slide 1 title: Protocol (onboarding_title_protocol)
+    static let onboardingTitleProtocol: LocalizedStringResource = "onboarding_title_protocol"
+
+    /// Onboarding slide 1 description (onboarding_desc_protocol)
+    static let onboardingDescProtocol: LocalizedStringResource = "onboarding_desc_protocol"
+
+    /// Onboarding slide 2 title: Claiming (onboarding_title_claiming)
+    static let onboardingTitleClaiming: LocalizedStringResource = "onboarding_title_claiming"
+
+    /// Onboarding slide 2 description (onboarding_desc_claiming)
+    static let onboardingDescClaiming: LocalizedStringResource = "onboarding_desc_claiming"
+
+    /// Onboarding slide 3 title: Scavenging (onboarding_title_scavenging)
+    static let onboardingTitleScavenging: LocalizedStringResource = "onboarding_title_scavenging"
+
+    /// Onboarding slide 3 description (onboarding_desc_scavenging)
+    static let onboardingDescScavenging: LocalizedStringResource = "onboarding_desc_scavenging"
+
+    /// Onboarding slide 4 title: Comms (onboarding_title_comms)
+    static let onboardingTitleComms: LocalizedStringResource = "onboarding_title_comms"
+
+    /// Onboarding slide 4 description (onboarding_desc_comms)
+    static let onboardingDescComms: LocalizedStringResource = "onboarding_desc_comms"
+
+    /// Onboarding slide 5 title: Economy (onboarding_title_economy)
+    static let onboardingTitleEconomy: LocalizedStringResource = "onboarding_title_economy"
+
+    /// Onboarding slide 5 description (onboarding_desc_economy)
+    static let onboardingDescEconomy: LocalizedStringResource = "onboarding_desc_economy"
+
+    /// Skip button (onboarding_skip)
+    static let onboardingSkip: LocalizedStringResource = "onboarding_skip"
+
+    /// Start Journey button (onboarding_start_journey)
+    static let onboardingStartJourney: LocalizedStringResource = "onboarding_start_journey"
+
+    /// Manual / Operations Manual settings row (onboarding_manual)
+    static let onboardingManual: LocalizedStringResource = "onboarding_manual"
+
+    /// Onboarding main headline (onboarding_headline)
+    static let onboardingHeadline: LocalizedStringResource = "onboarding_headline"
+
     // MARK: - Key Strings (for statusKey parameters)
 
     /// 仅需 key 字符串（如 statusKey）时使用

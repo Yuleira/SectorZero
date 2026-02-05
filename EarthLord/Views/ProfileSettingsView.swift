@@ -18,6 +18,7 @@ struct ProfileSettingsView: View {
     @State private var showDeleteAccountSheet = false
     @State private var showDeleteError = false
     @State private var deleteErrorMessage = ""
+    @State private var showOnboarding = false
 
     var body: some View {
         ScrollView {
@@ -59,6 +60,20 @@ struct ProfileSettingsView: View {
                         settingsRow(
                             icon: "hand.raised.fill",
                             title: LocalizedString.profilePrivacyPolicy,
+                            trailingText: nil
+                        )
+                    }
+
+                    Divider()
+                        .background(ApocalypseTheme.textMuted.opacity(0.3))
+
+                    // 操作手册 (re-watch onboarding)
+                    Button {
+                        showOnboarding = true
+                    } label: {
+                        settingsRow(
+                            icon: "book.fill",
+                            title: LocalizedString.onboardingManual,
                             trailingText: nil
                         )
                     }
@@ -141,6 +156,9 @@ struct ProfileSettingsView: View {
             Button(LocalizedString.commonOk, role: .cancel) { }
         } message: {
             Text(deleteErrorMessage)
+        }
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView(isPresented: $showOnboarding)
         }
     }
 
