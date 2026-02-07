@@ -291,18 +291,18 @@
       }
     },
     "auth_app_slogan" : {
-      "comment" : "App slogan",
+      "comment" : "App slogan shown below title on auth screen",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Measure the world with your steps, conquer the Earth with your territories"
+            "value" : "Build your territory in the wasteland"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用脚步丈量世界，用领地征服地球"
+            "value" : "在废土之上，建立你的领地"
           }
         }
       }
@@ -313,13 +313,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Earth Lord"
+            "value" : "SectorZero"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "地球新主"
+            "value" : "零号扇区"
           }
         }
       }
@@ -7030,13 +7030,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Earth Lord needs your location to show your coordinates in the post-apocalyptic world. Please enable location access in Settings."
+            "value" : "SectorZero needs your location to show your coordinates in the post-apocalyptic world. Please enable location access in Settings."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "《地球新主》需要获取您的位置才能显示您在末日世界中的坐标。请在设置中开启定位权限。"
+            "value" : "《零号扇区》需要获取您的位置才能显示您在末日世界中的坐标。请在设置中开启定位权限。"
           }
         }
       }

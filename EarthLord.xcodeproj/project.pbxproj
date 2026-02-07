@@ -111,6 +111,7 @@
 		STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE003A2F03000000000003 /* SubscriptionCard.swift */; };
 		STORE008A2F03000000000008 /* ProductRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE004A2F03000000000004 /* ProductRow.swift */; };
 		STORE010A2F03000000000010 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE011A2F03000000000011 /* VaultView.swift */; };
+		INFOP001A2F04000000000001 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = INFOP002A2F04000000000002 /* InfoPlist.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -144,6 +145,7 @@
 		E62484FC2F152D66001B6ABC /* RewardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardGenerator.swift; sourceTree = "<group>"; };
 		E632AFC02F12BECD0098D5EC /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E66247742F250BC70094BEBF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		INFOP002A2F04000000000002 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		E68C12DA2F1A5983008967AA /* AIDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDebugView.swift; sourceTree = "<group>"; };
 		E69FA4312F1CEBB900E53528 /* BackpackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackpackView.swift; sourceTree = "<group>"; };
 		E69FA4322F1CEBB900E53528 /* ExplorationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationResultView.swift; sourceTree = "<group>"; };
@@ -457,6 +459,7 @@
 				E6E50DB02F12898D0096D2BB /* EarthLord.entitlements */,
 				E6E50DB12F12898D0096D2BB /* EarthLordApp.swift */,
 				E6E50DB22F12898D0096D2BB /* Info.plist */,
+				INFOP002A2F04000000000002 /* InfoPlist.xcstrings */,
 			);
 			path = EarthLord;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 			files = (
 				E6A35D472F353B2800542D38 /* splash_intro.mp4 in Resources */,
 				E66247752F250BC70094BEBF /* Localizable.xcstrings in Resources */,
+				INFOP001A2F04000000000001 /* InfoPlist.xcstrings in Resources */,
 				E61D7CB42F23A0730088DCB4 /* building_templates.json in Resources */,
 				E6E50DD32F12898D0096D2BB /* Assets.xcassets in Resources */,
 			);
@@ -831,7 +835,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EarthLord/Info.plist;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "《地球新主》需要获取您的位置来显示您在末日世界中的坐标，帮助您探索和圈定领地。";
+				INFOPLIST_KEY_CFBundleDisplayName = SectorZero;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "SectorZero requires your location to display your coordinates in the wasteland and help you explore and establish resonance zones.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -866,7 +871,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EarthLord/Info.plist;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "《地球新主》需要获取您的位置来显示您在末日世界中的坐标，帮助您探索和圈定领地。";
+				INFOPLIST_KEY_CFBundleDisplayName = SectorZero;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "SectorZero requires your location to display your coordinates in the wasteland and help you explore and establish resonance zones.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

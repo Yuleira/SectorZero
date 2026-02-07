@@ -47,104 +47,126 @@ struct AuthView: View {
     @State private var showToast = false
     @State private var toastMessage = ""
 
+    // Antenna pulse
+    @State private var antennaPulse = false
+
     var body: some View {
-        ZStack {
-            // 背景渐变
-            backgroundGradient
+        GeometryReader { geo in
+            ZStack {
+                // Layer 1: Background artwork (pinned to screen size)
+                Image("login_bg_artwork")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+                    .ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: 32) {
-                    Spacer().frame(height: 40)
+                // Layer 2: Gradient overlay for readability
+                LinearGradient(
+                    colors: [
+                        Color.black.opacity(0.7),
+                        Color.black.opacity(0.4),
+                        Color.black.opacity(0.8)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
 
-                    // Logo 和标题
-                    headerView
+                // Layer 3: Scrollable content
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 32) {
+                        Spacer().frame(height: 60)
 
-                    // Tab 切换
-                    tabSelector
+                        // Header: icon + title + subtitle
+                        headerView
 
-                    // 内容区域
-                    if selectedTab == 0 {
-                        loginView
-                    } else {
-                        registerView
+                        // Glassmorphism form card
+                        VStack(spacing: 16) {
+                            tabSelector
+
+                            if selectedTab == 0 {
+                                loginView
+                            } else {
+                                registerView
+                            }
+                        }
+                        .padding(20)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
+
+                        // Social sign-in
+                        dividerView
+                        thirdPartyLoginView
+
+                        Spacer().frame(height: 50)
                     }
-
-                    // 分隔线
-                    dividerView
-
-                    // 第三方登录
-                    thirdPartyLoginView
-
-                    Spacer().frame(height: 40)
+                    .padding(.horizontal, 28)
                 }
-                .padding(.horizontal, 24)
-            }
 
-            // Toast 提示
-            if showToast {
-                toastView
+                // Toast overlay
+                if showToast {
+                    toastView
+                }
             }
         }
+        .ignoresSafeArea(.keyboard)
         .sheet(isPresented: $showForgotPassword) {
             forgotPasswordSheet
         }
         .onChange(of: authManager.otpVerified) { _, newValue in
-            // 注册流程：OTP验证成功后自动进入第三步
             if newValue && authManager.needsPasswordSetup {
-                // 状态已经由 AuthManager 处理，UI 会自动更新
+                // State handled by AuthManager, UI auto-updates
             }
         }
     }
 
-    // MARK: - 背景渐变
-    private var backgroundGradient: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.05, green: 0.05, blue: 0.08),
-                Color(red: 0.10, green: 0.08, blue: 0.12),
-                Color(red: 0.08, green: 0.06, blue: 0.10)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
-    }
+    // MARK: - Header (Icon + Title + Subtitle)
 
-    // MARK: - 头部视图
     private var headerView: some View {
         VStack(spacing: 16) {
-            // Logo
-            Image(systemName: "globe.asia.australia.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [ApocalypseTheme.primary, ApocalypseTheme.primaryDark],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .shadow(color: ApocalypseTheme.primary.opacity(0.5), radius: 20)
+            // Hardcore antenna icon with glow + pulse
+            Image(systemName: "antenna.radiowaves.left.and.right")
+                .symbolRenderingMode(.hierarchical)
+                .font(.system(size: 64, weight: .thin))
+                .foregroundColor(ApocalypseTheme.primary)
+                .scaleEffect(antennaPulse ? 1.08 : 1.0)
+                .opacity(antennaPulse ? 1.0 : 0.8)
+                .shadow(color: ApocalypseTheme.primary.opacity(antennaPulse ? 0.7 : 0.4), radius: antennaPulse ? 30 : 20, x: 0, y: 0)
+                .shadow(color: ApocalypseTheme.primary.opacity(0.25), radius: 50, x: 0, y: 0)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
+                        antennaPulse = true
+                    }
+                }
 
+            // Title — bold, tight tracking
             Text("auth_app_title")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(ApocalypseTheme.textPrimary)
+                .font(.system(size: 36, weight: .bold))
+                .foregroundColor(.white)
+                .tracking(-1)
 
+            // Subtitle
             Text("auth_app_slogan")
-                .font(.subheadline)
-                .foregroundColor(ApocalypseTheme.textSecondary)
+                .font(.system(size: 14, weight: .regular))
+                .foregroundColor(Color.white.opacity(0.55))
+                .tracking(1)
         }
+        .padding(.bottom, 4)
     }
 
-    // MARK: - Tab 选择器
+    // MARK: - Tab Selector
     private var tabSelector: some View {
         HStack(spacing: 0) {
             tabButton(title: "auth_login", index: 0)
             tabButton(title: "auth_register", index: 1)
         }
-        .background(ApocalypseTheme.cardBackground)
+        .background(Color.white.opacity(0.08))
         .cornerRadius(12)
-        .padding(.horizontal, 40)
     }
 
     private func tabButton(title: LocalizedStringKey, index: Int) -> some View {
@@ -576,132 +598,83 @@ struct AuthView: View {
         }
     }
 
-    // MARK: - ==================== 分隔线 ====================
+    // MARK: - Divider
     private var dividerView: some View {
-        HStack {
+        HStack(spacing: 12) {
             Rectangle()
-                .fill(ApocalypseTheme.textMuted.opacity(0.3))
-                .frame(height: 1)
+                .fill(Color.white.opacity(0.15))
+                .frame(height: 0.5)
 
             Text("auth_or_sign_in_with")
-                .font(.caption)
-                .foregroundColor(ApocalypseTheme.textMuted)
-                .padding(.horizontal, 12)
+                .font(.system(size: 12))
+                .foregroundColor(Color.white.opacity(0.4))
+                .fixedSize()
 
             Rectangle()
-                .fill(ApocalypseTheme.textMuted.opacity(0.3))
-                .frame(height: 1)
+                .fill(Color.white.opacity(0.15))
+                .frame(height: 0.5)
         }
     }
 
-    // MARK: - ==================== 第三方登录 ====================
+    // MARK: - Social Sign-In (Compact Circles)
     private var thirdPartyLoginView: some View {
-        VStack(spacing: 12) {
-            // Apple 登录按钮（符合 Apple Human Interface Guidelines）
+        HStack(spacing: 20) {
             if AppConfig.Features.enableAppleSignIn {
                 Button {
-                    Task {
-                        await authManager.signInWithApple()
-                    }
+                    Task { await authManager.signInWithApple() }
                 } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "apple.logo")
-                            .font(.system(size: 18, weight: .semibold))
-                        Text("auth_sign_in_apple")
-                            .font(.system(size: 17, weight: .semibold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(Color.black)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                    )
+                    Image(systemName: "apple.logo")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                        .frame(width: 50, height: 50)
+                        .background(Color.white.opacity(0.1))
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 1))
                 }
                 .disabled(authManager.isLoading)
             }
 
-            // Google 登录按钮
             if AppConfig.Features.enableGoogleSignIn {
                 Button {
-                    Task {
-                        await authManager.signInWithGoogle()
-                    }
+                    Task { await authManager.signInWithGoogle() }
                 } label: {
-                    HStack(spacing: 8) {
-                        // Google "G" Logo
-                        googleLogo
-                            .frame(width: 18, height: 18)
-                        Text("auth_sign_in_google")
-                            .font(.system(size: 17, weight: .medium))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(Color.white)
-                    .foregroundColor(Color(red: 0.26, green: 0.26, blue: 0.26))
-                    .cornerRadius(12)
-                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    googleLogo
+                        .frame(width: 20, height: 20)
+                        .frame(width: 50, height: 50)
+                        .background(Color.white.opacity(0.1))
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white.opacity(0.15), lineWidth: 1))
                 }
                 .disabled(authManager.isLoading)
             }
         }
     }
 
-    // MARK: - Google Logo（多色 G 图标）
+    // MARK: - Google Logo (Arc-based G)
     private var googleLogo: some View {
-        // Google 官方多色 "G" 图标的 SwiftUI 实现
-        GeometryReader { geometry in
-            let size = min(geometry.size.width, geometry.size.height)
-            ZStack {
-                // 蓝色部分（右侧）
-                Path { path in
-                    path.move(to: CGPoint(x: size * 0.96, y: size * 0.5))
-                    path.addLine(to: CGPoint(x: size * 0.5, y: size * 0.5))
-                    path.addLine(to: CGPoint(x: size * 0.5, y: size * 0.68))
-                    path.addLine(to: CGPoint(x: size * 0.82, y: size * 0.68))
-                    path.addCurve(
-                        to: CGPoint(x: size * 0.5, y: size * 0.96),
-                        control1: CGPoint(x: size * 0.78, y: size * 0.84),
-                        control2: CGPoint(x: size * 0.66, y: size * 0.96)
-                    )
-                }
-                .fill(Color(red: 0.26, green: 0.52, blue: 0.96))
+        Canvas { context, size in
+            let s = min(size.width, size.height)
+            let center = CGPoint(x: s / 2, y: s / 2)
+            let outer = s * 0.48
+            let thick = s * 0.17
 
-                // 绿色部分（右下）
-                Path { path in
-                    path.move(to: CGPoint(x: size * 0.5, y: size * 0.96))
-                    path.addCurve(
-                        to: CGPoint(x: size * 0.04, y: size * 0.5),
-                        control1: CGPoint(x: size * 0.24, y: size * 0.96),
-                        control2: CGPoint(x: size * 0.04, y: size * 0.76)
-                    )
-                }
-                .stroke(Color(red: 0.20, green: 0.66, blue: 0.33), lineWidth: size * 0.18)
+            // Color segments: Red (top-left), Yellow (bottom-left), Green (bottom-right), Blue (right)
+            let segments: [(Color, Angle, Angle)] = [
+                (Color(red: 0.92, green: 0.26, blue: 0.21), .degrees(-150), .degrees(-30)),  // Red: top-left arc
+                (Color(red: 0.98, green: 0.74, blue: 0.02), .degrees(-30), .degrees(30)),      // Yellow: left arc (mapped to bottom-left)
+                (Color(red: 0.20, green: 0.66, blue: 0.33), .degrees(30), .degrees(90)),       // Green: bottom-right arc
+                (Color(red: 0.26, green: 0.52, blue: 0.96), .degrees(90), .degrees(210)),      // Blue: right arc
+            ]
 
-                // 黄色部分（左下）
-                Path { path in
-                    path.move(to: CGPoint(x: size * 0.04, y: size * 0.5))
-                    path.addCurve(
-                        to: CGPoint(x: size * 0.26, y: size * 0.16),
-                        control1: CGPoint(x: size * 0.04, y: size * 0.34),
-                        control2: CGPoint(x: size * 0.12, y: size * 0.22)
-                    )
-                }
-                .stroke(Color(red: 0.98, green: 0.74, blue: 0.02), lineWidth: size * 0.18)
-
-                // 红色部分（左上）
-                Path { path in
-                    path.move(to: CGPoint(x: size * 0.26, y: size * 0.16))
-                    path.addCurve(
-                        to: CGPoint(x: size * 0.96, y: size * 0.5),
-                        control1: CGPoint(x: size * 0.46, y: size * 0.04),
-                        control2: CGPoint(x: size * 0.78, y: size * 0.14)
-                    )
-                }
-                .stroke(Color(red: 0.92, green: 0.26, blue: 0.21), lineWidth: size * 0.18)
+            for (color, start, end) in segments {
+                var path = Path()
+                path.addArc(center: center, radius: outer - thick / 2, startAngle: start, endAngle: end, clockwise: false)
+                context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: thick, lineCap: .butt))
             }
+
+            // Blue horizontal bar (the crossbar of the G)
+            let barRect = CGRect(x: s * 0.48, y: s * 0.42, width: s * 0.38, height: thick)
+            context.fill(Path(barRect), with: .color(Color(red: 0.26, green: 0.52, blue: 0.96)))
         }
     }
 
@@ -757,7 +730,7 @@ struct AuthView: View {
         }
     }
 
-    // 输入框
+    // Input field with fixed height
     private func inputField(
         icon: String,
         placeholder: String,
@@ -766,29 +739,30 @@ struct AuthView: View {
     ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(ApocalypseTheme.textMuted)
-                .frame(width: 24)
+                .foregroundColor(Color.white.opacity(0.4))
+                .frame(width: 22)
 
             TextField("", text: text)
                 .placeholder(when: text.wrappedValue.isEmpty) {
                     Text(placeholder)
-                        .foregroundColor(ApocalypseTheme.textMuted)
+                        .foregroundColor(Color.white.opacity(0.35))
                 }
                 .keyboardType(keyboardType)
                 .autocapitalization(.none)
                 .autocorrectionDisabled()
-                .foregroundColor(ApocalypseTheme.textPrimary)
+                .foregroundColor(.white)
         }
-        .padding()
-        .background(ApocalypseTheme.cardBackground)
+        .padding(.horizontal, 16)
+        .frame(height: 50)
+        .background(Color.white.opacity(0.08))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ApocalypseTheme.textMuted.opacity(0.3), lineWidth: 1)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
         )
     }
 
-    // 密码输入框
+    // Secure input field with fixed height
     private func secureInputField(
         icon: String,
         placeholder: String,
@@ -796,86 +770,86 @@ struct AuthView: View {
     ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(ApocalypseTheme.textMuted)
-                .frame(width: 24)
+                .foregroundColor(Color.white.opacity(0.4))
+                .frame(width: 22)
 
             SecureField("", text: text)
                 .placeholder(when: text.wrappedValue.isEmpty) {
                     Text(placeholder)
-                        .foregroundColor(ApocalypseTheme.textMuted)
+                        .foregroundColor(Color.white.opacity(0.35))
                 }
                 .textContentType(.password)
-                .foregroundColor(ApocalypseTheme.textPrimary)
+                .foregroundColor(.white)
         }
-        .padding()
-        .background(ApocalypseTheme.cardBackground)
+        .padding(.horizontal, 16)
+        .frame(height: 50)
+        .background(Color.white.opacity(0.08))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ApocalypseTheme.textMuted.opacity(0.3), lineWidth: 1)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
         )
     }
 
-    // OTP 验证码输入框
+    // OTP input field with fixed height
     private func otpInputField(text: Binding<String>) -> some View {
         HStack(spacing: 12) {
             Image(systemName: "number")
-                .foregroundColor(ApocalypseTheme.textMuted)
-                .frame(width: 24)
+                .foregroundColor(Color.white.opacity(0.4))
+                .frame(width: 22)
 
             TextField("", text: text)
                 .placeholder(when: text.wrappedValue.isEmpty) {
                     Text("auth_code_placeholder")
-                        .foregroundColor(ApocalypseTheme.textMuted)
+                        .foregroundColor(Color.white.opacity(0.35))
                 }
                 .keyboardType(.numberPad)
-                .foregroundColor(ApocalypseTheme.textPrimary)
+                .foregroundColor(.white)
                 .onChange(of: text.wrappedValue) { _, newValue in
-                    // 限制为6位数字
                     if newValue.count > 6 {
                         text.wrappedValue = String(newValue.prefix(6))
                     }
-                    // 只允许数字
                     text.wrappedValue = newValue.filter { $0.isNumber }
                 }
         }
-        .padding()
-        .background(ApocalypseTheme.cardBackground)
+        .padding(.horizontal, 16)
+        .frame(height: 50)
+        .background(Color.white.opacity(0.08))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ApocalypseTheme.textMuted.opacity(0.3), lineWidth: 1)
+                .stroke(Color.white.opacity(0.1), lineWidth: 1)
         )
     }
 
-    // 主按钮
+    // Primary action button
     private func primaryButton(
         title: String,
         isEnabled: Bool,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack {
+            HStack(spacing: 8) {
                 if authManager.isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        .padding(.trailing, 8)
+                        .scaleEffect(0.85)
                 }
                 Text(title)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 16, weight: .semibold))
             }
             .frame(maxWidth: .infinity)
-            .padding()
+            .frame(height: 50)
             .background(
                 LinearGradient(
                     colors: isEnabled
                     ? [ApocalypseTheme.primary, ApocalypseTheme.primaryDark]
-                    : [ApocalypseTheme.textMuted, ApocalypseTheme.textMuted],
+                    : [Color.white.opacity(0.15), Color.white.opacity(0.1)],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
             )
-            .foregroundColor(.white)
+            .foregroundColor(isEnabled ? .white : Color.white.opacity(0.4))
             .cornerRadius(12)
         }
         .disabled(!isEnabled)
