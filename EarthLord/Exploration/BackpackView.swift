@@ -107,32 +107,44 @@ struct BackpackView: View {
 
     // MARK: - 分类筛选器
 
+    /// Visible filter categories (excludes weapon & other)
+    private static let filterCategories: [(category: ItemCategory?, icon: String, title: LocalizedStringResource)] = [
+        (nil,       "square.grid.2x2.fill", LocalizedString.filterAll),
+        (.food,     "fork.knife",           ItemCategory.food.localizedName),
+        (.water,    "drop.fill",            ItemCategory.water.localizedName),
+        (.material, "shippingbox.fill",     ItemCategory.material.localizedName),
+        (.medical,  "cross.case.fill",      ItemCategory.medical.localizedName),
+        (.tool,     "wrench.adjustable.fill", ItemCategory.tool.localizedName),
+    ]
+
     private var categoryFilter: some View {
-        HStack(spacing: 12) {
-            // All
-            categoryButton(category: nil, title: LocalizedString.filterAll)
-
-            // Material only
-            categoryButton(category: .material, title: ItemCategory.material.localizedName)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(Array(Self.filterCategories.enumerated()), id: \.offset) { _, item in
+                    categoryChip(category: item.category, icon: item.icon, title: item.title)
+                }
+            }
         }
     }
 
-    private func categoryButton(category: ItemCategory?, title: LocalizedStringResource) -> some View {
-        Button(action: {
-            selectedCategory = category
-        }) {
-            Text(title)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(isSelectedCategory(category) ? .white : ApocalypseTheme.textSecondary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(isSelectedCategory(category) ? ApocalypseTheme.primary : ApocalypseTheme.cardBackground)
-                .cornerRadius(20)
+    private func categoryChip(category: ItemCategory?, icon: String, title: LocalizedStringResource) -> some View {
+        let selected = selectedCategory == category
+        return Button(action: { selectedCategory = category }) {
+            VStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 22))
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .foregroundColor(selected ? ApocalypseTheme.primary : ApocalypseTheme.textSecondary)
+            .frame(width: 72, height: 64)
+            .background(ApocalypseTheme.cardBackground)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(selected ? ApocalypseTheme.primary : ApocalypseTheme.textSecondary.opacity(0.3), lineWidth: 1)
+            )
         }
-    }
-
-    private func isSelectedCategory(_ category: ItemCategory?) -> Bool {
-        selectedCategory == category
     }
 
     // MARK: - 内容区域
