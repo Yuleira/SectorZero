@@ -972,6 +972,44 @@ enum LocalizedString {
     /// 需建造「通讯塔」建筑 (unlock_require_comm_tower)
     static let unlockRequireCommTower: LocalizedStringResource = "unlock_require_comm_tower"
 
+    // MARK: - Device Upgrade System (12 keys)
+
+    /// 解锁需求 (upgrade_requirements)
+    static let upgradeRequirements: LocalizedStringResource = "upgrade_requirements"
+
+    /// 所需资源 (upgrade_needed_resources)
+    static let upgradeNeededResources: LocalizedStringResource = "upgrade_needed_resources"
+
+    /// 所需领地 (upgrade_needed_territories)
+    static let upgradeNeededTerritories: LocalizedStringResource = "upgrade_needed_territories"
+
+    /// 前置设备 (upgrade_prerequisite)
+    static let upgradePrerequisite: LocalizedStringResource = "upgrade_prerequisite"
+
+    /// 需要先解锁前置设备 (upgrade_prerequisite_required)
+    static let upgradePrerequisiteRequired: LocalizedStringResource = "upgrade_prerequisite_required"
+
+    /// 使用资源解锁 (upgrade_with_resources)
+    static let upgradeWithResources: LocalizedStringResource = "upgrade_with_resources"
+
+    /// 使用 %lld AEC 立即解锁 (upgrade_instant_format)
+    static let upgradeInstantFormat: LocalizedStringResource = "upgrade_instant_format"
+
+    /// 资源不足 (upgrade_insufficient_resources)
+    static let upgradeInsufficientResources: LocalizedStringResource = "upgrade_insufficient_resources"
+
+    /// 领地不足：拥有 %lld / 需要 %lld (upgrade_territories_format)
+    static let upgradeTerritoriesFormat: LocalizedStringResource = "upgrade_territories_format"
+
+    /// 前往商店 (upgrade_go_to_store)
+    static let upgradeGoToStore: LocalizedStringResource = "upgrade_go_to_store"
+
+    /// 已解锁 (upgrade_unlocked)
+    static let upgradeUnlocked: LocalizedStringResource = "upgrade_unlocked"
+
+    /// 解锁成功 (upgrade_success)
+    static let upgradeSuccess: LocalizedStringResource = "upgrade_success"
+
     /// 频道中心 (channel_center)
     static let channelCenter: LocalizedStringResource = "channel_center"
 
@@ -1399,6 +1437,63 @@ enum LocalizedString {
 
     /// Shards balance format (shards_balance_format)
     static let shardsBalanceFormat: LocalizedStringResource = "shards_balance_format"
+
+    // MARK: - Vault Tab (8 keys)
+
+    /// Vault segment label (segment_vault)
+    static let segmentVault: LocalizedStringResource = "segment_vault"
+
+    /// Vault membership tier label (vault_membership_tier)
+    static let vaultMembershipTier: LocalizedStringResource = "vault_membership_tier"
+
+    /// Vault Aether Energy label (vault_aether_energy)
+    static let vaultAetherEnergy: LocalizedStringResource = "vault_aether_energy"
+
+    /// Vault Aether Coins label (vault_aether_coins)
+    static let vaultAetherCoins: LocalizedStringResource = "vault_aether_coins"
+
+    /// Buy More button (vault_buy_more)
+    static let vaultBuyMore: LocalizedStringResource = "vault_buy_more"
+
+    /// Top Up button (vault_top_up)
+    static let vaultTopUp: LocalizedStringResource = "vault_top_up"
+
+    /// Unlimited badge text (vault_unlimited)
+    static let vaultUnlimited: LocalizedStringResource = "vault_unlimited"
+
+    /// Go to Store link (vault_go_to_store)
+    static let vaultGoToStore: LocalizedStringResource = "vault_go_to_store"
+
+    // MARK: - Store Sections (6 keys)
+
+    /// Energy Packs section header (store_energy_packs)
+    static let storeEnergyPacks: LocalizedStringResource = "store_energy_packs"
+
+    /// Coin Top-up section header (store_coin_topup)
+    static let storeCoinTopup: LocalizedStringResource = "store_coin_topup"
+
+    /// Resource Exchange section header (store_resource_exchange)
+    static let storeResourceExchange: LocalizedStringResource = "store_resource_exchange"
+
+    /// Exchange button label (store_exchange_button)
+    static let storeExchangeButton: LocalizedStringResource = "store_exchange_button"
+
+    /// Insufficient coins alert message (store_insufficient_coins)
+    static let storeInsufficientCoins: LocalizedStringResource = "store_insufficient_coins"
+
+    /// Unlimited AI Scans benefit for Archon (store_benefit_unlimited_scans)
+    static let storeBenefitUnlimitedScans: LocalizedStringResource = "store_benefit_unlimited_scans"
+
+    // MARK: - Energy Depleted Alert (3 keys)
+
+    /// Energy depleted alert title (energy_depleted_title)
+    static let energyDepletedTitle: LocalizedStringResource = "energy_depleted_title"
+
+    /// Energy depleted alert message (energy_depleted_message)
+    static let energyDepletedMessage: LocalizedStringResource = "energy_depleted_message"
+
+    /// Energy depleted go to store button (energy_depleted_go_to_store)
+    static let energyDepletedGoToStore: LocalizedStringResource = "energy_depleted_go_to_store"
 
     // MARK: - Splash & Actions
 

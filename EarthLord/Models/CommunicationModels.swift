@@ -49,6 +49,20 @@ enum MessageCategory: String, Codable, CaseIterable {
     }
 }
 
+// MARK: - Device Upgrade Requirements
+
+/// Requirements to unlock a communication device via resource upgrade path
+struct DeviceUpgradeRequirements {
+    /// Resources needed: ["wood": 200, "metal": 50, ...]
+    let neededResources: [String: Int]
+    /// Minimum number of claimed territories
+    let neededTerritories: Int
+    /// Another device that must be unlocked first (nil = no prerequisite)
+    let prerequisiteDeviceId: DeviceType?
+    /// Aether Coin cost for instant unlock (bypasses resource requirements)
+    let aecInstantCost: Int
+}
+
 // MARK: - 设备类型
 
 /// 通讯设备类型
@@ -119,6 +133,29 @@ enum DeviceType: String, Codable, CaseIterable {
         case .radio, .walkieTalkie: return String(localized: "unlock_default_owned")
         case .campRadio: return String(localized: "unlock_require_base_station")
         case .satellite: return String(localized: "unlock_require_comm_tower")
+        }
+    }
+
+    /// Upgrade requirements for unlocking this device via resource path
+    /// Returns nil for devices that are unlocked by default
+    var upgradeRequirements: DeviceUpgradeRequirements? {
+        switch self {
+        case .radio, .walkieTalkie:
+            return nil // Unlocked by default
+        case .campRadio:
+            return DeviceUpgradeRequirements(
+                neededResources: ["wood": 200, "stone": 150, "metal": 80],
+                neededTerritories: 1,
+                prerequisiteDeviceId: .walkieTalkie,
+                aecInstantCost: 50
+            )
+        case .satellite:
+            return DeviceUpgradeRequirements(
+                neededResources: ["metal": 200, "circuit": 100, "stone": 300],
+                neededTerritories: 3,
+                prerequisiteDeviceId: .campRadio,
+                aecInstantCost: 150
+            )
         }
     }
 }

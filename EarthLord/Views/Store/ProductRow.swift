@@ -21,8 +21,10 @@ struct ProductRow: View {
         switch product.id {
         case StoreProductID.storageLarge.rawValue:
             return "archivebox.fill"
-        case StoreProductID.shards100.rawValue:
-            return "diamond.fill"
+        case StoreProductID.shards100.rawValue,
+             StoreProductID.coins500.rawValue,
+             StoreProductID.coins1200.rawValue:
+            return "bitcoinsign.circle.fill"
         default:
             return "bag.fill"
         }
@@ -32,7 +34,9 @@ struct ProductRow: View {
         switch product.id {
         case StoreProductID.storageLarge.rawValue:
             return ApocalypseTheme.info
-        case StoreProductID.shards100.rawValue:
+        case StoreProductID.shards100.rawValue,
+             StoreProductID.coins500.rawValue,
+             StoreProductID.coins1200.rawValue:
             return ApocalypseTheme.primary
         default:
             return ApocalypseTheme.textSecondary

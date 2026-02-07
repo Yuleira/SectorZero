@@ -110,6 +110,7 @@
 		STORE006A2F03000000000006 /* StoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE002A2F03000000000002 /* StoreView.swift */; };
 		STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE003A2F03000000000003 /* SubscriptionCard.swift */; };
 		STORE008A2F03000000000008 /* ProductRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE004A2F03000000000004 /* ProductRow.swift */; };
+		STORE010A2F03000000000010 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE011A2F03000000000011 /* VaultView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -217,6 +218,7 @@
 		STORE002A2F03000000000002 /* StoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreView.swift; sourceTree = "<group>"; };
 		STORE003A2F03000000000003 /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
 		STORE004A2F03000000000004 /* ProductRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRow.swift; sourceTree = "<group>"; };
+		STORE011A2F03000000000011 /* VaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -501,6 +503,7 @@
 				STORE002A2F03000000000002 /* StoreView.swift */,
 				STORE003A2F03000000000003 /* SubscriptionCard.swift */,
 				STORE004A2F03000000000004 /* ProductRow.swift */,
+				STORE011A2F03000000000011 /* VaultView.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -686,6 +689,7 @@
 				STORE006A2F03000000000006 /* StoreView.swift in Sources */,
 				STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */,
 				STORE008A2F03000000000008 /* ProductRow.swift in Sources */,
+				STORE010A2F03000000000010 /* VaultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

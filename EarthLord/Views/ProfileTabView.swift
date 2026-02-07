@@ -186,15 +186,14 @@ struct ProfileTabView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Action Buttons Grid
+    // MARK: - Action Buttons Row
 
     private var actionButtonsGrid: some View {
-        LazyVGrid(columns: [
-            GridItem(.flexible(), spacing: 10),
-            GridItem(.flexible(), spacing: 10)
-        ], spacing: 10) {
-            // Edit Profile
-            Button { } label: {
+        HStack(spacing: 10) {
+            // Edit Profile → Settings (profile editing)
+            NavigationLink {
+                ProfileSettingsView()
+            } label: {
                 actionButtonLabel(
                     icon: "pencil",
                     title: LocalizedString.profileEditProfile,
@@ -210,36 +209,6 @@ struct ProfileTabView: View {
                     icon: "gearshape",
                     title: LocalizedString.profileSettings,
                     background: AnyShapeStyle(ApocalypseTheme.cardBackground)
-                )
-            }
-
-            // View Subscription → Store subscriptions section only
-            NavigationLink {
-                StoreView(initialSection: .subscriptions)
-            } label: {
-                actionButtonLabel(
-                    icon: "star.fill",
-                    title: LocalizedString.profileViewSubscription,
-                    background: AnyShapeStyle(LinearGradient(
-                        colors: [.orange, .yellow],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ))
-                )
-            }
-
-            // Buy Resource → Store items section only
-            NavigationLink {
-                StoreView(initialSection: .items)
-            } label: {
-                actionButtonLabel(
-                    icon: "cart.fill",
-                    title: LocalizedString.profileBuyResource,
-                    background: AnyShapeStyle(LinearGradient(
-                        colors: [.green, .cyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ))
                 )
             }
         }

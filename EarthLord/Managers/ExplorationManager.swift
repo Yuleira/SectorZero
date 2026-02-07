@@ -79,6 +79,9 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 是否显示搜刮结果
     @Published var showScavengeResult = false
 
+    /// 能量不足提示（触发 Store 导航）
+    @Published var showEnergyDepletedAlert = false
+
     // MARK: - 私有属性
 
     private let locationManager = LocationManager.shared
@@ -763,6 +766,15 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// - Parameter poi: 要搜刮的POI
     func scavengePOI(_ poi: NearbyPOI) async {
         print("🏪 [搜刮] 开始搜刮：\(poi.name) (危险等级: \(poi.dangerLevel))")
+
+        // Aether Energy gate: consume 1 energy before AI scan
+        if !StoreKitManager.shared.isInfiniteEnergyEnabled {
+            guard StoreKitManager.shared.consumeAetherEnergy() else {
+                showEnergyDepletedAlert = true
+                print("🏪 [搜刮] ⚡ 能量不足，无法进行 AI 扫描")
+                return
+            }
+        }
 
         // 生成物品数量（1-3件，高危地点可能更多）
         let baseCount = Int.random(in: 1...3)

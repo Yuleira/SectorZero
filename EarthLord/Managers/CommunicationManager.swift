@@ -161,6 +161,108 @@ final class CommunicationManager: ObservableObject {
         }
     }
 
+    // MARK: - Device Upgrade System
+
+    /// Result of an upgrade attempt
+    enum UpgradeResult {
+        case success
+        case alreadyUnlocked
+        case missingPrerequisite(DeviceType)
+        case insufficientTerritories(have: Int, need: Int)
+        case insufficientResources(missing: [String: Int])
+        case noRequirements
+    }
+
+    /// Check upgrade requirements without consuming resources
+    func checkUpgradeRequirements(for deviceType: DeviceType) -> UpgradeResult {
+        // Already unlocked
+        if isDeviceUnlocked(deviceType) {
+            return .alreadyUnlocked
+        }
+
+        guard let reqs = deviceType.upgradeRequirements else {
+            return .noRequirements
+        }
+
+        // Check prerequisite device
+        if let prereq = reqs.prerequisiteDeviceId, !isDeviceUnlocked(prereq) {
+            return .missingPrerequisite(prereq)
+        }
+
+        // Check territory count
+        let territoryCount = TerritoryManager.shared.territories.count
+        if territoryCount < reqs.neededTerritories {
+            return .insufficientTerritories(have: territoryCount, need: reqs.neededTerritories)
+        }
+
+        // Check resources
+        var missing: [String: Int] = [:]
+        for (resourceId, needed) in reqs.neededResources {
+            let have = InventoryManager.shared.getResourceQuantity(for: resourceId)
+            if have < needed {
+                missing[resourceId] = needed - have
+            }
+        }
+        if !missing.isEmpty {
+            return .insufficientResources(missing: missing)
+        }
+
+        return .success
+    }
+
+    /// Attempt to unlock a device by consuming resources
+    func attemptUpgrade(userId: UUID, deviceType: DeviceType) async -> UpgradeResult {
+        let checkResult = checkUpgradeRequirements(for: deviceType)
+        guard case .success = checkResult else {
+            return checkResult
+        }
+
+        guard let reqs = deviceType.upgradeRequirements else {
+            return .noRequirements
+        }
+
+        // Deduct all resources
+        for (resourceId, quantity) in reqs.neededResources {
+            let removed = await InventoryManager.shared.removeItemsByDefinition(
+                definitionId: resourceId,
+                quantity: quantity
+            )
+            if !removed {
+                print("❌ [Upgrade] Failed to deduct \(resourceId) x\(quantity)")
+                return .insufficientResources(missing: [resourceId: quantity])
+            }
+        }
+
+        // Unlock the device
+        await unlockDevice(userId: userId, deviceType: deviceType)
+        print("✅ [Upgrade] Device unlocked via resources: \(deviceType.rawValue)")
+        return .success
+    }
+
+    /// Instantly unlock a device using Aether Coins (bypasses all resource requirements)
+    func instantUnlock(userId: UUID, deviceType: DeviceType) async -> Bool {
+        guard !isDeviceUnlocked(deviceType) else { return true }
+
+        guard let reqs = deviceType.upgradeRequirements else { return false }
+
+        // Check prerequisite even for instant unlock
+        if let prereq = reqs.prerequisiteDeviceId, !isDeviceUnlocked(prereq) {
+            errorMessage = String(localized: LocalizedString.upgradePrerequisiteRequired)
+            return false
+        }
+
+        // Spend coins
+        guard StoreKitManager.shared.spendAetherCoins(reqs.aecInstantCost) else {
+            errorMessage = String(localized: LocalizedString.storeInsufficientCoins)
+            return false
+        }
+
+        // Unlock the device
+        await unlockDevice(userId: userId, deviceType: deviceType)
+        print("✅ [Upgrade] Device instant-unlocked with \(reqs.aecInstantCost) AEC: \(deviceType.rawValue)")
+        return true
+    }
+
     // MARK: - 便捷方法
 
     /// 获取当前设备类型

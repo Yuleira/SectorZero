@@ -23,15 +23,50 @@ enum StoreProductID: String, CaseIterable {
     // Non-consumables
     case storageLarge = "com.sectorzero.item.storage_large"
 
-    // Consumables
+    // Consumables — Aether Coins
     case shards100 = "com.sectorzero.shards.100"
+    case coins500 = "com.sectorzero.coins.500"
+    case coins1200 = "com.sectorzero.coins.1200"
+
+    // Consumables — Aether Energy packs
+    case energy5 = "com.sectorzero.energy.5"
+    case energy20 = "com.sectorzero.energy.20"
+    case energy50 = "com.sectorzero.energy.50"
 
     static var subscriptions: [StoreProductID] {
         [.scavenger, .pioneer, .archon]
     }
 
+    static var energyPacks: [StoreProductID] {
+        [.energy5, .energy20, .energy50]
+    }
+
+    static var coinPacks: [StoreProductID] {
+        [.shards100, .coins500, .coins1200]
+    }
+
     static var allProductIDs: Set<String> {
         Set(allCases.map { $0.rawValue })
+    }
+
+    /// Amount of energy granted by this product
+    var energyAmount: Int? {
+        switch self {
+        case .energy5: return 5
+        case .energy20: return 20
+        case .energy50: return 50
+        default: return nil
+        }
+    }
+
+    /// Amount of coins granted by this product
+    var coinAmount: Int? {
+        switch self {
+        case .shards100: return 100
+        case .coins500: return 500
+        case .coins1200: return 1200
+        default: return nil
+        }
     }
 }
 
@@ -122,8 +157,11 @@ final class StoreKitManager: ObservableObject {
     /// Subscription expiration/renewal date
     @Published private(set) var subscriptionExpirationDate: Date?
 
-    /// Aether Shards balance (consumable currency)
-    @Published private(set) var shardsBalance: Int = 0
+    /// Aether Coins balance (consumable currency, DB column: shards_balance)
+    @Published private(set) var aetherCoins: Int = 0
+
+    /// Aether Energy balance (AI scan charges)
+    @Published private(set) var aetherEnergy: Int = 0
 
     /// Permanent unlocks (non-consumable product IDs)
     @Published private(set) var permanentUnlocks: [String] = []
@@ -133,6 +171,13 @@ final class StoreKitManager: ObservableObject {
 
     /// Error message for UI display
     @Published var errorMessage: String?
+
+    // MARK: - Computed Properties
+
+    /// Archon tier grants unlimited AI scans
+    var isInfiniteEnergyEnabled: Bool {
+        currentMembershipTier >= .archon
+    }
 
     // MARK: - Private Properties
 
@@ -346,10 +391,16 @@ final class StoreKitManager: ObservableObject {
                 permanentUnlocks.append(productID)
                 print("💰 [StoreKit] Added permanent unlock: \(productID)")
             }
-        } else if productID == StoreProductID.shards100.rawValue {
-            // Consumable: add shards
-            shardsBalance += 100
-            print("💰 [StoreKit] Shards balance updated to: \(shardsBalance)")
+        } else if let storeProduct = StoreProductID(rawValue: productID),
+                  let coinAmount = storeProduct.coinAmount {
+            // Consumable: add Aether Coins
+            aetherCoins += coinAmount
+            print("💰 [StoreKit] Aether Coins balance updated to: \(aetherCoins) (+\(coinAmount))")
+        } else if let storeProduct = StoreProductID(rawValue: productID),
+                  let energyAmount = storeProduct.energyAmount {
+            // Consumable: add Aether Energy
+            addAetherEnergy(energyAmount)
+            print("💰 [StoreKit] Aether Energy balance updated to: \(aetherEnergy) (+\(energyAmount))")
         }
 
         // Sync with Supabase
@@ -364,6 +415,45 @@ final class StoreKitManager: ObservableObject {
         case StoreProductID.archon.rawValue: return .archon
         default: return nil
         }
+    }
+
+    // MARK: - Aether Energy
+
+    /// Attempt to consume 1 Aether Energy for an AI scan.
+    /// Returns true if deduction succeeded (Archon bypasses, or balance > 0 and deducted).
+    func consumeAetherEnergy() -> Bool {
+        if isInfiniteEnergyEnabled {
+            print("⚡ [Energy] Infinite energy (Archon) — no deduction")
+            return true
+        }
+        guard aetherEnergy > 0 else {
+            print("⚡ [Energy] Insufficient energy: \(aetherEnergy)")
+            return false
+        }
+        aetherEnergy -= 1
+        print("⚡ [Energy] Consumed 1 energy, remaining: \(aetherEnergy)")
+        Task { await syncEntitlementsWithSupabase() }
+        return true
+    }
+
+    /// Add Aether Energy units
+    func addAetherEnergy(_ amount: Int) {
+        aetherEnergy += amount
+        print("⚡ [Energy] Added \(amount) energy, total: \(aetherEnergy)")
+    }
+
+    // MARK: - Aether Coins
+
+    /// Spend Aether Coins. Returns true if balance was sufficient and deducted.
+    func spendAetherCoins(_ amount: Int) -> Bool {
+        guard aetherCoins >= amount else {
+            print("🪙 [Coins] Insufficient coins: have \(aetherCoins), need \(amount)")
+            return false
+        }
+        aetherCoins -= amount
+        print("🪙 [Coins] Spent \(amount) coins, remaining: \(aetherCoins)")
+        Task { await syncEntitlementsWithSupabase() }
+        return true
     }
 
     // MARK: - Restore Purchases
@@ -449,13 +539,15 @@ final class StoreKitManager: ObservableObject {
             struct IAPUpdate: Encodable {
                 let membership_tier: Int
                 let shards_balance: Int
+                let aether_energy: Int
                 let permanent_unlocks: [String]
                 let updated_at: String
             }
 
             let update = IAPUpdate(
                 membership_tier: currentMembershipTier.rawValue,
-                shards_balance: shardsBalance,
+                shards_balance: aetherCoins,
+                aether_energy: aetherEnergy,
                 permanent_unlocks: permanentUnlocks,
                 updated_at: ISO8601DateFormatter().string(from: Date())
             )
@@ -469,7 +561,8 @@ final class StoreKitManager: ObservableObject {
 
             print("💰 [StoreKit] Synced entitlements to Supabase")
             print("   - Tier: \(currentMembershipTier.rawValue)")
-            print("   - Shards: \(shardsBalance)")
+            print("   - Coins: \(aetherCoins)")
+            print("   - Energy: \(aetherEnergy)")
             print("   - Unlocks: \(permanentUnlocks)")
 
         } catch {
@@ -489,24 +582,27 @@ final class StoreKitManager: ObservableObject {
             struct ProfileIAP: Decodable {
                 let membership_tier: Int?
                 let shards_balance: Int?
+                let aether_energy: Int?
                 let permanent_unlocks: [String]?
             }
 
             let response: [ProfileIAP] = try await supabase
                 .from("player_profiles")
-                .select("membership_tier, shards_balance, permanent_unlocks")
+                .select("membership_tier, shards_balance, aether_energy, permanent_unlocks")
                 .eq("user_id", value: userId.uuidString)
                 .execute()
                 .value
 
             if let profile = response.first {
                 currentMembershipTier = MembershipTier(rawValue: profile.membership_tier ?? 0) ?? .free
-                shardsBalance = profile.shards_balance ?? 0
+                aetherCoins = profile.shards_balance ?? 0
+                aetherEnergy = profile.aether_energy ?? 0
                 permanentUnlocks = profile.permanent_unlocks ?? []
 
                 print("💰 [StoreKit] Loaded entitlements from Supabase")
                 print("   - Tier: \(currentMembershipTier)")
-                print("   - Shards: \(shardsBalance)")
+                print("   - Coins: \(aetherCoins)")
+                print("   - Energy: \(aetherEnergy)")
                 print("   - Unlocks: \(permanentUnlocks)")
             }
 
@@ -554,6 +650,22 @@ final class StoreKitManager: ObservableObject {
                       date.formatted(date: .abbreviated, time: .omitted))
     }
 
+    /// Filter products to energy packs only
+    var energyPackProducts: [Product] {
+        let energyIDs = Set(StoreProductID.energyPacks.map { $0.rawValue })
+        return consumableProducts
+            .filter { energyIDs.contains($0.id) }
+            .sorted { $0.price < $1.price }
+    }
+
+    /// Filter products to coin packs only
+    var coinPackProducts: [Product] {
+        let coinIDs = Set(StoreProductID.coinPacks.map { $0.rawValue })
+        return consumableProducts
+            .filter { coinIDs.contains($0.id) }
+            .sorted { $0.price < $1.price }
+    }
+
     // MARK: - Debug Helpers
 
     #if DEBUG
@@ -567,8 +679,10 @@ final class StoreKitManager: ObservableObject {
             currentMembershipTier = tier
         } else if productID == .storageLarge {
             permanentUnlocks.append(productID.rawValue)
-        } else if productID == .shards100 {
-            shardsBalance += 100
+        } else if let coinAmount = productID.coinAmount {
+            aetherCoins += coinAmount
+        } else if let energyAmount = productID.energyAmount {
+            addAetherEnergy(energyAmount)
         }
 
         await syncEntitlementsWithSupabase()
@@ -579,7 +693,8 @@ final class StoreKitManager: ObservableObject {
         print("💰 [StoreKit] DEBUG: Resetting all entitlements")
         purchasedProductIDs.removeAll()
         currentMembershipTier = .free
-        shardsBalance = 0
+        aetherCoins = 0
+        aetherEnergy = 0
         permanentUnlocks.removeAll()
     }
     #endif

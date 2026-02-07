@@ -30,18 +30,118 @@
       "internalID" : "shards_100_001",
       "localizations" : [
         {
-          "description" : "100 Aether Shards - Premium currency for special items",
-          "displayName" : "100 Aether Shards",
+          "description" : "100 Aether Coins - Premium currency for resources",
+          "displayName" : "100 Aether Coins",
           "locale" : "en_US"
         },
         {
-          "description" : "100枚以太碎片 - 用于购买特殊物品的高级货币",
-          "displayName" : "100以太碎片",
+          "description" : "100枚以太币 - 用于兑换资源的高级货币",
+          "displayName" : "100以太币",
           "locale" : "zh_CN"
         }
       ],
       "productID" : "com.sectorzero.shards.100",
-      "referenceName" : "100 Aether Shards",
+      "referenceName" : "100 Aether Coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "3.99",
+      "familyShareable" : false,
+      "internalID" : "coins_500_001",
+      "localizations" : [
+        {
+          "description" : "500 Aether Coins - Premium currency for resources",
+          "displayName" : "500 Aether Coins",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "500枚以太币 - 用于兑换资源的高级货币",
+          "displayName" : "500以太币",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.coins.500",
+      "referenceName" : "500 Aether Coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "7.99",
+      "familyShareable" : false,
+      "internalID" : "coins_1200_001",
+      "localizations" : [
+        {
+          "description" : "1200 Aether Coins - Premium currency for resources (Best Value)",
+          "displayName" : "1200 Aether Coins",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "1200枚以太币 - 用于兑换资源的高级货币（最超值）",
+          "displayName" : "1200以太币",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.coins.1200",
+      "referenceName" : "1200 Aether Coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "energy_5_001",
+      "localizations" : [
+        {
+          "description" : "5 Aether Energy units for AI exploration scans",
+          "displayName" : "5 Aether Energy",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "5单位以太能量 - 用于AI探索扫描",
+          "displayName" : "5以太能量",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.energy.5",
+      "referenceName" : "5 Aether Energy",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "energy_20_001",
+      "localizations" : [
+        {
+          "description" : "20 Aether Energy units for AI exploration scans",
+          "displayName" : "20 Aether Energy",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "20单位以太能量 - 用于AI探索扫描",
+          "displayName" : "20以太能量",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.energy.20",
+      "referenceName" : "20 Aether Energy",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "5.99",
+      "familyShareable" : false,
+      "internalID" : "energy_50_001",
+      "localizations" : [
+        {
+          "description" : "50 Aether Energy units for AI exploration scans (Best Value)",
+          "displayName" : "50 Aether Energy",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "50单位以太能量 - 用于AI探索扫描（最超值）",
+          "displayName" : "50以太能量",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.sectorzero.energy.50",
+      "referenceName" : "50 Aether Energy",
       "type" : "Consumable"
     }
   ],
@@ -197,12 +297,12 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Ultimate commander benefits: 3x daily bonus, +500 storage, no ads, priority trade, exclusive items, territory bonus",
+              "description" : "Ultimate commander benefits: 3x daily bonus, +500 storage, no ads, priority trade, exclusive items, territory bonus, unlimited AI scans",
               "displayName" : "Archon",
               "locale" : "en_US"
             },
             {
-              "description" : "终极指挥官福利：三倍每日奖励、+500背包、无广告、优先交易、专属物品、领地加成",
+              "description" : "终极指挥官福利：三倍每日奖励、+500背包、无广告、优先交易、专属物品、领地加成、无限AI扫描",
               "displayName" : "执政官",
               "locale" : "zh_CN"
             }

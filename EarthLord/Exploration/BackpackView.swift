@@ -108,16 +108,12 @@ struct BackpackView: View {
     // MARK: - 分类筛选器
 
     private var categoryFilter: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                // 全部按钮
-                categoryButton(category: nil, title: LocalizedString.filterAll)
+        HStack(spacing: 12) {
+            // All
+            categoryButton(category: nil, title: LocalizedString.filterAll)
 
-                // 各分类按钮
-                ForEach(ItemCategory.allCases, id: \.self) { category in
-                    categoryButton(category: category, title: category.localizedName)
-                }
-            }
+            // Material only
+            categoryButton(category: .material, title: ItemCategory.material.localizedName)
         }
     }
 

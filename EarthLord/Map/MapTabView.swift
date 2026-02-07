@@ -563,10 +563,8 @@ struct MapTabView: View {
                 }
             }
         } else {
-            // 触发真实的 POI 搜索逻辑（与之前的调试按钮保持一致）
-            Task {
-                await explorationManager.manualSearchPOIs()
-            }
+            // 开始探索模式（设置状态 + 搜索POI + 启动定位）
+            explorationManager.startExploration()
         }
     }
 

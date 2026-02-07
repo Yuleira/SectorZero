@@ -165,6 +165,7 @@ struct SubscriptionCard: View {
                 benefitRow(LocalizedString.storeBenefitPriorityTrade)
                 benefitRow(LocalizedString.storeBenefitExclusiveItems)
                 benefitRow(LocalizedString.storeBenefitTerritoryBonus)
+                benefitRow(LocalizedString.storeBenefitUnlimitedScans)
 
             default:
                 EmptyView()
