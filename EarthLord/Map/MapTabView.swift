@@ -39,6 +39,9 @@ struct MapTabView: View {
     /// 是否已完成首次定位
     @State private var hasLocatedUser = false
 
+    /// 请求地图居中到用户位置的版本号（每次点击 Locate 递增，供 MapViewRepresentable 响应）
+    @State private var centerToUserRequestVersion = 0
+
     /// 是否显示验证结果横幅
     @State private var showValidationBanner = false
 
@@ -110,6 +113,7 @@ struct MapTabView: View {
             MapViewRepresentable(
                 userLocation: $userLocation,
                 hasLocatedUser: $hasLocatedUser,
+                centerToUserRequestVersion: centerToUserRequestVersion,
                 trackingPath: $locationManager.pathCoordinates,
                 pathUpdateVersion: locationManager.pathUpdateVersion,
                 isTracking: locationManager.isTracking,
@@ -264,6 +268,15 @@ struct MapTabView: View {
         .animation(.easeInOut(duration: 0.3), value: showUploadSuccess)
         .animation(.easeInOut(duration: 0.3), value: uploadError)
         .animation(.easeInOut(duration: 0.3), value: locationManager.territoryValidationPassed)
+        .alert(Text(LocalizedString.energyDepletedTitle),
+               isPresented: $explorationManager.showEnergyDepletedAlert) {
+            NavigationLink(destination: StoreView(initialSection: .energy)) {
+                Text(LocalizedString.energyDepletedGoToStore)
+            }
+            Button(String(localized: LocalizedString.commonCancel), role: .cancel) {}
+        } message: {
+            Text(LocalizedString.energyDepletedMessage)
+        }
     }
 
     /// 速度警告横幅
@@ -564,6 +577,7 @@ struct MapTabView: View {
             }
         } else {
             // 开始探索模式（设置状态 + 搜索POI + 启动定位）
+            showExplorationOverlay = true
             explorationManager.startExploration()
         }
     }
@@ -613,19 +627,15 @@ struct MapTabView: View {
                     .foregroundColor(.white.opacity(0.7))
             }
 
-            Divider()
-                .frame(height: 40)
-                .background(Color.white.opacity(0.3))
-
-            // 当前等级预览
-            VStack(spacing: 4) {
-                let tier = RewardTier.from(distance: explorationManager.currentDistance)
-                Image(systemName: tier.iconName)
-                    .font(.system(size: 24))
-                    .foregroundColor(tier.color)
-                Text(tier.localizedName)
-                    .font(.system(size: 12))
-                    .foregroundColor(.white.opacity(0.7))
+            // 关闭按钮
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showExplorationOverlay = false
+                }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundColor(.white.opacity(0.6))
             }
         }
         .padding(.horizontal, 24)
@@ -691,14 +701,10 @@ struct MapTabView: View {
         }
     }
 
-    /// 居中到用户位置
+    /// 居中到用户位置（不重置 hasLocatedUser，避免 “Locating...” 无法关闭）
     private func centerToUserLocation() {
         print("🗺️ [地图页面] 用户点击定位按钮")
-
-        // 重置居中标志，触发地图重新居中
-        hasLocatedUser = false
-
-        // 确保正在定位
+        centerToUserRequestVersion += 1
         if !locationManager.isUpdatingLocation {
             locationManager.startUpdatingLocation()
         }

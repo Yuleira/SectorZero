@@ -57,12 +57,20 @@ struct MainTabView: View {
             // 用户登录后启动位置追踪
             if authManager.isAuthenticated {
                 PlayerPresenceManager.shared.startPresenceTracking()
+                // 加载权益并触发每日发放
+                Task {
+                    await StoreKitManager.shared.loadEntitlementsFromSupabase()
+                }
             }
         }
         .onChange(of: authManager.isAuthenticated) { _, isAuthenticated in
             // 监听登录状态变化
             if isAuthenticated {
                 PlayerPresenceManager.shared.startPresenceTracking()
+                // 加载权益并触发每日发放
+                Task {
+                    await StoreKitManager.shared.loadEntitlementsFromSupabase()
+                }
             } else {
                 PlayerPresenceManager.shared.stopPresenceTracking()
             }

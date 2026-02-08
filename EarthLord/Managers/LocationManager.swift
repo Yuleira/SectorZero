@@ -317,6 +317,23 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.requestLocation()
     }
 
+    // MARK: - 后台定位控制
+
+    /// 启用后台定位（供 ExplorationManager 等外部调用）
+    func enableBackgroundTracking() {
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.pausesLocationUpdatesAutomatically = false
+        locationManager.activityType = .fitness
+        print("📍 [定位管理器] 后台定位已启用")
+    }
+
+    /// 关闭后台定位（省电）
+    func disableBackgroundTracking() {
+        locationManager.allowsBackgroundLocationUpdates = false
+        locationManager.pausesLocationUpdatesAutomatically = true
+        print("📍 [定位管理器] 后台定位已关闭")
+    }
+
     // MARK: - 路径追踪方法
 
     /// 开始路径追踪
@@ -344,6 +361,9 @@ final class LocationManager: NSObject, ObservableObject {
         // 标记开始追踪
         isTracking = true
 
+        // 启用后台定位（黑屏/锁屏时继续追踪）
+        enableBackgroundTracking()
+
         // 确保正在定位
         if !isUpdatingLocation {
             startUpdatingLocation()
@@ -361,9 +381,12 @@ final class LocationManager: NSObject, ObservableObject {
         }
 
         // 启动定时器，每 2 秒检查一次是否需要记录新点
-        pathUpdateTimer = Timer.scheduledTimer(withTimeInterval: pathUpdateInterval, repeats: true) { [weak self] _ in
+        // 使用 .common 模式确保后台/锁屏时定时器仍然触发
+        let timer = Timer(timeInterval: pathUpdateInterval, repeats: true) { [weak self] _ in
             self?.recordPathPoint()
         }
+        RunLoop.main.add(timer, forMode: .common)
+        pathUpdateTimer = timer
     }
 
     /// 停止路径追踪
@@ -374,6 +397,9 @@ final class LocationManager: NSObject, ObservableObject {
         // 停止定时器
         pathUpdateTimer?.invalidate()
         pathUpdateTimer = nil
+
+        // 关闭后台定位（省电）
+        disableBackgroundTracking()
 
         // 标记停止追踪
         isTracking = false
@@ -498,6 +524,10 @@ final class LocationManager: NSObject, ObservableObject {
             pathUpdateTimer?.invalidate()
             pathUpdateTimer = nil
             isTracking = false
+
+            // 关闭后台定位（省电）
+            locationManager.allowsBackgroundLocationUpdates = false
+            locationManager.pausesLocationUpdatesAutomatically = true
 
             // 重置速度检测状态
             speedWarning = nil

@@ -26,6 +26,7 @@ enum StoreSection: String, CaseIterable, Identifiable {
 
 struct ResourceExchangeRate {
     let resourceName: String
+    let displayName: LocalizedStringResource
     let resourceIcon: String
     let resourceColor: Color
     let coinCost: Int
@@ -36,10 +37,10 @@ struct ResourceExchangeRate {
 
 /// Exchange rates: Aether Coins → Resources
 let resourceExchangeRates: [ResourceExchangeRate] = [
-    ResourceExchangeRate(resourceName: "Wood", resourceIcon: "leaf.fill", resourceColor: .brown, coinCost: 10, resourceAmount: 100, category: "material"),
-    ResourceExchangeRate(resourceName: "Stone", resourceIcon: "mountain.2.fill", resourceColor: .gray, coinCost: 10, resourceAmount: 100, category: "material"),
-    ResourceExchangeRate(resourceName: "Metal", resourceIcon: "gearshape.fill", resourceColor: .blue, coinCost: 15, resourceAmount: 50, category: "material"),
-    ResourceExchangeRate(resourceName: "Fabric", resourceIcon: "tshirt.fill", resourceColor: .purple, coinCost: 10, resourceAmount: 80, category: "material"),
+    ResourceExchangeRate(resourceName: "Wood", displayName: LocalizedString.resourceWood, resourceIcon: "leaf.fill", resourceColor: .brown, coinCost: 10, resourceAmount: 100, category: "material"),
+    ResourceExchangeRate(resourceName: "Stone", displayName: LocalizedString.resourceStone, resourceIcon: "mountain.2.fill", resourceColor: .gray, coinCost: 10, resourceAmount: 100, category: "material"),
+    ResourceExchangeRate(resourceName: "Metal", displayName: LocalizedString.resourceMetal, resourceIcon: "gearshape.fill", resourceColor: .blue, coinCost: 15, resourceAmount: 50, category: "material"),
+    ResourceExchangeRate(resourceName: "Fabric", displayName: LocalizedString.resourceFabric, resourceIcon: "tshirt.fill", resourceColor: .purple, coinCost: 10, resourceAmount: 80, category: "material"),
 ]
 
 // MARK: - Store View
@@ -474,7 +475,7 @@ struct StoreView: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(rate.resourceName)
+                Text(rate.displayName)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(ApocalypseTheme.textPrimary)
@@ -536,28 +537,25 @@ struct StoreView: View {
             return
         }
 
-        // Create collected items for the resource
+        let resourceId = rate.resourceName.lowercased()
         let definition = ItemDefinition(
-            id: rate.resourceName.lowercased(),
-            name: rate.resourceName,
-            description: "Exchanged from Aether Coins",
-            category: ItemCategory(rawValue: rate.category) ?? .material,
+            id: resourceId,
+            name: "item_\(resourceId)",
+            description: "item_scrap_metal_desc",
+            category: .material,
             icon: rate.resourceIcon,
             rarity: .common
         )
 
-        var items: [CollectedItem] = []
-        for _ in 0..<rate.resourceAmount {
-            items.append(CollectedItem(
-                definition: definition,
-                quality: .good,
-                foundDate: Date(),
-                quantity: 1
-            ))
-        }
+        let item = CollectedItem(
+            definition: definition,
+            quality: .good,
+            foundDate: Date(),
+            quantity: rate.resourceAmount
+        )
 
         Task {
-            await InventoryManager.shared.addItems(items, sourceType: "exchange")
+            await InventoryManager.shared.addItems([item], sourceType: "exchange")
         }
 
         print("🔄 [Exchange] Traded \(rate.coinCost) AEC → \(rate.resourceAmount) \(rate.resourceName)")

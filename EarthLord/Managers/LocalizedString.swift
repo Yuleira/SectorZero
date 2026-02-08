@@ -264,6 +264,12 @@ enum LocalizedString {
     /// 获得经验 (exploration_experience_gained)
     static let explorationExperienceGained: LocalizedStringResource = "exploration_experience_gained"
 
+    /// 获得金币 (exploration_coins_earned)
+    static let explorationCoinsEarned: LocalizedStringResource = "exploration_coins_earned"
+
+    /// 结果页存储已满警告 (result_storage_full_warning)
+    static let resultStorageFullWarning: LocalizedStringResource = "result_storage_full_warning"
+
     /// 距离 (exploration_distance)
     static let explorationDistance: LocalizedStringResource = "exploration_distance"
 
@@ -290,6 +296,9 @@ enum LocalizedString {
 
     /// AI生成 (scavenge_ai_generated)
     static let scavengeAiGenerated: LocalizedStringResource = "scavenge_ai_generated"
+
+    /// 搜刮获得金币 (scavenge_coins_earned)
+    static let scavengeCoinsEarned: LocalizedStringResource = "scavenge_coins_earned"
 
     /// POI发现标题 (poi_discovery_title)
     static let poiDiscoveryTitle: LocalizedStringResource = "poi_discovery_title"
@@ -1392,37 +1401,40 @@ enum LocalizedString {
     /// Archon tier name (tier_archon)
     static let tierArchon: LocalizedStringResource = "tier_archon"
 
-    // MARK: - Subscription Benefits (10 keys)
+    // MARK: - Subscription Benefits (10 keys — only real, implemented benefits)
 
-    /// Daily bonus benefit (store_benefit_daily_bonus)
-    static let storeBenefitDailyBonus: LocalizedStringResource = "store_benefit_daily_bonus"
+    /// 5 Territories (store_benefit_territories_5)
+    static let storeBenefitTerritories5: LocalizedStringResource = "store_benefit_territories_5"
 
-    /// Double daily bonus benefit (store_benefit_daily_bonus_double)
-    static let storeBenefitDailyBonusDouble: LocalizedStringResource = "store_benefit_daily_bonus_double"
+    /// 10 Territories (store_benefit_territories_10)
+    static let storeBenefitTerritories10: LocalizedStringResource = "store_benefit_territories_10"
 
-    /// Triple daily bonus benefit (store_benefit_daily_bonus_triple)
-    static let storeBenefitDailyBonusTriple: LocalizedStringResource = "store_benefit_daily_bonus_triple"
+    /// 25 Territories (store_benefit_territories_25)
+    static let storeBenefitTerritories25: LocalizedStringResource = "store_benefit_territories_25"
 
-    /// Extra storage 50 slots (store_benefit_extra_storage_50)
-    static let storeBenefitExtraStorage50: LocalizedStringResource = "store_benefit_extra_storage_50"
+    /// Daily Energy ×3 (store_benefit_daily_energy_3)
+    static let storeBenefitDailyEnergy3: LocalizedStringResource = "store_benefit_daily_energy_3"
 
-    /// Extra storage 200 slots (store_benefit_extra_storage_200)
-    static let storeBenefitExtraStorage200: LocalizedStringResource = "store_benefit_extra_storage_200"
+    /// Daily Energy ×5 (store_benefit_daily_energy_5)
+    static let storeBenefitDailyEnergy5: LocalizedStringResource = "store_benefit_daily_energy_5"
 
-    /// Extra storage 500 slots (store_benefit_extra_storage_500)
-    static let storeBenefitExtraStorage500: LocalizedStringResource = "store_benefit_extra_storage_500"
+    /// Daily 5 Coins (store_benefit_daily_coins_5)
+    static let storeBenefitDailyCoins5: LocalizedStringResource = "store_benefit_daily_coins_5"
 
-    /// No ads benefit (store_benefit_no_ads)
-    static let storeBenefitNoAds: LocalizedStringResource = "store_benefit_no_ads"
+    /// Daily 15 Coins (store_benefit_daily_coins_15)
+    static let storeBenefitDailyCoins15: LocalizedStringResource = "store_benefit_daily_coins_15"
 
-    /// Priority trade benefit (store_benefit_priority_trade)
-    static let storeBenefitPriorityTrade: LocalizedStringResource = "store_benefit_priority_trade"
+    /// Daily 30 Coins (store_benefit_daily_coins_30)
+    static let storeBenefitDailyCoins30: LocalizedStringResource = "store_benefit_daily_coins_30"
 
-    /// Exclusive items benefit (store_benefit_exclusive_items)
-    static let storeBenefitExclusiveItems: LocalizedStringResource = "store_benefit_exclusive_items"
+    /// Storage 150 (store_benefit_storage_150)
+    static let storeBenefitStorage150: LocalizedStringResource = "store_benefit_storage_150"
 
-    /// Territory bonus benefit (store_benefit_territory_bonus)
-    static let storeBenefitTerritoryBonus: LocalizedStringResource = "store_benefit_territory_bonus"
+    /// Storage 300 (store_benefit_storage_300)
+    static let storeBenefitStorage300: LocalizedStringResource = "store_benefit_storage_300"
+
+    /// Storage 600 (store_benefit_storage_600)
+    static let storeBenefitStorage600: LocalizedStringResource = "store_benefit_storage_600"
 
     // MARK: - Product Names (4 keys)
 
@@ -1464,6 +1476,12 @@ enum LocalizedString {
     /// Go to Store link (vault_go_to_store)
     static let vaultGoToStore: LocalizedStringResource = "vault_go_to_store"
 
+    /// Storage label (vault_storage)
+    static let vaultStorage: LocalizedStringResource = "vault_storage"
+
+    /// Storage full warning (vault_storage_full)
+    static let vaultStorageFull: LocalizedStringResource = "vault_storage_full"
+
     // MARK: - Store Sections (6 keys)
 
     /// Energy Packs section header (store_energy_packs)
@@ -1480,6 +1498,12 @@ enum LocalizedString {
 
     /// Insufficient coins alert message (store_insufficient_coins)
     static let storeInsufficientCoins: LocalizedStringResource = "store_insufficient_coins"
+
+    // MARK: - Resource Names (store exchange display)
+    static let resourceWood: LocalizedStringResource = "resource_wood"
+    static let resourceStone: LocalizedStringResource = "resource_stone"
+    static let resourceMetal: LocalizedStringResource = "resource_metal"
+    static let resourceFabric: LocalizedStringResource = "resource_fabric"
 
     /// Unlimited AI Scans benefit for Archon (store_benefit_unlimited_scans)
     static let storeBenefitUnlimitedScans: LocalizedStringResource = "store_benefit_unlimited_scans"

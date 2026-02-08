@@ -29,6 +29,9 @@ final class InventoryManager: ObservableObject {
     
     /// 错误信息
     @Published var errorMessage: String?
+
+    /// 存储已满警告（UI 可绑定）
+    @Published var storageFullWarning: Bool = false
     
     // MARK: - 私有属性
     
@@ -103,22 +106,57 @@ final class InventoryManager: ObservableObject {
         }
     }
     
-    /// 添加物品（支持堆叠）
+    /// 添加物品（支持堆叠，受存储上限约束）
     func addItems(_ newItems: [CollectedItem], sourceType: String = "exploration", sourceSessionId: UUID? = nil) async {
         guard let userId = AuthManager.shared.currentUser?.id else {
             print("📦 [背包] 未登录，无法添加物品")
             return
         }
-        
+
+        let storageLimit = StoreKitManager.shared.currentStorageLimit
+        var currentCount = getTotalItemCount()
+        var addedCount = 0
+
         for item in newItems {
+            let spaceLeft = storageLimit - currentCount
+            if spaceLeft <= 0 {
+                print("📦 [背包] 存储已满 (\(currentCount)/\(storageLimit))，跳过剩余物品")
+                storageFullWarning = true
+                break
+            }
+
+            // Clamp quantity to available space
+            let actualQuantity = min(item.quantity, spaceLeft)
+            let clampedItem: CollectedItem
+            if actualQuantity < item.quantity {
+                clampedItem = CollectedItem(
+                    id: item.id,
+                    definition: item.definition,
+                    quality: item.quality,
+                    foundDate: item.foundDate,
+                    quantity: actualQuantity,
+                    aiName: item.aiName,
+                    aiStory: item.aiStory,
+                    isAIGenerated: item.isAIGenerated
+                )
+                storageFullWarning = true
+                print("📦 [背包] 存储不足，只添加 \(actualQuantity)/\(item.quantity) 个 \(item.definition.name)")
+            } else {
+                clampedItem = item
+            }
+
             await addSingleItem(
                 userId: userId,
-                item: item,
+                item: clampedItem,
                 sourceType: sourceType,
                 sourceSessionId: sourceSessionId
             )
+            currentCount += actualQuantity
+            addedCount += actualQuantity
         }
-        
+
+        print("📦 [背包] 共添加 \(addedCount) 个物品，当前 \(currentCount)/\(storageLimit)")
+
         // 刷新背包
         await loadItems()
     }
@@ -170,7 +208,22 @@ final class InventoryManager: ObservableObject {
     func getTotalItemCount() -> Int {
         return items.reduce(0) { $0 + $1.quantity }
     }
-    
+
+    /// 当前背包使用量
+    var currentUsage: Int {
+        getTotalItemCount()
+    }
+
+    /// 背包是否已满
+    var isStorageFull: Bool {
+        currentUsage >= StoreKitManager.shared.currentStorageLimit
+    }
+
+    /// 可用剩余空间
+    var remainingCapacity: Int {
+        max(0, StoreKitManager.shared.currentStorageLimit - currentUsage)
+    }
+
     /// 按分类获取物品
     func getItems(byCategory category: ItemCategory) -> [CollectedItem] {
         return items.filter { $0.definition.category == category }

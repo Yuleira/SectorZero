@@ -179,9 +179,50 @@ final class StoreKitManager: ObservableObject {
         currentMembershipTier >= .archon
     }
 
+    /// Daily energy grant amount by tier (Free=2, Scavenger=3, Pioneer=5, Archon=infinite)
+    var dailyEnergyAmount: Int {
+        switch currentMembershipTier {
+        case .free: return 2
+        case .scavenger: return 3
+        case .pioneer: return 5
+        case .archon: return 0 // Archon has infinite energy, no grant needed
+        }
+    }
+
+    /// Daily coin grant amount by subscription tier (Free=0)
+    var dailyCoinAmount: Int {
+        switch currentMembershipTier {
+        case .free: return 0
+        case .scavenger: return 5
+        case .pioneer: return 15
+        case .archon: return 30
+        }
+    }
+
+    /// Storage limit based on subscription tier + permanent unlocks
+    var currentStorageLimit: Int {
+        var limit: Int
+        switch currentMembershipTier {
+        case .free: limit = 100
+        case .scavenger: limit = 150
+        case .pioneer: limit = 300
+        case .archon: limit = 600
+        }
+        if permanentUnlocks.contains(StoreProductID.storageLarge.rawValue) {
+            limit += 100
+        }
+        return limit
+    }
+
     // MARK: - Private Properties
 
     private var transactionListener: Task<Void, Error>?
+
+    /// Last date daily energy was granted
+    private var lastEnergyGrantDate: Date?
+
+    /// Last date daily coins were granted
+    private var lastCoinGrantDate: Date?
 
     // MARK: - Initialization
 
@@ -456,6 +497,14 @@ final class StoreKitManager: ObservableObject {
         return true
     }
 
+    /// Add Aether Coins (e.g. from daily grants or exploration rewards)
+    func addAetherCoins(_ amount: Int) {
+        guard amount > 0 else { return }
+        aetherCoins += amount
+        print("🪙 [Coins] Added \(amount) coins, total: \(aetherCoins)")
+        Task { await syncEntitlementsWithSupabase() }
+    }
+
     // MARK: - Restore Purchases
 
     /// Restore previous purchases
@@ -541,14 +590,21 @@ final class StoreKitManager: ObservableObject {
                 let shards_balance: Int
                 let aether_energy: Int
                 let permanent_unlocks: [String]
+                let last_energy_grant_date: String?
+                let last_coin_grant_date: String?
                 let updated_at: String
             }
+
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
 
             let update = IAPUpdate(
                 membership_tier: currentMembershipTier.rawValue,
                 shards_balance: aetherCoins,
                 aether_energy: aetherEnergy,
                 permanent_unlocks: permanentUnlocks,
+                last_energy_grant_date: lastEnergyGrantDate.map { dateFormatter.string(from: $0) },
+                last_coin_grant_date: lastCoinGrantDate.map { dateFormatter.string(from: $0) },
                 updated_at: ISO8601DateFormatter().string(from: Date())
             )
 
@@ -584,11 +640,13 @@ final class StoreKitManager: ObservableObject {
                 let shards_balance: Int?
                 let aether_energy: Int?
                 let permanent_unlocks: [String]?
+                let last_energy_grant_date: String?
+                let last_coin_grant_date: String?
             }
 
             let response: [ProfileIAP] = try await supabase
                 .from("player_profiles")
-                .select("membership_tier, shards_balance, aether_energy, permanent_unlocks")
+                .select("membership_tier, shards_balance, aether_energy, permanent_unlocks, last_energy_grant_date, last_coin_grant_date")
                 .eq("user_id", value: userId.uuidString)
                 .execute()
                 .value
@@ -599,6 +657,12 @@ final class StoreKitManager: ObservableObject {
                 aetherEnergy = profile.aether_energy ?? 0
                 permanentUnlocks = profile.permanent_unlocks ?? []
 
+                // Parse grant dates
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                lastEnergyGrantDate = profile.last_energy_grant_date.flatMap { dateFormatter.date(from: $0) }
+                lastCoinGrantDate = profile.last_coin_grant_date.flatMap { dateFormatter.date(from: $0) }
+
                 print("💰 [StoreKit] Loaded entitlements from Supabase")
                 print("   - Tier: \(currentMembershipTier)")
                 print("   - Coins: \(aetherCoins)")
@@ -606,9 +670,62 @@ final class StoreKitManager: ObservableObject {
                 print("   - Unlocks: \(permanentUnlocks)")
             }
 
+            // Check and grant daily energy & coins
+            await checkAndGrantDailyEnergy()
+            await checkAndGrantDailyCoins()
+
         } catch {
             print("💰 [StoreKit] Load entitlements error: \(error)")
         }
+    }
+
+    // MARK: - Daily Grants
+
+    /// Check and grant daily energy regeneration.
+    /// Free=2, Scavenger=3, Pioneer=5, Archon=infinite (no grant needed)
+    private func checkAndGrantDailyEnergy() async {
+        // Archon has infinite energy, skip grant
+        guard !isInfiniteEnergyEnabled else { return }
+
+        let today = Calendar.current.startOfDay(for: Date())
+
+        // Check if already granted today
+        if let lastGrant = lastEnergyGrantDate,
+           Calendar.current.isDate(lastGrant, inSameDayAs: today) {
+            print("⚡ [Daily] Energy already granted today")
+            return
+        }
+
+        let amount = dailyEnergyAmount
+        guard amount > 0 else { return }
+
+        addAetherEnergy(amount)
+        lastEnergyGrantDate = today
+        print("⚡ [Daily] Granted \(amount) daily energy (tier: \(currentMembershipTier))")
+
+        await syncEntitlementsWithSupabase()
+    }
+
+    /// Check and grant daily coins for subscribers.
+    /// Free=0, Scavenger=5, Pioneer=15, Archon=30
+    private func checkAndGrantDailyCoins() async {
+        let amount = dailyCoinAmount
+        guard amount > 0 else { return } // Free tier gets nothing
+
+        let today = Calendar.current.startOfDay(for: Date())
+
+        // Check if already granted today
+        if let lastGrant = lastCoinGrantDate,
+           Calendar.current.isDate(lastGrant, inSameDayAs: today) {
+            print("🪙 [Daily] Coins already granted today")
+            return
+        }
+
+        aetherCoins += amount
+        lastCoinGrantDate = today
+        print("🪙 [Daily] Granted \(amount) daily coins (tier: \(currentMembershipTier))")
+
+        await syncEntitlementsWithSupabase()
     }
 
     // MARK: - Helpers

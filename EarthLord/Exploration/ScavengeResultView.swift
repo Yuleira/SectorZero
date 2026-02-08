@@ -44,6 +44,11 @@ struct ScavengeResultView: View {
                 // 物品列表
                 itemsList
 
+                // 存储满警告
+                if result.storageWarning {
+                    storageWarningBanner
+                }
+
                 // 确认按钮
                 confirmButton
             }
@@ -102,6 +107,18 @@ struct ScavengeResultView: View {
                         .font(.system(size: 11, weight: .medium))
                 }
                 .foregroundColor(dangerLevelColor)
+
+                // 金币奖励
+                if result.coinsEarned > 0 {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bitcoinsign.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(ApocalypseTheme.primary)
+                        Text("+\(result.coinsEarned)")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(ApocalypseTheme.primary)
+                    }
+                }
             }
         }
         .padding(.top, 24)
@@ -118,6 +135,23 @@ struct ScavengeResultView: View {
         case 5: return .red
         default: return .gray
         }
+    }
+
+    /// 存储满警告条
+    private var storageWarningBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(ApocalypseTheme.warning)
+            Text(LocalizedString.resultStorageFullWarning)
+                .font(.system(size: 13))
+                .foregroundColor(ApocalypseTheme.warning)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ApocalypseTheme.warning.opacity(0.15))
+        .cornerRadius(8)
+        .padding(.horizontal, 20)
     }
 
     /// 物品列表
@@ -370,7 +404,9 @@ struct ScavengeResultView: View {
                     aiStory: "瓶身上还贴着患者的名字，这些药片可能是某个人最后的希望。",
                     isAIGenerated: true
                 )
-            ]
+            ],
+            coinsEarned: 3,
+            storageWarning: false
         ),
         onDismiss: {}
     )

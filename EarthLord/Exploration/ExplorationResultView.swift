@@ -49,6 +49,16 @@ struct ExplorationResultView: View {
                     collectedItemsSection
                 }
 
+                // 存储满警告
+                if result.storageWarning {
+                    storageWarningBanner
+                }
+
+                // 金币奖励
+                if result.coinsEarned > 0 {
+                    coinsEarnedSection
+                }
+
                 // 经验值
                 experienceSection
 
@@ -177,6 +187,21 @@ struct ExplorationResultView: View {
         }
     }
 
+    /// 存储满警告条
+    private var storageWarningBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(ApocalypseTheme.warning)
+            Text(LocalizedString.resultStorageFullWarning)
+                .font(.system(size: 14))
+                .foregroundColor(ApocalypseTheme.warning)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ApocalypseTheme.warning.opacity(0.15))
+        .cornerRadius(12)
+    }
+
     // MARK: - 收集物品区域
 
     private var collectedItemsSection: some View {
@@ -191,6 +216,29 @@ struct ExplorationResultView: View {
                 }
             }
         }
+    }
+
+    // MARK: - 金币奖励区域
+
+    private var coinsEarnedSection: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "bitcoinsign.circle.fill")
+                .font(.system(size: 24))
+                .foregroundColor(ApocalypseTheme.primary)
+
+            Text(LocalizedString.explorationCoinsEarned)
+                .font(.system(size: 16))
+                .foregroundColor(ApocalypseTheme.textSecondary)
+
+            Spacer()
+
+            Text("+\(result.coinsEarned)")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(ApocalypseTheme.primary)
+        }
+        .padding(16)
+        .background(ApocalypseTheme.cardBackground)
+        .cornerRadius(12)
     }
 
     // MARK: - 经验值区域

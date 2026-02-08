@@ -22,6 +22,8 @@ struct ExplorationTrackPoint {
 struct ScavengeResult {
     let poi: NearbyPOI
     let items: [CollectedItem]
+    let coinsEarned: Int
+    let storageWarning: Bool
 }
 
 /// 探索管理器
@@ -165,7 +167,8 @@ final class ExplorationManager: NSObject, ObservableObject {
         isExploring = true
         startTime = Date()
 
-        // 确保定位服务运行
+        // 确保定位服务运行，并启用后台定位
+        locationManager.enableBackgroundTracking()
         if !locationManager.isUpdatingLocation {
             print("🔍 [探索] 启动定位服务")
             locationManager.startUpdatingLocation()
@@ -244,15 +247,26 @@ final class ExplorationManager: NSObject, ObservableObject {
             itemsCount: collectedItems.count
         )
 
-        // 将物品保存到背包
+        // 将物品保存到背包（重置/捕获存储满警告）
+        var hadStorageWarning = false
         if let sessionId = sessionId, !collectedItems.isEmpty {
             print("🔍 [探索] 将物品保存到背包...")
+            InventoryManager.shared.storageFullWarning = false
             await InventoryManager.shared.addItems(
                 collectedItems,
                 sourceType: "exploration",
                 sourceSessionId: sessionId
             )
+            hadStorageWarning = InventoryManager.shared.storageFullWarning
+            InventoryManager.shared.storageFullWarning = false
             print("🔍 [探索] 物品已保存到背包")
+        }
+
+        // 计算并发放金币奖励
+        let coinsEarned = coinsForTier(tier)
+        if coinsEarned > 0 {
+            StoreKitManager.shared.addAetherCoins(coinsEarned)
+            print("🔍 [探索] 💰 金币奖励: +\(coinsEarned) (等级: \(tier.rawValue))")
         }
 
         // 构建结果
@@ -271,7 +285,9 @@ final class ExplorationManager: NSObject, ObservableObject {
             distanceWalked: currentDistance,
             stats: stats,
             startTime: startTime ?? endTime,
-            endTime: endTime
+            endTime: endTime,
+            coinsEarned: coinsEarned,
+            storageWarning: hadStorageWarning
         )
 
         latestResult = result
@@ -383,36 +399,41 @@ final class ExplorationManager: NSObject, ObservableObject {
         print("🔍 [探索] 探索数据已重置")
     }
 
-    /// 启动时长计时器
+    /// 启动时长计时器（使用 .common 模式确保锁屏时继续运行）
     private func startDurationTimer() {
-        durationTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor [weak self] in
                 guard let self, let start = self.startTime else { return }
                 self.currentDuration = Date().timeIntervalSince(start)
             }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        durationTimer = timer
     }
 
-    /// 启动采点定时器
+    /// 启动采点定时器（使用 .common 模式确保锁屏时继续运行）
     private func startSamplingTimer() {
-        samplingTimer = Timer.scheduledTimer(withTimeInterval: sampleInterval, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: sampleInterval, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor [weak self] in
                 self?.sampleCurrentLocation()
             }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        samplingTimer = timer
     }
 
-    /// 启动速度检测定时器
+    /// 启动速度检测定时器（使用 .common 模式确保锁屏时继续运行）
     private func startSpeedCheckTimer() {
-        // 每2秒检测一次速度
-        speedCheckTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 2.0, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor [weak self] in
                 self?.checkSpeed()
             }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        speedCheckTimer = timer
     }
 
     /// 检测速度
@@ -492,7 +513,9 @@ final class ExplorationManager: NSObject, ObservableObject {
         samplingTimer = nil
         speedCheckTimer?.invalidate()
         speedCheckTimer = nil
-        print("🔍 [探索] 所有定时器已停止")
+        // 关闭后台定位（省电）
+        locationManager.disableBackgroundTracking()
+        print("🔍 [探索] 所有定时器已停止，后台定位已关闭")
     }
 
     /// 采集当前位置
@@ -619,6 +642,30 @@ final class ExplorationManager: NSObject, ObservableObject {
         }
     }
 
+    /// 根据奖励等级计算金币奖励
+    /// None=0, Bronze=2, Silver=5, Gold=10, Diamond=20
+    private func coinsForTier(_ tier: RewardTier) -> Int {
+        switch tier {
+        case .none: return 0
+        case .bronze: return 2
+        case .silver: return 5
+        case .gold: return 10
+        case .diamond: return 20
+        }
+    }
+
+    /// 根据 POI 危险等级计算搜刮金币奖励
+    private func coinsForDangerLevel(_ level: Int) -> Int {
+        switch level {
+        case 1: return 1
+        case 2: return 2
+        case 3: return 3
+        case 4: return 5
+        case 5: return 8
+        default: return 1
+        }
+    }
+
     /// 计算经验值
     private func calculateExperience(tier: RewardTier, distance: Double) -> Int {
         // 基础经验 = 距离 / 10
@@ -691,15 +738,17 @@ final class ExplorationManager: NSObject, ObservableObject {
         isSearchingPOIs = false
     }
 
-    /// 启动POI接近检测定时器
+    /// 启动POI接近检测定时器（使用 .common 模式确保锁屏时继续运行）
     private func startPOIProximityTimer() {
         poiProximityTimer?.invalidate()
-        poiProximityTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 2.0, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor [weak self] in
                 self?.checkPOIProximity()
             }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        poiProximityTimer = timer
         print("🏪 [POI] ✅ 接近检测定时器已启动 (每2秒检测一次，触发范围: \(poiTriggerRadius)米)")
         print("🏪 [POI] 当前共有 \(nearbyPOIs.count) 个POI待检测")
     }
@@ -833,14 +882,24 @@ final class ExplorationManager: NSObject, ObservableObject {
             print("🏪 [搜刮] 获得：\(aiItem.name) [\(aiItem.rarity)] [\(quality.rawValue)] (定义ID: \(definitionId))")
         }
 
-        // 将物品存入背包
+        // 将物品存入背包（重置/捕获存储满警告）
         print("🏪 [搜刮] 正在保存 \(collectedItems.count) 个物品到背包...")
+        InventoryManager.shared.storageFullWarning = false
         await InventoryManager.shared.addItems(
             collectedItems,
             sourceType: "scavenge",
             sourceSessionId: nil
         )
+        let hadStorageWarning = InventoryManager.shared.storageFullWarning
+        InventoryManager.shared.storageFullWarning = false
         print("🏪 [搜刮] 物品保存完成")
+
+        // 计算并发放搜刮金币奖励
+        let coinsEarned = coinsForDangerLevel(poi.dangerLevel)
+        if coinsEarned > 0 {
+            StoreKitManager.shared.addAetherCoins(coinsEarned)
+            print("🏪 [搜刮] 💰 金币奖励: +\(coinsEarned) (危险等级: \(poi.dangerLevel))")
+        }
 
         // 标记POI为已搜刮
         if let index = nearbyPOIs.firstIndex(where: { $0.id == poi.id }) {
@@ -848,7 +907,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         }
 
         // 设置搜刮结果
-        latestScavengeResult = ScavengeResult(poi: poi, items: collectedItems)
+        latestScavengeResult = ScavengeResult(poi: poi, items: collectedItems, coinsEarned: coinsEarned, storageWarning: hadStorageWarning)
 
         // 关闭接近弹窗，显示结果
         showPOIPopup = false

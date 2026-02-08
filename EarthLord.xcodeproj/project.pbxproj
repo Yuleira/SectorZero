@@ -105,6 +105,7 @@
 		E6E50E012F12898D0096D2BB /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50E002F12898D0096D2BB /* LocalizedString.swift */; };
 		F744270E89F30AA0AFD83D5A /* CallsignSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */; };
 		F8FA3C425BD3B92FF9810F4E /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D94A24A2F2B9DE1A622FB68 /* ProfileSettingsView.swift */; };
+		ED1TPR0F1L2E00000000001A /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1TPR0F1L2E00000000001B /* EditProfileView.swift */; };
 		F9D30270753ADA4325F4A2FD /* AIGeneratedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C987D042E72C465043FA761 /* AIGeneratedItem.swift */; };
 		STORE005A2F03000000000005 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE001A2F03000000000001 /* StoreKitManager.swift */; };
 		STORE006A2F03000000000006 /* StoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE002A2F03000000000002 /* StoreView.swift */; };
@@ -118,6 +119,7 @@
 		00D07D29FC143CD40F1E2317 /* POISearchManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = POISearchManager.swift; sourceTree = "<group>"; };
 		0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlayerPresenceManager.swift; sourceTree = "<group>"; };
 		0D94A24A2F2B9DE1A622FB68 /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
+		ED1TPR0F1L2E00000000001B /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		0FD5BA2B77298E792E230915 /* MessageRowView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageRowView.swift; sourceTree = "<group>"; };
 		167B01229078B7FF37507795 /* ChannelCenterView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChannelCenterView.swift; sourceTree = "<group>"; };
 		2F274079912C58F7B842211C /* CallsignSettingsSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CallsignSettingsSheet.swift; sourceTree = "<group>"; };
@@ -430,6 +432,7 @@
 				E6E50DA82F12898D0096D2BB /* PlaceholderView.swift */,
 				E6E50DAB2F12898D0096D2BB /* ProfileTabView.swift */,
 				0D94A24A2F2B9DE1A622FB68 /* ProfileSettingsView.swift */,
+				ED1TPR0F1L2E00000000001B /* EditProfileView.swift */,
 				A1B2C3D40000000000000002 /* OnboardingView.swift */,
 				A1B2C3D40000000000000004 /* SplashVideoView.swift */,
 				E6E50DAC2F12898D0096D2BB /* ResourcesTabView.swift */,
@@ -601,6 +604,7 @@
 				B3AF75D4EBA04AC381C94C25 /* DensityLevel.swift in Sources */,
 				E6E50DB52F12898D0096D2BB /* ProfileTabView.swift in Sources */,
 				F8FA3C425BD3B92FF9810F4E /* ProfileSettingsView.swift in Sources */,
+				ED1TPR0F1L2E00000000001A /* EditProfileView.swift in Sources */,
 				A1B2C3D40000000000000001 /* OnboardingView.swift in Sources */,
 				A1B2C3D40000000000000003 /* SplashVideoView.swift in Sources */,
 				E6E50DB62F12898D0096D2BB /* TerritoryLogger.swift in Sources */,

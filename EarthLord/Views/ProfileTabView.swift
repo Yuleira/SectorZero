@@ -190,9 +190,9 @@ struct ProfileTabView: View {
 
     private var actionButtonsGrid: some View {
         HStack(spacing: 10) {
-            // Edit Profile → Settings (profile editing)
+            // Edit Profile
             NavigationLink {
-                ProfileSettingsView()
+                EditProfileView()
             } label: {
                 actionButtonLabel(
                     icon: "pencil",

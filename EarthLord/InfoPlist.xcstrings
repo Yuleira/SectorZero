@@ -35,6 +35,24 @@
         }
       }
     },
+    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
+      "comment" : "Background location permission dialog",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero needs background location access to continue tracking your territory claims and exploration progress even when the screen is locked."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "《零号扇区》需要后台定位权限，以便在锁屏时继续追踪您的领地圈占和探索进度。"
+          }
+        }
+      }
+    },
     "NSLocationWhenInUseUsageDescription" : {
       "comment" : "Location permission dialog",
       "localizations" : {

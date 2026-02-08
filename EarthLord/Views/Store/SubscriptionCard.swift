@@ -148,24 +148,22 @@ struct SubscriptionCard: View {
         VStack(alignment: .leading, spacing: 6) {
             switch product.id {
             case StoreProductID.scavenger.rawValue:
-                benefitRow(LocalizedString.storeBenefitDailyBonus)
-                benefitRow(LocalizedString.storeBenefitExtraStorage50)
-                benefitRow(LocalizedString.storeBenefitNoAds)
+                benefitRow(LocalizedString.storeBenefitTerritories5)
+                benefitRow(LocalizedString.storeBenefitDailyEnergy3)
+                benefitRow(LocalizedString.storeBenefitDailyCoins5)
+                benefitRow(LocalizedString.storeBenefitStorage150)
 
             case StoreProductID.pioneer.rawValue:
-                benefitRow(LocalizedString.storeBenefitDailyBonusDouble)
-                benefitRow(LocalizedString.storeBenefitExtraStorage200)
-                benefitRow(LocalizedString.storeBenefitNoAds)
-                benefitRow(LocalizedString.storeBenefitPriorityTrade)
+                benefitRow(LocalizedString.storeBenefitTerritories10)
+                benefitRow(LocalizedString.storeBenefitDailyEnergy5)
+                benefitRow(LocalizedString.storeBenefitDailyCoins15)
+                benefitRow(LocalizedString.storeBenefitStorage300)
 
             case StoreProductID.archon.rawValue:
-                benefitRow(LocalizedString.storeBenefitDailyBonusTriple)
-                benefitRow(LocalizedString.storeBenefitExtraStorage500)
-                benefitRow(LocalizedString.storeBenefitNoAds)
-                benefitRow(LocalizedString.storeBenefitPriorityTrade)
-                benefitRow(LocalizedString.storeBenefitExclusiveItems)
-                benefitRow(LocalizedString.storeBenefitTerritoryBonus)
+                benefitRow(LocalizedString.storeBenefitTerritories25)
                 benefitRow(LocalizedString.storeBenefitUnlimitedScans)
+                benefitRow(LocalizedString.storeBenefitDailyCoins30)
+                benefitRow(LocalizedString.storeBenefitStorage600)
 
             default:
                 EmptyView()

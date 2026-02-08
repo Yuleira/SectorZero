@@ -215,6 +215,14 @@ final class AuthManager: NSObject, ObservableObject {
         }
     }
 
+    /// 更新用户名
+    func updateUsername(_ newUsername: String) async throws {
+        let response = try await supabase.auth.update(
+            user: UserAttributes(data: ["username": .string(newUsername)])
+        )
+        currentUser = response
+    }
+
     // MARK: - ==================== 登录流程 ====================
 
     /// 邮箱密码登录

@@ -7,6 +7,10 @@
 		<string>en</string>
 		<string>zh-Hans</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

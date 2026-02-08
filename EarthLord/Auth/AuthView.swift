@@ -624,8 +624,9 @@ struct AuthView: View {
                     Task { await authManager.signInWithApple() }
                 } label: {
                     Image(systemName: "apple.logo")
-                        .font(.system(size: 20, weight: .medium))
+                        .font(.system(size: 24, weight: .medium))
                         .foregroundColor(.white)
+                        .frame(width: 24, height: 24)
                         .frame(width: 50, height: 50)
                         .background(Color.white.opacity(0.1))
                         .clipShape(Circle())
@@ -638,8 +639,11 @@ struct AuthView: View {
                 Button {
                     Task { await authManager.signInWithGoogle() }
                 } label: {
-                    googleLogo
-                        .frame(width: 20, height: 20)
+                    Image("GoogleLogo")
+                        .renderingMode(.original)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
                         .frame(width: 50, height: 50)
                         .background(Color.white.opacity(0.1))
                         .clipShape(Circle())
@@ -647,34 +651,6 @@ struct AuthView: View {
                 }
                 .disabled(authManager.isLoading)
             }
-        }
-    }
-
-    // MARK: - Google Logo (Arc-based G)
-    private var googleLogo: some View {
-        Canvas { context, size in
-            let s = min(size.width, size.height)
-            let center = CGPoint(x: s / 2, y: s / 2)
-            let outer = s * 0.48
-            let thick = s * 0.17
-
-            // Color segments: Red (top-left), Yellow (bottom-left), Green (bottom-right), Blue (right)
-            let segments: [(Color, Angle, Angle)] = [
-                (Color(red: 0.92, green: 0.26, blue: 0.21), .degrees(-150), .degrees(-30)),  // Red: top-left arc
-                (Color(red: 0.98, green: 0.74, blue: 0.02), .degrees(-30), .degrees(30)),      // Yellow: left arc (mapped to bottom-left)
-                (Color(red: 0.20, green: 0.66, blue: 0.33), .degrees(30), .degrees(90)),       // Green: bottom-right arc
-                (Color(red: 0.26, green: 0.52, blue: 0.96), .degrees(90), .degrees(210)),      // Blue: right arc
-            ]
-
-            for (color, start, end) in segments {
-                var path = Path()
-                path.addArc(center: center, radius: outer - thick / 2, startAngle: start, endAngle: end, clockwise: false)
-                context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: thick, lineCap: .butt))
-            }
-
-            // Blue horizontal bar (the crossbar of the G)
-            let barRect = CGRect(x: s * 0.48, y: s * 0.42, width: s * 0.38, height: thick)
-            context.fill(Path(barRect), with: .color(Color(red: 0.26, green: 0.52, blue: 0.96)))
         }
     }
 

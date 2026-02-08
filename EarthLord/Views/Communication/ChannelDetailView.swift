@@ -345,10 +345,10 @@ struct ChannelDetailView: View {
     private func deleteChannel() {
         isProcessing = true
         Task {
-            await communicationManager.deleteChannel(channelId: channel.id)
+            let didDelete = await communicationManager.deleteChannel(channelId: channel.id)
             await MainActor.run {
                 isProcessing = false
-                if communicationManager.errorMessage == nil {
+                if didDelete && communicationManager.errorMessage == nil {
                     dismiss()
                 }
             }

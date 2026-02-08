@@ -189,23 +189,45 @@ final class BuildingManager: ObservableObject {
             return .failure(validation.error!)
         }
         
-        // 4. 消耗资源（原子操作）；definitionId 使用归一化 ID 与 item_definition_id 对齐
+        // 4. 消耗资源（带回滚支持）
+        var consumedResources: [(definitionId: String, amount: Int)] = []
+
         for (resourceId, amount) in template.requiredResources {
+            let normalizedId = resourceId.lowercased()
             let success = await InventoryManager.shared.removeItemsByDefinition(
-                definitionId: resourceId.lowercased(),
+                definitionId: normalizedId,
                 quantity: amount
             )
-            
-            if !success {
-                print("🏗️ [建筑] ❌ 资源消耗失败: \(resourceId) x\(amount)")
+
+            if success {
+                consumedResources.append((definitionId: normalizedId, amount: amount))
+            } else {
+                print("🏗️ [建筑] ❌ 资源消耗失败: \(resourceId) x\(amount)，开始回滚...")
+                for consumed in consumedResources {
+                    let definition = ItemDefinition(
+                        id: consumed.definitionId,
+                        name: "item_\(consumed.definitionId)",
+                        description: "item_scrap_metal_desc",
+                        category: .material,
+                        icon: InventoryManager.shared.resourceIconName(for: consumed.definitionId),
+                        rarity: .common
+                    )
+                    let rollbackItem = CollectedItem(
+                        definition: definition,
+                        quality: .good,
+                        foundDate: Date(),
+                        quantity: consumed.amount
+                    )
+                    await InventoryManager.shared.addItems([rollbackItem], sourceType: "rollback")
+                    print("🏗️ [建筑] 🔄 回滚: 返还 \(consumed.definitionId) x\(consumed.amount)")
+                }
                 errorMessage = String(localized: "error_resource_consumption_failed")
-                // TODO: 回滚已消耗的资源（未来优化）
                 return .failure(.insufficientResources(missing: [resourceId: amount]))
             }
         }
-        
+
         print("🏗️ [建筑] ✅ 资源消耗成功")
-        
+
         // 5. 获取当前用户
         guard let userId = AuthManager.shared.currentUser?.id else {
             print("🏗️ [建筑] ❌ 未登录")
@@ -257,6 +279,24 @@ final class BuildingManager: ObservableObject {
             
         } catch {
             print("🏗️ [建筑] ❌ 数据库插入失败: \(error.localizedDescription)")
+            for consumed in consumedResources {
+                let definition = ItemDefinition(
+                    id: consumed.definitionId,
+                    name: "item_\(consumed.definitionId)",
+                    description: "item_scrap_metal_desc",
+                    category: .material,
+                    icon: InventoryManager.shared.resourceIconName(for: consumed.definitionId),
+                    rarity: .common
+                )
+                let rollbackItem = CollectedItem(
+                    definition: definition,
+                    quality: .good,
+                    foundDate: Date(),
+                    quantity: consumed.amount
+                )
+                await InventoryManager.shared.addItems([rollbackItem], sourceType: "rollback")
+                print("🏗️ [建筑] 🔄 DB失败回滚: 返还 \(consumed.definitionId) x\(consumed.amount)")
+            }
             errorMessage = String(localized: "error_construction_failed") + ": " + error.localizedDescription
             return .failure(.templateNotFound)
         }

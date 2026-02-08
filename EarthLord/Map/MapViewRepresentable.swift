@@ -24,6 +24,9 @@ struct MapViewRepresentable: UIViewRepresentable {
     /// 是否已完成首次定位（防止重复居中）
     @Binding var hasLocatedUser: Bool
 
+    /// 请求居中到用户位置的版本号（父视图每次点击 Locate 递增，此处响应并执行居中）
+    var centerToUserRequestVersion: Int = 0
+
     /// 追踪路径坐标数组（WGS-84 原始坐标）
     @Binding var trackingPath: [CLLocationCoordinate2D]
 
@@ -97,6 +100,20 @@ struct MapViewRepresentable: UIViewRepresentable {
 
     /// 更新 MKMapView（SwiftUI 状态变化时调用）
     func updateUIView(_ mapView: MKMapView, context: Context) {
+        // 响应「居中到用户位置」请求（点击 Locate 按钮）
+        if centerToUserRequestVersion != context.coordinator.lastCenterToUserRequestVersion {
+            context.coordinator.lastCenterToUserRequestVersion = centerToUserRequestVersion
+            let coordinate = userLocation ?? mapView.userLocation.location?.coordinate
+            if let coordinate = coordinate, CLLocationCoordinate2DIsValid(coordinate) {
+                let region = MKCoordinateRegion(
+                    center: coordinate,
+                    latitudinalMeters: 1000,
+                    longitudinalMeters: 1000
+                )
+                mapView.setRegion(region, animated: true)
+            }
+        }
+
         // 更新轨迹显示
         updateTrackingPath(on: mapView, context: context)
 
@@ -278,6 +295,9 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         /// 是否已完成首次居中（防止重复居中）
         private var hasInitialCentered = false
+
+        /// 上次已处理的「居中到用户位置」请求版本号
+        var lastCenterToUserRequestVersion: Int = -1
 
         init(_ parent: MapViewRepresentable) {
             self.parent = parent
@@ -585,6 +605,7 @@ class POIAnnotation: NSObject, MKAnnotation {
     MapViewRepresentable(
         userLocation: .constant(nil),
         hasLocatedUser: .constant(false),
+        centerToUserRequestVersion: 0,
         trackingPath: .constant([]),
         pathUpdateVersion: 0,
         isTracking: false,
