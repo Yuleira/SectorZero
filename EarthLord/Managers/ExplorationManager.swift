@@ -22,7 +22,6 @@ struct ExplorationTrackPoint {
 struct ScavengeResult {
     let poi: NearbyPOI
     let items: [CollectedItem]
-    let coinsEarned: Int
     let storageWarning: Bool
 }
 
@@ -262,13 +261,6 @@ final class ExplorationManager: NSObject, ObservableObject {
             print("🔍 [探索] 物品已保存到背包")
         }
 
-        // 计算并发放金币奖励
-        let coinsEarned = coinsForTier(tier)
-        if coinsEarned > 0 {
-            StoreKitManager.shared.addAetherCoins(coinsEarned)
-            print("🔍 [探索] 💰 金币奖励: +\(coinsEarned) (等级: \(tier.rawValue))")
-        }
-
         // 构建结果
         let stats = ExplorationStats(
             totalDistance: currentDistance,
@@ -286,7 +278,6 @@ final class ExplorationManager: NSObject, ObservableObject {
             stats: stats,
             startTime: startTime ?? endTime,
             endTime: endTime,
-            coinsEarned: coinsEarned,
             storageWarning: hadStorageWarning
         )
 
@@ -642,30 +633,6 @@ final class ExplorationManager: NSObject, ObservableObject {
         }
     }
 
-    /// 根据奖励等级计算金币奖励
-    /// None=0, Bronze=2, Silver=5, Gold=10, Diamond=20
-    private func coinsForTier(_ tier: RewardTier) -> Int {
-        switch tier {
-        case .none: return 0
-        case .bronze: return 2
-        case .silver: return 5
-        case .gold: return 10
-        case .diamond: return 20
-        }
-    }
-
-    /// 根据 POI 危险等级计算搜刮金币奖励
-    private func coinsForDangerLevel(_ level: Int) -> Int {
-        switch level {
-        case 1: return 1
-        case 2: return 2
-        case 3: return 3
-        case 4: return 5
-        case 5: return 8
-        default: return 1
-        }
-    }
-
     /// 计算经验值
     private func calculateExperience(tier: RewardTier, distance: Double) -> Int {
         // 基础经验 = 距离 / 10
@@ -894,20 +861,13 @@ final class ExplorationManager: NSObject, ObservableObject {
         InventoryManager.shared.storageFullWarning = false
         print("🏪 [搜刮] 物品保存完成")
 
-        // 计算并发放搜刮金币奖励
-        let coinsEarned = coinsForDangerLevel(poi.dangerLevel)
-        if coinsEarned > 0 {
-            StoreKitManager.shared.addAetherCoins(coinsEarned)
-            print("🏪 [搜刮] 💰 金币奖励: +\(coinsEarned) (危险等级: \(poi.dangerLevel))")
-        }
-
         // 标记POI为已搜刮
         if let index = nearbyPOIs.firstIndex(where: { $0.id == poi.id }) {
             nearbyPOIs[index].isScavenged = true
         }
 
         // 设置搜刮结果
-        latestScavengeResult = ScavengeResult(poi: poi, items: collectedItems, coinsEarned: coinsEarned, storageWarning: hadStorageWarning)
+        latestScavengeResult = ScavengeResult(poi: poi, items: collectedItems, storageWarning: hadStorageWarning)
 
         // 关闭接近弹窗，显示结果
         showPOIPopup = false

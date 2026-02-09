@@ -2,7 +2,7 @@
 //  ProductRow.swift
 //  EarthLord
 //
-//  Generic product row for non-consumables and consumables
+//  Generic product row for energy pack consumables
 //
 
 import SwiftUI
@@ -14,33 +14,16 @@ struct ProductRow: View {
     let onPurchase: () async -> Void
 
     @State private var isPurchasing = false
+    @State private var showDetail = false
 
     // MARK: - Product Styling
 
     private var productIcon: String {
-        switch product.id {
-        case StoreProductID.storageLarge.rawValue:
-            return "archivebox.fill"
-        case StoreProductID.shards100.rawValue,
-             StoreProductID.coins500.rawValue,
-             StoreProductID.coins1200.rawValue:
-            return "bitcoinsign.circle.fill"
-        default:
-            return "bag.fill"
-        }
+        "bag.fill"
     }
 
     private var productColor: Color {
-        switch product.id {
-        case StoreProductID.storageLarge.rawValue:
-            return ApocalypseTheme.info
-        case StoreProductID.shards100.rawValue,
-             StoreProductID.coins500.rawValue,
-             StoreProductID.coins1200.rawValue:
-            return ApocalypseTheme.primary
-        default:
-            return ApocalypseTheme.textSecondary
-        }
+        ApocalypseTheme.textSecondary
     }
 
     private var isConsumable: Bool {
@@ -51,28 +34,33 @@ struct ProductRow: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill(productColor.opacity(0.2))
-                    .frame(width: 50, height: 50)
+            // Tappable area for detail sheet
+            HStack(spacing: 16) {
+                // Icon
+                ZStack {
+                    Circle()
+                        .fill(productColor.opacity(0.2))
+                        .frame(width: 50, height: 50)
 
-                Image(systemName: productIcon)
-                    .font(.title2)
-                    .foregroundColor(productColor)
+                    Image(systemName: productIcon)
+                        .font(.title2)
+                        .foregroundColor(productColor)
+                }
+
+                // Product Info
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(product.displayName)
+                        .font(.headline)
+                        .foregroundColor(ApocalypseTheme.textPrimary)
+
+                    Text(product.description)
+                        .font(.caption)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                        .lineLimit(2)
+                }
             }
-
-            // Product Info
-            VStack(alignment: .leading, spacing: 4) {
-                Text(product.displayName)
-                    .font(.headline)
-                    .foregroundColor(ApocalypseTheme.textPrimary)
-
-                Text(product.description)
-                    .font(.caption)
-                    .foregroundColor(ApocalypseTheme.textSecondary)
-                    .lineLimit(2)
-            }
+            .contentShape(Rectangle())
+            .onTapGesture { showDetail = true }
 
             Spacer()
 
@@ -86,6 +74,14 @@ struct ProductRow: View {
         .padding()
         .background(ApocalypseTheme.cardBackground)
         .cornerRadius(12)
+        .sheet(isPresented: $showDetail) {
+            ProductDetailSheet(
+                product: product,
+                isPurchased: isPurchased && !isConsumable,
+                isCurrentPlan: false,
+                onPurchase: onPurchase
+            )
+        }
     }
 
     // MARK: - Purchased Badge

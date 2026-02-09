@@ -264,9 +264,6 @@ enum LocalizedString {
     /// 获得经验 (exploration_experience_gained)
     static let explorationExperienceGained: LocalizedStringResource = "exploration_experience_gained"
 
-    /// 获得金币 (exploration_coins_earned)
-    static let explorationCoinsEarned: LocalizedStringResource = "exploration_coins_earned"
-
     /// 结果页存储已满警告 (result_storage_full_warning)
     static let resultStorageFullWarning: LocalizedStringResource = "result_storage_full_warning"
 
@@ -296,9 +293,6 @@ enum LocalizedString {
 
     /// AI生成 (scavenge_ai_generated)
     static let scavengeAiGenerated: LocalizedStringResource = "scavenge_ai_generated"
-
-    /// 搜刮获得金币 (scavenge_coins_earned)
-    static let scavengeCoinsEarned: LocalizedStringResource = "scavenge_coins_earned"
 
     /// POI发现标题 (poi_discovery_title)
     static let poiDiscoveryTitle: LocalizedStringResource = "poi_discovery_title"
@@ -1001,17 +995,11 @@ enum LocalizedString {
     /// 使用资源解锁 (upgrade_with_resources)
     static let upgradeWithResources: LocalizedStringResource = "upgrade_with_resources"
 
-    /// 使用 %lld AEC 立即解锁 (upgrade_instant_format)
-    static let upgradeInstantFormat: LocalizedStringResource = "upgrade_instant_format"
-
     /// 资源不足 (upgrade_insufficient_resources)
     static let upgradeInsufficientResources: LocalizedStringResource = "upgrade_insufficient_resources"
 
     /// 领地不足：拥有 %lld / 需要 %lld (upgrade_territories_format)
     static let upgradeTerritoriesFormat: LocalizedStringResource = "upgrade_territories_format"
-
-    /// 前往商店 (upgrade_go_to_store)
-    static let upgradeGoToStore: LocalizedStringResource = "upgrade_go_to_store"
 
     /// 已解锁 (upgrade_unlocked)
     static let upgradeUnlocked: LocalizedStringResource = "upgrade_unlocked"
@@ -1366,6 +1354,15 @@ enum LocalizedString {
     /// Per month suffix (store_per_month)
     static let storePerMonth: LocalizedStringResource = "store_per_month"
 
+    /// Per year suffix (store_per_year)
+    static let storePerYear: LocalizedStringResource = "store_per_year"
+
+    /// Monthly plan toggle label (monthly_plan)
+    static let monthlyPlan: LocalizedStringResource = "monthly_plan"
+
+    /// Yearly plan toggle label (yearly_plan)
+    static let yearlyPlan: LocalizedStringResource = "yearly_plan"
+
     /// Loading products indicator (store_loading_products)
     static let storeLoadingProducts: LocalizedStringResource = "store_loading_products"
 
@@ -1401,7 +1398,7 @@ enum LocalizedString {
     /// Archon tier name (tier_archon)
     static let tierArchon: LocalizedStringResource = "tier_archon"
 
-    // MARK: - Subscription Benefits (10 keys — only real, implemented benefits)
+    // MARK: - Subscription Benefits (8 keys — only real, implemented benefits)
 
     /// 5 Territories (store_benefit_territories_5)
     static let storeBenefitTerritories5: LocalizedStringResource = "store_benefit_territories_5"
@@ -1412,20 +1409,11 @@ enum LocalizedString {
     /// 25 Territories (store_benefit_territories_25)
     static let storeBenefitTerritories25: LocalizedStringResource = "store_benefit_territories_25"
 
-    /// Daily Energy ×3 (store_benefit_daily_energy_3)
-    static let storeBenefitDailyEnergy3: LocalizedStringResource = "store_benefit_daily_energy_3"
+    /// 5 Daily AI Scans (store_benefit_daily_scans_5)
+    static let storeBenefitDailyScans5: LocalizedStringResource = "store_benefit_daily_scans_5"
 
-    /// Daily Energy ×5 (store_benefit_daily_energy_5)
-    static let storeBenefitDailyEnergy5: LocalizedStringResource = "store_benefit_daily_energy_5"
-
-    /// Daily 5 Coins (store_benefit_daily_coins_5)
-    static let storeBenefitDailyCoins5: LocalizedStringResource = "store_benefit_daily_coins_5"
-
-    /// Daily 15 Coins (store_benefit_daily_coins_15)
-    static let storeBenefitDailyCoins15: LocalizedStringResource = "store_benefit_daily_coins_15"
-
-    /// Daily 30 Coins (store_benefit_daily_coins_30)
-    static let storeBenefitDailyCoins30: LocalizedStringResource = "store_benefit_daily_coins_30"
+    /// 10 Daily AI Scans (store_benefit_daily_scans_10)
+    static let storeBenefitDailyScans10: LocalizedStringResource = "store_benefit_daily_scans_10"
 
     /// Storage 150 (store_benefit_storage_150)
     static let storeBenefitStorage150: LocalizedStringResource = "store_benefit_storage_150"
@@ -1435,20 +1423,6 @@ enum LocalizedString {
 
     /// Storage 600 (store_benefit_storage_600)
     static let storeBenefitStorage600: LocalizedStringResource = "store_benefit_storage_600"
-
-    // MARK: - Product Names (4 keys)
-
-    /// Large storage product (product_storage_large)
-    static let productStorageLarge: LocalizedStringResource = "product_storage_large"
-
-    /// Large storage description (product_storage_large_desc)
-    static let productStorageLargeDesc: LocalizedStringResource = "product_storage_large_desc"
-
-    /// 100 Shards product (product_shards_100)
-    static let productShards100: LocalizedStringResource = "product_shards_100"
-
-    /// Shards balance format (shards_balance_format)
-    static let shardsBalanceFormat: LocalizedStringResource = "shards_balance_format"
 
     // MARK: - Vault Tab (8 keys)
 
@@ -1461,14 +1435,8 @@ enum LocalizedString {
     /// Vault Aether Energy label (vault_aether_energy)
     static let vaultAetherEnergy: LocalizedStringResource = "vault_aether_energy"
 
-    /// Vault Aether Coins label (vault_aether_coins)
-    static let vaultAetherCoins: LocalizedStringResource = "vault_aether_coins"
-
     /// Buy More button (vault_buy_more)
     static let vaultBuyMore: LocalizedStringResource = "vault_buy_more"
-
-    /// Top Up button (vault_top_up)
-    static let vaultTopUp: LocalizedStringResource = "vault_top_up"
 
     /// Unlimited badge text (vault_unlimited)
     static let vaultUnlimited: LocalizedStringResource = "vault_unlimited"
@@ -1482,22 +1450,10 @@ enum LocalizedString {
     /// Storage full warning (vault_storage_full)
     static let vaultStorageFull: LocalizedStringResource = "vault_storage_full"
 
-    // MARK: - Store Sections (6 keys)
+    // MARK: - Store Sections (1 key)
 
     /// Energy Packs section header (store_energy_packs)
     static let storeEnergyPacks: LocalizedStringResource = "store_energy_packs"
-
-    /// Coin Top-up section header (store_coin_topup)
-    static let storeCoinTopup: LocalizedStringResource = "store_coin_topup"
-
-    /// Resource Exchange section header (store_resource_exchange)
-    static let storeResourceExchange: LocalizedStringResource = "store_resource_exchange"
-
-    /// Exchange button label (store_exchange_button)
-    static let storeExchangeButton: LocalizedStringResource = "store_exchange_button"
-
-    /// Insufficient coins alert message (store_insufficient_coins)
-    static let storeInsufficientCoins: LocalizedStringResource = "store_insufficient_coins"
 
     // MARK: - Resource Names (store exchange display)
     static let resourceWood: LocalizedStringResource = "resource_wood"
@@ -1567,6 +1523,49 @@ enum LocalizedString {
 
     /// Onboarding main headline (onboarding_headline)
     static let onboardingHeadline: LocalizedStringResource = "onboarding_headline"
+
+    // MARK: - Product Detail Sheet (22 keys)
+
+    /// Scavenger tier headline (detail_scavenger_headline)
+    static let detailScavengerHeadline: LocalizedStringResource = "detail_scavenger_headline"
+    /// Pioneer tier headline (detail_pioneer_headline)
+    static let detailPioneerHeadline: LocalizedStringResource = "detail_pioneer_headline"
+    /// Archon tier headline (detail_archon_headline)
+    static let detailArchonHeadline: LocalizedStringResource = "detail_archon_headline"
+    /// Energy pack headline (detail_energy_headline)
+    static let detailEnergyHeadline: LocalizedStringResource = "detail_energy_headline"
+
+    /// Scavenger tier description (detail_scavenger_desc)
+    static let detailScavengerDesc: LocalizedStringResource = "detail_scavenger_desc"
+    /// Pioneer tier description (detail_pioneer_desc)
+    static let detailPioneerDesc: LocalizedStringResource = "detail_pioneer_desc"
+    /// Archon tier description (detail_archon_desc)
+    static let detailArchonDesc: LocalizedStringResource = "detail_archon_desc"
+    /// Energy pack description (detail_energy_desc)
+    static let detailEnergyDesc: LocalizedStringResource = "detail_energy_desc"
+
+    /// Comparison "Now" column header (detail_now)
+    static let detailNow: LocalizedStringResource = "detail_now"
+    /// Comparison "After" column header (detail_after)
+    static let detailAfter: LocalizedStringResource = "detail_after"
+    /// Territories label (detail_label_territories)
+    static let detailLabelTerritories: LocalizedStringResource = "detail_label_territories"
+    /// Daily Energy label (detail_label_daily_energy)
+    static let detailLabelDailyEnergy: LocalizedStringResource = "detail_label_daily_energy"
+    /// Storage label (detail_label_storage)
+    static let detailLabelStorage: LocalizedStringResource = "detail_label_storage"
+    /// AI Scans label (detail_label_ai_scans)
+    static let detailLabelAIScans: LocalizedStringResource = "detail_label_ai_scans"
+    /// Energy balance label (detail_label_energy)
+    static let detailLabelEnergy: LocalizedStringResource = "detail_label_energy"
+    /// Unlimited value display (detail_unlimited)
+    static let detailUnlimited: LocalizedStringResource = "detail_unlimited"
+    /// Each scan costs 1 energy (detail_energy_cost_per_scan)
+    static let detailEnergyCostPerScan: LocalizedStringResource = "detail_energy_cost_per_scan"
+    /// Scan POIs to discover items (detail_energy_scan_pois)
+    static let detailEnergyScanPois: LocalizedStringResource = "detail_energy_scan_pois"
+    /// Get N AI scans (detail_energy_scans_count)
+    static let detailEnergyScansCount: LocalizedStringResource = "detail_energy_scans_count"
 
     // MARK: - Key Strings (for statusKey parameters)
 

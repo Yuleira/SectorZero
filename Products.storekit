@@ -5,86 +5,6 @@
   ],
   "products" : [
     {
-      "displayPrice" : "9.99",
-      "familyShareable" : false,
-      "internalID" : "storage_large_001",
-      "localizations" : [
-        {
-          "description" : "Permanently unlock 500 extra inventory slots",
-          "displayName" : "Large Storage Expansion",
-          "locale" : "en_US"
-        },
-        {
-          "description" : "永久解锁500格额外背包空间",
-          "displayName" : "大型仓库扩展",
-          "locale" : "zh_CN"
-        }
-      ],
-      "productID" : "com.sectorzero.item.storage_large",
-      "referenceName" : "Large Storage Expansion",
-      "type" : "NonConsumable"
-    },
-    {
-      "displayPrice" : "0.99",
-      "familyShareable" : false,
-      "internalID" : "shards_100_001",
-      "localizations" : [
-        {
-          "description" : "100 Aether Coins - Premium currency for resources",
-          "displayName" : "100 Aether Coins",
-          "locale" : "en_US"
-        },
-        {
-          "description" : "100枚以太币 - 用于兑换资源的高级货币",
-          "displayName" : "100以太币",
-          "locale" : "zh_CN"
-        }
-      ],
-      "productID" : "com.sectorzero.shards.100",
-      "referenceName" : "100 Aether Coins",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "3.99",
-      "familyShareable" : false,
-      "internalID" : "coins_500_001",
-      "localizations" : [
-        {
-          "description" : "500 Aether Coins - Premium currency for resources",
-          "displayName" : "500 Aether Coins",
-          "locale" : "en_US"
-        },
-        {
-          "description" : "500枚以太币 - 用于兑换资源的高级货币",
-          "displayName" : "500以太币",
-          "locale" : "zh_CN"
-        }
-      ],
-      "productID" : "com.sectorzero.coins.500",
-      "referenceName" : "500 Aether Coins",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "7.99",
-      "familyShareable" : false,
-      "internalID" : "coins_1200_001",
-      "localizations" : [
-        {
-          "description" : "1200 Aether Coins - Premium currency for resources (Best Value)",
-          "displayName" : "1200 Aether Coins",
-          "locale" : "en_US"
-        },
-        {
-          "description" : "1200枚以太币 - 用于兑换资源的高级货币（最超值）",
-          "displayName" : "1200以太币",
-          "locale" : "zh_CN"
-        }
-      ],
-      "productID" : "com.sectorzero.coins.1200",
-      "referenceName" : "1200 Aether Coins",
-      "type" : "Consumable"
-    },
-    {
       "displayPrice" : "0.99",
       "familyShareable" : false,
       "internalID" : "energy_5_001",
@@ -224,26 +144,26 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "2.99",
+          "displayPrice" : "4.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "sub_scavenger_001",
+          "internalID" : "sub_scavenger_monthly_001",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Basic survivor benefits: Daily bonus, +50 storage, no ads",
-              "displayName" : "Scavenger",
+              "description" : "Basic survivor benefits: 5 territories, 5 daily scans, 150 storage",
+              "displayName" : "Scavenger Monthly",
               "locale" : "en_US"
             },
             {
-              "description" : "基础幸存者福利：每日奖励、+50背包、无广告",
-              "displayName" : "拾荒者",
+              "description" : "基础幸存者福利：5领地、5次每日扫描、150背包",
+              "displayName" : "拾荒者 月度",
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.sectorzero.sub.scavenger",
+          "productID" : "com.sectorzero.sub.scavenger.monthly",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Scavenger Tier",
+          "referenceName" : "Scavenger Monthly",
           "subscriptionGroupID" : "com.sectorzero.subscription.group",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
@@ -257,26 +177,59 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "5.99",
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "sub_scavenger_yearly_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Basic survivor benefits: 5 territories, 5 daily scans, 150 storage — Save 33%",
+              "displayName" : "Scavenger Yearly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "基础幸存者福利：5领地、5次每日扫描、150背包 — 节省33%",
+              "displayName" : "拾荒者 年度",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sectorzero.sub.scavenger.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Scavenger Yearly",
+          "subscriptionGroupID" : "com.sectorzero.subscription.group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
           "familyShareable" : false,
           "groupNumber" : 2,
-          "internalID" : "sub_pioneer_001",
+          "internalID" : "sub_pioneer_monthly_001",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Enhanced explorer perks: 2x daily bonus, +200 storage, no ads, priority trade",
-              "displayName" : "Pioneer",
+              "description" : "Enhanced explorer perks: 10 territories, 10 daily scans, 300 storage",
+              "displayName" : "Pioneer Monthly",
               "locale" : "en_US"
             },
             {
-              "description" : "增强探索者福利：双倍每日奖励、+200背包、无广告、优先交易",
-              "displayName" : "先驱者",
+              "description" : "增强探索者福利：10领地、10次每日扫描、300背包",
+              "displayName" : "先驱者 月度",
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.sectorzero.sub.pioneer",
+          "productID" : "com.sectorzero.sub.pioneer.monthly",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Pioneer Tier",
+          "referenceName" : "Pioneer Monthly",
           "subscriptionGroupID" : "com.sectorzero.subscription.group",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
@@ -290,26 +243,92 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "12.99",
+          "displayPrice" : "69.99",
           "familyShareable" : false,
-          "groupNumber" : 3,
-          "internalID" : "sub_archon_001",
+          "groupNumber" : 2,
+          "internalID" : "sub_pioneer_yearly_001",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Ultimate commander benefits: 3x daily bonus, +500 storage, no ads, priority trade, exclusive items, territory bonus, unlimited AI scans",
-              "displayName" : "Archon",
+              "description" : "Enhanced explorer perks: 10 territories, 10 daily scans, 300 storage — Save 42%",
+              "displayName" : "Pioneer Yearly",
               "locale" : "en_US"
             },
             {
-              "description" : "终极指挥官福利：三倍每日奖励、+500背包、无广告、优先交易、专属物品、领地加成、无限AI扫描",
-              "displayName" : "执政官",
+              "description" : "增强探索者福利：10领地、10次每日扫描、300背包 — 节省42%",
+              "displayName" : "先驱者 年度",
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.sectorzero.sub.archon",
+          "productID" : "com.sectorzero.sub.pioneer.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Pioneer Yearly",
+          "subscriptionGroupID" : "com.sectorzero.subscription.group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "14.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "sub_archon_monthly_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Ultimate commander benefits: 25 territories, unlimited AI scans, 600 storage",
+              "displayName" : "Archon Monthly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "终极指挥官福利：25领地、无限AI扫描、600背包",
+              "displayName" : "执政官 月度",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sectorzero.sub.archon.monthly",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Archon Tier",
+          "referenceName" : "Archon Monthly",
+          "subscriptionGroupID" : "com.sectorzero.subscription.group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "sub_archon_yearly_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Ultimate commander benefits: 25 territories, unlimited AI scans, 600 storage — Save 44%",
+              "displayName" : "Archon Yearly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "终极指挥官福利：25领地、无限AI扫描、600背包 — 节省44%",
+              "displayName" : "执政官 年度",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sectorzero.sub.archon.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Archon Yearly",
           "subscriptionGroupID" : "com.sectorzero.subscription.group",
           "type" : "RecurringSubscription",
           "winbackOffers" : [

@@ -14,34 +14,10 @@ import StoreKit
 /// Sections of the store, used for context-aware deep-link navigation.
 enum StoreSection: String, CaseIterable, Identifiable {
     case subscriptions
-    case items
     case energy
-    case coins
-    case exchange
 
     var id: String { rawValue }
 }
-
-// MARK: - Resource Exchange Rates
-
-struct ResourceExchangeRate {
-    let resourceName: String
-    let displayName: LocalizedStringResource
-    let resourceIcon: String
-    let resourceColor: Color
-    let coinCost: Int
-    let resourceAmount: Int
-    /// The item_definitions category used when adding to inventory
-    let category: String
-}
-
-/// Exchange rates: Aether Coins → Resources
-let resourceExchangeRates: [ResourceExchangeRate] = [
-    ResourceExchangeRate(resourceName: "Wood", displayName: LocalizedString.resourceWood, resourceIcon: "leaf.fill", resourceColor: .brown, coinCost: 10, resourceAmount: 100, category: "material"),
-    ResourceExchangeRate(resourceName: "Stone", displayName: LocalizedString.resourceStone, resourceIcon: "mountain.2.fill", resourceColor: .gray, coinCost: 10, resourceAmount: 100, category: "material"),
-    ResourceExchangeRate(resourceName: "Metal", displayName: LocalizedString.resourceMetal, resourceIcon: "gearshape.fill", resourceColor: .blue, coinCost: 15, resourceAmount: 50, category: "material"),
-    ResourceExchangeRate(resourceName: "Fabric", displayName: LocalizedString.resourceFabric, resourceIcon: "tshirt.fill", resourceColor: .purple, coinCost: 10, resourceAmount: 80, category: "material"),
-]
 
 // MARK: - Store View
 
@@ -55,7 +31,7 @@ struct StoreView: View {
     @State private var showPurchaseSuccessAlert = false
     @State private var showFetchErrorAlert = false
     @State private var restoreMessage: String = ""
-    @State private var showInsufficientCoinsAlert = false
+    @State private var selectedEnergyProduct: Product? = nil
 
     var body: some View {
         ZStack {
@@ -133,11 +109,6 @@ struct StoreView: View {
         } message: {
             Text(storeManager.errorMessage ?? String(localized: LocalizedString.storeNetworkError))
         }
-        .alert(Text(LocalizedString.insufficientResources), isPresented: $showInsufficientCoinsAlert) {
-            Button(String(localized: LocalizedString.commonOk), role: .cancel) {}
-        } message: {
-            Text(LocalizedString.storeInsufficientCoins)
-        }
     }
 
     // MARK: - Loading View
@@ -202,23 +173,9 @@ struct StoreView: View {
                             .id(StoreSection.subscriptions)
                     }
 
-                    // Non-Consumables (Items)
-                    if !storeManager.nonConsumableProducts.isEmpty {
-                        itemsSection
-                            .id(StoreSection.items)
-                    }
-
                     // Energy Packs
                     energyPacksSection
                         .id(StoreSection.energy)
-
-                    // Aether Coin Top-up
-                    coinTopUpSection
-                        .id(StoreSection.coins)
-
-                    // Resource Exchange
-                    resourceExchangeSection
-                        .id(StoreSection.exchange)
                 }
                 .padding()
                 .padding(.bottom, 120)
@@ -262,13 +219,19 @@ struct StoreView: View {
 
             Spacer()
 
-            // Aether Coins balance
+            // Energy balance
             HStack(spacing: 4) {
-                Image(systemName: "bitcoinsign.circle.fill")
-                    .foregroundColor(ApocalypseTheme.primary)
-                Text("\(storeManager.aetherCoins)")
-                    .fontWeight(.bold)
-                    .foregroundColor(ApocalypseTheme.textPrimary)
+                Image(systemName: "bolt.fill")
+                    .foregroundColor(.yellow)
+                if storeManager.isInfiniteEnergyEnabled {
+                    Image(systemName: "infinity")
+                        .fontWeight(.bold)
+                        .foregroundColor(ApocalypseTheme.success)
+                } else {
+                    Text("\(storeManager.aetherEnergy)")
+                        .fontWeight(.bold)
+                        .foregroundColor(ApocalypseTheme.textPrimary)
+                }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
@@ -290,34 +253,24 @@ struct StoreView: View {
                 color: .yellow
             )
 
-            ForEach(storeManager.subscriptionProducts, id: \.id) { product in
+            // Show one SubscriptionCard per tier (monthly products drive it)
+            ForEach(storeManager.monthlySubscriptionProducts, id: \.id) { monthlyProduct in
+                let yearlyProduct = yearlyProductForMonthly(monthlyProduct)
                 SubscriptionCard(
-                    product: product,
-                    isCurrentPlan: storeManager.isCurrentPlan(product),
-                    onPurchase: { await purchaseProduct(product) }
+                    monthlyProduct: monthlyProduct,
+                    yearlyProduct: yearlyProduct,
+                    isCurrentPlan: storeManager.isCurrentPlan(monthlyProduct),
+                    onPurchase: { product in await purchaseProduct(product) }
                 )
             }
         }
     }
 
-    // MARK: - Items Section
-
-    private var itemsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(
-                icon: "archivebox.fill",
-                title: LocalizedString.storeItems,
-                color: ApocalypseTheme.info
-            )
-
-            ForEach(storeManager.nonConsumableProducts, id: \.id) { product in
-                ProductRow(
-                    product: product,
-                    isPurchased: storeManager.hasUnlock(product.id),
-                    onPurchase: { await purchaseProduct(product) }
-                )
-            }
-        }
+    /// Find the yearly counterpart for a monthly subscription product
+    private func yearlyProductForMonthly(_ monthlyProduct: Product) -> Product? {
+        guard let storeID = StoreProductID(rawValue: monthlyProduct.id),
+              let yearlyID = storeID.yearlyCounterpart else { return nil }
+        return storeManager.product(for: yearlyID)
     }
 
     // MARK: - Energy Packs Section
@@ -372,28 +325,41 @@ struct StoreView: View {
                 }
             }
         }
+        .sheet(item: $selectedEnergyProduct) { product in
+            ProductDetailSheet(
+                product: product,
+                isPurchased: false,
+                isCurrentPlan: false,
+                onPurchase: { await purchaseProduct(product) }
+            )
+        }
     }
 
     private func energyPackRow(product: Product) -> some View {
         HStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.yellow.opacity(0.2))
-                    .frame(width: 50, height: 50)
-                Image(systemName: "bolt.fill")
-                    .font(.title2)
-                    .foregroundColor(.yellow)
-            }
+            // Tappable area for detail sheet
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(Color.yellow.opacity(0.2))
+                        .frame(width: 50, height: 50)
+                    Image(systemName: "bolt.fill")
+                        .font(.title2)
+                        .foregroundColor(.yellow)
+                }
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(product.displayName)
-                    .font(.headline)
-                    .foregroundColor(ApocalypseTheme.textPrimary)
-                Text(product.description)
-                    .font(.caption)
-                    .foregroundColor(ApocalypseTheme.textSecondary)
-                    .lineLimit(2)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(product.displayName)
+                        .font(.headline)
+                        .foregroundColor(ApocalypseTheme.textPrimary)
+                    Text(product.description)
+                        .font(.caption)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                        .lineLimit(2)
+                }
             }
+            .contentShape(Rectangle())
+            .onTapGesture { selectedEnergyProduct = product }
 
             Spacer()
 
@@ -416,106 +382,6 @@ struct StoreView: View {
         .cornerRadius(12)
     }
 
-    // MARK: - Coin Top-up Section
-
-    private var coinTopUpSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(
-                icon: "bitcoinsign.circle.fill",
-                title: LocalizedString.storeCoinTopup,
-                color: ApocalypseTheme.primary
-            )
-
-            ForEach(storeManager.coinPackProducts, id: \.id) { product in
-                ProductRow(
-                    product: product,
-                    isPurchased: false,
-                    onPurchase: { await purchaseProduct(product) }
-                )
-            }
-        }
-    }
-
-    // MARK: - Resource Exchange Section
-
-    private var resourceExchangeSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                sectionHeader(
-                    icon: "arrow.triangle.2.circlepath",
-                    title: LocalizedString.storeResourceExchange,
-                    color: ApocalypseTheme.success
-                )
-                Spacer()
-                HStack(spacing: 4) {
-                    Image(systemName: "bitcoinsign.circle.fill")
-                        .foregroundColor(ApocalypseTheme.primary)
-                    Text("\(storeManager.aetherCoins)")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundColor(ApocalypseTheme.textPrimary)
-                }
-            }
-
-            ForEach(resourceExchangeRates, id: \.resourceName) { rate in
-                exchangeRow(rate: rate)
-            }
-        }
-    }
-
-    private func exchangeRow(rate: ResourceExchangeRate) -> some View {
-        HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(rate.resourceColor.opacity(0.2))
-                    .frame(width: 44, height: 44)
-                Image(systemName: rate.resourceIcon)
-                    .font(.title3)
-                    .foregroundColor(rate.resourceColor)
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(rate.displayName)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(ApocalypseTheme.textPrimary)
-                HStack(spacing: 4) {
-                    Image(systemName: "bitcoinsign.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(ApocalypseTheme.primary)
-                    Text("\(rate.coinCost)")
-                        .font(.caption)
-                        .foregroundColor(ApocalypseTheme.textSecondary)
-                    Image(systemName: "arrow.right")
-                        .font(.caption2)
-                        .foregroundColor(ApocalypseTheme.textMuted)
-                    Text("\(rate.resourceAmount)")
-                        .font(.caption)
-                        .foregroundColor(ApocalypseTheme.textSecondary)
-                }
-            }
-
-            Spacer()
-
-            Button {
-                performExchange(rate: rate)
-            } label: {
-                Text(LocalizedString.storeExchangeButton)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(storeManager.aetherCoins >= rate.coinCost ? ApocalypseTheme.primary : Color.gray.opacity(0.5))
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            .disabled(storeManager.aetherCoins < rate.coinCost)
-        }
-        .padding()
-        .background(ApocalypseTheme.cardBackground)
-        .cornerRadius(12)
-    }
-
     // MARK: - Section Header
 
     private func sectionHeader(icon: String, title: LocalizedStringResource, color: Color) -> some View {
@@ -527,38 +393,6 @@ struct StoreView: View {
                 .font(.headline)
                 .foregroundColor(ApocalypseTheme.textPrimary)
         }
-    }
-
-    // MARK: - Exchange Handler
-
-    private func performExchange(rate: ResourceExchangeRate) {
-        guard storeManager.spendAetherCoins(rate.coinCost) else {
-            showInsufficientCoinsAlert = true
-            return
-        }
-
-        let resourceId = rate.resourceName.lowercased()
-        let definition = ItemDefinition(
-            id: resourceId,
-            name: "item_\(resourceId)",
-            description: "item_scrap_metal_desc",
-            category: .material,
-            icon: rate.resourceIcon,
-            rarity: .common
-        )
-
-        let item = CollectedItem(
-            definition: definition,
-            quality: .good,
-            foundDate: Date(),
-            quantity: rate.resourceAmount
-        )
-
-        Task {
-            await InventoryManager.shared.addItems([item], sourceType: "exchange")
-        }
-
-        print("🔄 [Exchange] Traded \(rate.coinCost) AEC → \(rate.resourceAmount) \(rate.resourceName)")
     }
 
     // MARK: - Purchase Handler

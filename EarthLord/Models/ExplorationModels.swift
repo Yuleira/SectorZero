@@ -27,15 +27,12 @@ struct ExplorationResult {
     let startTime: Date
     let endTime: Date
 
-    /// 本次探索获得的金币奖励
-    let coinsEarned: Int
-
     /// 存储已满时部分物品未能收入
     let storageWarning: Bool
 
     init(isSuccess: Bool, message: String, itemsCollected: [CollectedItem],
          experienceGained: Int, distanceWalked: Double, stats: ExplorationStats,
-         startTime: Date, endTime: Date, coinsEarned: Int = 0, storageWarning: Bool = false) {
+         startTime: Date, endTime: Date, storageWarning: Bool = false) {
         self.isSuccess = isSuccess
         self.message = message
         self.itemsCollected = itemsCollected
@@ -44,7 +41,6 @@ struct ExplorationResult {
         self.stats = stats
         self.startTime = startTime
         self.endTime = endTime
-        self.coinsEarned = coinsEarned
         self.storageWarning = storageWarning
     }
 }

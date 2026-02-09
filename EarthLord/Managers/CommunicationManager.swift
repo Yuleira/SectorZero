@@ -239,29 +239,6 @@ final class CommunicationManager: ObservableObject {
         return .success
     }
 
-    /// Instantly unlock a device using Aether Coins (bypasses all resource requirements)
-    func instantUnlock(userId: UUID, deviceType: DeviceType) async -> Bool {
-        guard !isDeviceUnlocked(deviceType) else { return true }
-
-        guard let reqs = deviceType.upgradeRequirements else { return false }
-
-        // Check prerequisite even for instant unlock
-        if let prereq = reqs.prerequisiteDeviceId, !isDeviceUnlocked(prereq) {
-            errorMessage = String(localized: LocalizedString.upgradePrerequisiteRequired)
-            return false
-        }
-
-        // Spend coins
-        guard StoreKitManager.shared.spendAetherCoins(reqs.aecInstantCost) else {
-            errorMessage = String(localized: LocalizedString.storeInsufficientCoins)
-            return false
-        }
-
-        // Unlock the device
-        await unlockDevice(userId: userId, deviceType: deviceType)
-        print("✅ [Upgrade] Device instant-unlocked with \(reqs.aecInstantCost) AEC: \(deviceType.rawValue)")
-        return true
-    }
 
     // MARK: - 便捷方法
 

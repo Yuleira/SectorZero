@@ -54,11 +54,6 @@ struct ExplorationResultView: View {
                     storageWarningBanner
                 }
 
-                // 金币奖励
-                if result.coinsEarned > 0 {
-                    coinsEarnedSection
-                }
-
                 // 经验值
                 experienceSection
 
@@ -216,29 +211,6 @@ struct ExplorationResultView: View {
                 }
             }
         }
-    }
-
-    // MARK: - 金币奖励区域
-
-    private var coinsEarnedSection: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "bitcoinsign.circle.fill")
-                .font(.system(size: 24))
-                .foregroundColor(ApocalypseTheme.primary)
-
-            Text(LocalizedString.explorationCoinsEarned)
-                .font(.system(size: 16))
-                .foregroundColor(ApocalypseTheme.textSecondary)
-
-            Spacer()
-
-            Text("+\(result.coinsEarned)")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(ApocalypseTheme.primary)
-        }
-        .padding(16)
-        .background(ApocalypseTheme.cardBackground)
-        .cornerRadius(12)
     }
 
     // MARK: - 经验值区域

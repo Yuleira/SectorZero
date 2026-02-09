@@ -13,8 +13,6 @@ struct DeviceManagementView: View {
     @ObservedObject var authManager: AuthManager
     @ObservedObject var communicationManager: CommunicationManager
     @ObservedObject private var inventoryManager = InventoryManager.shared
-    @ObservedObject private var storeManager = StoreKitManager.shared
-
     @State private var expandedDevice: DeviceType?
     @State private var showingCallsignSettings = false
     @State private var isUpgrading = false
@@ -268,43 +266,6 @@ struct DeviceManagementView: View {
                 }
                 .disabled(!canUpgrade || isUpgrading)
 
-                // AEC instant unlock button
-                let hasEnoughCoins = storeManager.aetherCoins >= reqs.aecInstantCost
-                // Prerequisite must still be met for instant unlock
-                let prereqMet: Bool = {
-                    if let prereq = reqs.prerequisiteDeviceId {
-                        return communicationManager.isDeviceUnlocked(prereq)
-                    }
-                    return true
-                }()
-
-                Button {
-                    performInstantUnlock(deviceType)
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "bitcoinsign.circle.fill")
-                        Text(String(format: String(localized: LocalizedString.upgradeInstantFormat), reqs.aecInstantCost))
-                    }
-                    .font(.caption).fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background((hasEnoughCoins && prereqMet) ? ApocalypseTheme.primary : ApocalypseTheme.textSecondary.opacity(0.3))
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
-                .disabled(!hasEnoughCoins || !prereqMet || isUpgrading)
-
-                // Go to store link if insufficient coins
-                if !hasEnoughCoins {
-                    NavigationLink(destination: StoreView(initialSection: .coins)) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "bag.fill")
-                            Text(LocalizedString.upgradeGoToStore)
-                        }
-                        .font(.caption)
-                        .foregroundColor(ApocalypseTheme.primary)
-                    }
-                }
             }
             .padding(.top, 4)
         }
@@ -380,22 +341,6 @@ struct DeviceManagementView: View {
         }
     }
 
-    private func performInstantUnlock(_ deviceType: DeviceType) {
-        guard let userId = authManager.currentUser?.id else { return }
-        isUpgrading = true
-        Task {
-            let success = await communicationManager.instantUnlock(userId: userId, deviceType: deviceType)
-            isUpgrading = false
-
-            if success {
-                upgradeResultMessage = String(localized: LocalizedString.upgradeSuccess)
-                expandedDevice = nil
-            } else {
-                upgradeResultMessage = String(localized: LocalizedString.storeInsufficientCoins)
-            }
-            showUpgradeResult = true
-        }
-    }
 
     // MARK: - Callsign Settings Entry
 

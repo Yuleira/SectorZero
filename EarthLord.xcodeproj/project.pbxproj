@@ -112,6 +112,7 @@
 		STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE003A2F03000000000003 /* SubscriptionCard.swift */; };
 		STORE008A2F03000000000008 /* ProductRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE004A2F03000000000004 /* ProductRow.swift */; };
 		STORE010A2F03000000000010 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE011A2F03000000000011 /* VaultView.swift */; };
+		STORE013A2F03000000000013 /* ProductDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE012A2F03000000000012 /* ProductDetailSheet.swift */; };
 		INFOP001A2F04000000000001 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = INFOP002A2F04000000000002 /* InfoPlist.xcstrings */; };
 /* End PBXBuildFile section */
 
@@ -223,6 +224,7 @@
 		STORE003A2F03000000000003 /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
 		STORE004A2F03000000000004 /* ProductRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRow.swift; sourceTree = "<group>"; };
 		STORE011A2F03000000000011 /* VaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultView.swift; sourceTree = "<group>"; };
+		STORE012A2F03000000000012 /* ProductDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -509,6 +511,7 @@
 				STORE002A2F03000000000002 /* StoreView.swift */,
 				STORE003A2F03000000000003 /* SubscriptionCard.swift */,
 				STORE004A2F03000000000004 /* ProductRow.swift */,
+				STORE012A2F03000000000012 /* ProductDetailSheet.swift */,
 				STORE011A2F03000000000011 /* VaultView.swift */,
 			);
 			path = Store;
@@ -697,6 +700,7 @@
 				STORE006A2F03000000000006 /* StoreView.swift in Sources */,
 				STORE007A2F03000000000007 /* SubscriptionCard.swift in Sources */,
 				STORE008A2F03000000000008 /* ProductRow.swift in Sources */,
+				STORE013A2F03000000000013 /* ProductDetailSheet.swift in Sources */,
 				STORE010A2F03000000000010 /* VaultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

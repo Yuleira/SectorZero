@@ -15,18 +15,15 @@ import Combine
 
 /// Product identifiers matching Products.storekit configuration
 enum StoreProductID: String, CaseIterable {
-    // Subscriptions
-    case scavenger = "com.sectorzero.sub.scavenger"
-    case pioneer = "com.sectorzero.sub.pioneer"
-    case archon = "com.sectorzero.sub.archon"
+    // Subscriptions — Monthly
+    case scavengerMonthly = "com.sectorzero.sub.scavenger.monthly"
+    case pioneerMonthly = "com.sectorzero.sub.pioneer.monthly"
+    case archonMonthly = "com.sectorzero.sub.archon.monthly"
 
-    // Non-consumables
-    case storageLarge = "com.sectorzero.item.storage_large"
-
-    // Consumables — Aether Coins
-    case shards100 = "com.sectorzero.shards.100"
-    case coins500 = "com.sectorzero.coins.500"
-    case coins1200 = "com.sectorzero.coins.1200"
+    // Subscriptions — Yearly
+    case scavengerYearly = "com.sectorzero.sub.scavenger.yearly"
+    case pioneerYearly = "com.sectorzero.sub.pioneer.yearly"
+    case archonYearly = "com.sectorzero.sub.archon.yearly"
 
     // Consumables — Aether Energy packs
     case energy5 = "com.sectorzero.energy.5"
@@ -34,15 +31,13 @@ enum StoreProductID: String, CaseIterable {
     case energy50 = "com.sectorzero.energy.50"
 
     static var subscriptions: [StoreProductID] {
-        [.scavenger, .pioneer, .archon]
+        [.scavengerMonthly, .scavengerYearly,
+         .pioneerMonthly, .pioneerYearly,
+         .archonMonthly, .archonYearly]
     }
 
     static var energyPacks: [StoreProductID] {
         [.energy5, .energy20, .energy50]
-    }
-
-    static var coinPacks: [StoreProductID] {
-        [.shards100, .coins500, .coins1200]
     }
 
     static var allProductIDs: Set<String> {
@@ -59,14 +54,52 @@ enum StoreProductID: String, CaseIterable {
         }
     }
 
-    /// Amount of coins granted by this product
-    var coinAmount: Int? {
+    /// Get the membership tier for this subscription product
+    var tier: MembershipTier? {
         switch self {
-        case .shards100: return 100
-        case .coins500: return 500
-        case .coins1200: return 1200
+        case .scavengerMonthly, .scavengerYearly: return .scavenger
+        case .pioneerMonthly, .pioneerYearly: return .pioneer
+        case .archonMonthly, .archonYearly: return .archon
         default: return nil
         }
+    }
+
+    /// Whether this is a yearly subscription
+    var isYearly: Bool {
+        switch self {
+        case .scavengerYearly, .pioneerYearly, .archonYearly: return true
+        default: return false
+        }
+    }
+
+    /// Get monthly product ID for the same tier
+    var monthlyCounterpart: StoreProductID? {
+        switch self {
+        case .scavengerYearly: return .scavengerMonthly
+        case .pioneerYearly: return .pioneerMonthly
+        case .archonYearly: return .archonMonthly
+        default: return nil
+        }
+    }
+
+    /// Get yearly product ID for the same tier
+    var yearlyCounterpart: StoreProductID? {
+        switch self {
+        case .scavengerMonthly: return .scavengerYearly
+        case .pioneerMonthly: return .pioneerYearly
+        case .archonMonthly: return .archonYearly
+        default: return nil
+        }
+    }
+
+    /// Monthly product IDs (for grouping in UI)
+    static var monthlySubscriptions: [StoreProductID] {
+        [.scavengerMonthly, .pioneerMonthly, .archonMonthly]
+    }
+
+    /// Yearly product IDs
+    static var yearlySubscriptions: [StoreProductID] {
+        [.scavengerYearly, .pioneerYearly, .archonYearly]
     }
 }
 
@@ -142,9 +175,6 @@ final class StoreKitManager: ObservableObject {
     /// Subscription products only (sorted by price)
     @Published private(set) var subscriptionProducts: [Product] = []
 
-    /// Non-consumable products
-    @Published private(set) var nonConsumableProducts: [Product] = []
-
     /// Consumable products
     @Published private(set) var consumableProducts: [Product] = []
 
@@ -157,14 +187,8 @@ final class StoreKitManager: ObservableObject {
     /// Subscription expiration/renewal date
     @Published private(set) var subscriptionExpirationDate: Date?
 
-    /// Aether Coins balance (consumable currency, DB column: shards_balance)
-    @Published private(set) var aetherCoins: Int = 0
-
     /// Aether Energy balance (AI scan charges)
     @Published private(set) var aetherEnergy: Int = 0
-
-    /// Permanent unlocks (non-consumable product IDs)
-    @Published private(set) var permanentUnlocks: [String] = []
 
     /// Loading state
     @Published private(set) var isLoading = false
@@ -179,39 +203,24 @@ final class StoreKitManager: ObservableObject {
         currentMembershipTier >= .archon
     }
 
-    /// Daily energy grant amount by tier (Free=2, Scavenger=3, Pioneer=5, Archon=infinite)
+    /// Daily energy grant amount by tier (Free=3, Scavenger=5, Pioneer=10, Archon=infinite)
     var dailyEnergyAmount: Int {
         switch currentMembershipTier {
-        case .free: return 2
-        case .scavenger: return 3
-        case .pioneer: return 5
+        case .free: return 3
+        case .scavenger: return 5
+        case .pioneer: return 10
         case .archon: return 0 // Archon has infinite energy, no grant needed
         }
     }
 
-    /// Daily coin grant amount by subscription tier (Free=0)
-    var dailyCoinAmount: Int {
-        switch currentMembershipTier {
-        case .free: return 0
-        case .scavenger: return 5
-        case .pioneer: return 15
-        case .archon: return 30
-        }
-    }
-
-    /// Storage limit based on subscription tier + permanent unlocks
+    /// Storage limit based on subscription tier
     var currentStorageLimit: Int {
-        var limit: Int
         switch currentMembershipTier {
-        case .free: limit = 100
-        case .scavenger: limit = 150
-        case .pioneer: limit = 300
-        case .archon: limit = 600
+        case .free: return 100
+        case .scavenger: return 150
+        case .pioneer: return 300
+        case .archon: return 600
         }
-        if permanentUnlocks.contains(StoreProductID.storageLarge.rawValue) {
-            limit += 100
-        }
-        return limit
     }
 
     // MARK: - Private Properties
@@ -220,9 +229,6 @@ final class StoreKitManager: ObservableObject {
 
     /// Last date daily energy was granted
     private var lastEnergyGrantDate: Date?
-
-    /// Last date daily coins were granted
-    private var lastCoinGrantDate: Date?
 
     // MARK: - Initialization
 
@@ -295,7 +301,6 @@ final class StoreKitManager: ObservableObject {
         do {
             let fetchedProducts = try await Product.products(for: requestedIDs)
 
-            // ✅ CRITICAL DIAGNOSTIC LOG
             print("🛒 [StoreKit] Fetched \(fetchedProducts.count) products")
 
             if fetchedProducts.isEmpty {
@@ -314,13 +319,10 @@ final class StoreKitManager: ObservableObject {
                 .filter { $0.type == .autoRenewable }
                 .sorted { $0.price < $1.price }
 
-            nonConsumableProducts = fetchedProducts
-                .filter { $0.type == .nonConsumable }
-
             consumableProducts = fetchedProducts
                 .filter { $0.type == .consumable }
 
-            print("🛒 [StoreKit] Categorized — Subs: \(subscriptionProducts.count), NonConsumable: \(nonConsumableProducts.count), Consumable: \(consumableProducts.count)")
+            print("🛒 [StoreKit] Categorized — Subs: \(subscriptionProducts.count), Consumable: \(consumableProducts.count)")
 
             // Update current entitlements (handles expiry/downgrade)
             await updatePurchasedProducts()
@@ -426,17 +428,6 @@ final class StoreKitManager: ObservableObject {
                 currentMembershipTier = tier
                 print("💰 [StoreKit] Membership tier updated to: \(tier)")
             }
-        } else if productID == StoreProductID.storageLarge.rawValue {
-            // Non-consumable: add to permanent unlocks
-            if !permanentUnlocks.contains(productID) {
-                permanentUnlocks.append(productID)
-                print("💰 [StoreKit] Added permanent unlock: \(productID)")
-            }
-        } else if let storeProduct = StoreProductID(rawValue: productID),
-                  let coinAmount = storeProduct.coinAmount {
-            // Consumable: add Aether Coins
-            aetherCoins += coinAmount
-            print("💰 [StoreKit] Aether Coins balance updated to: \(aetherCoins) (+\(coinAmount))")
         } else if let storeProduct = StoreProductID(rawValue: productID),
                   let energyAmount = storeProduct.energyAmount {
             // Consumable: add Aether Energy
@@ -450,12 +441,8 @@ final class StoreKitManager: ObservableObject {
 
     /// Get membership tier for a product ID
     private func membershipTier(for productID: String) -> MembershipTier? {
-        switch productID {
-        case StoreProductID.scavenger.rawValue: return .scavenger
-        case StoreProductID.pioneer.rawValue: return .pioneer
-        case StoreProductID.archon.rawValue: return .archon
-        default: return nil
-        }
+        guard let storeProduct = StoreProductID(rawValue: productID) else { return nil }
+        return storeProduct.tier
     }
 
     // MARK: - Aether Energy
@@ -481,28 +468,6 @@ final class StoreKitManager: ObservableObject {
     func addAetherEnergy(_ amount: Int) {
         aetherEnergy += amount
         print("⚡ [Energy] Added \(amount) energy, total: \(aetherEnergy)")
-    }
-
-    // MARK: - Aether Coins
-
-    /// Spend Aether Coins. Returns true if balance was sufficient and deducted.
-    func spendAetherCoins(_ amount: Int) -> Bool {
-        guard aetherCoins >= amount else {
-            print("🪙 [Coins] Insufficient coins: have \(aetherCoins), need \(amount)")
-            return false
-        }
-        aetherCoins -= amount
-        print("🪙 [Coins] Spent \(amount) coins, remaining: \(aetherCoins)")
-        Task { await syncEntitlementsWithSupabase() }
-        return true
-    }
-
-    /// Add Aether Coins (e.g. from daily grants or exploration rewards)
-    func addAetherCoins(_ amount: Int) {
-        guard amount > 0 else { return }
-        aetherCoins += amount
-        print("🪙 [Coins] Added \(amount) coins, total: \(aetherCoins)")
-        Task { await syncEntitlementsWithSupabase() }
     }
 
     // MARK: - Restore Purchases
@@ -558,13 +523,6 @@ final class StoreKitManager: ObservableObject {
                 highestTier = tier
                 expirationDate = transaction.expirationDate
             }
-
-            // Track permanent unlocks
-            if transaction.productID == StoreProductID.storageLarge.rawValue {
-                if !permanentUnlocks.contains(transaction.productID) {
-                    permanentUnlocks.append(transaction.productID)
-                }
-            }
         }
 
         purchasedProductIDs = purchased
@@ -587,11 +545,8 @@ final class StoreKitManager: ObservableObject {
             // Prepare update payload
             struct IAPUpdate: Encodable {
                 let membership_tier: Int
-                let shards_balance: Int
                 let aether_energy: Int
-                let permanent_unlocks: [String]
                 let last_energy_grant_date: String?
-                let last_coin_grant_date: String?
                 let updated_at: String
             }
 
@@ -600,11 +555,8 @@ final class StoreKitManager: ObservableObject {
 
             let update = IAPUpdate(
                 membership_tier: currentMembershipTier.rawValue,
-                shards_balance: aetherCoins,
                 aether_energy: aetherEnergy,
-                permanent_unlocks: permanentUnlocks,
                 last_energy_grant_date: lastEnergyGrantDate.map { dateFormatter.string(from: $0) },
-                last_coin_grant_date: lastCoinGrantDate.map { dateFormatter.string(from: $0) },
                 updated_at: ISO8601DateFormatter().string(from: Date())
             )
 
@@ -617,9 +569,7 @@ final class StoreKitManager: ObservableObject {
 
             print("💰 [StoreKit] Synced entitlements to Supabase")
             print("   - Tier: \(currentMembershipTier.rawValue)")
-            print("   - Coins: \(aetherCoins)")
             print("   - Energy: \(aetherEnergy)")
-            print("   - Unlocks: \(permanentUnlocks)")
 
         } catch {
             print("💰 [StoreKit] Sync error: \(error)")
@@ -637,42 +587,33 @@ final class StoreKitManager: ObservableObject {
         do {
             struct ProfileIAP: Decodable {
                 let membership_tier: Int?
-                let shards_balance: Int?
                 let aether_energy: Int?
-                let permanent_unlocks: [String]?
                 let last_energy_grant_date: String?
-                let last_coin_grant_date: String?
             }
 
             let response: [ProfileIAP] = try await supabase
                 .from("player_profiles")
-                .select("membership_tier, shards_balance, aether_energy, permanent_unlocks, last_energy_grant_date, last_coin_grant_date")
+                .select("membership_tier, aether_energy, last_energy_grant_date")
                 .eq("user_id", value: userId.uuidString)
                 .execute()
                 .value
 
             if let profile = response.first {
                 currentMembershipTier = MembershipTier(rawValue: profile.membership_tier ?? 0) ?? .free
-                aetherCoins = profile.shards_balance ?? 0
                 aetherEnergy = profile.aether_energy ?? 0
-                permanentUnlocks = profile.permanent_unlocks ?? []
 
                 // Parse grant dates
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd"
                 lastEnergyGrantDate = profile.last_energy_grant_date.flatMap { dateFormatter.date(from: $0) }
-                lastCoinGrantDate = profile.last_coin_grant_date.flatMap { dateFormatter.date(from: $0) }
 
                 print("💰 [StoreKit] Loaded entitlements from Supabase")
                 print("   - Tier: \(currentMembershipTier)")
-                print("   - Coins: \(aetherCoins)")
                 print("   - Energy: \(aetherEnergy)")
-                print("   - Unlocks: \(permanentUnlocks)")
             }
 
-            // Check and grant daily energy & coins
+            // Check and grant daily energy
             await checkAndGrantDailyEnergy()
-            await checkAndGrantDailyCoins()
 
         } catch {
             print("💰 [StoreKit] Load entitlements error: \(error)")
@@ -682,7 +623,7 @@ final class StoreKitManager: ObservableObject {
     // MARK: - Daily Grants
 
     /// Check and grant daily energy regeneration.
-    /// Free=2, Scavenger=3, Pioneer=5, Archon=infinite (no grant needed)
+    /// Free=3, Scavenger=5, Pioneer=10, Archon=infinite (no grant needed)
     private func checkAndGrantDailyEnergy() async {
         // Archon has infinite energy, skip grant
         guard !isInfiniteEnergyEnabled else { return }
@@ -706,28 +647,6 @@ final class StoreKitManager: ObservableObject {
         await syncEntitlementsWithSupabase()
     }
 
-    /// Check and grant daily coins for subscribers.
-    /// Free=0, Scavenger=5, Pioneer=15, Archon=30
-    private func checkAndGrantDailyCoins() async {
-        let amount = dailyCoinAmount
-        guard amount > 0 else { return } // Free tier gets nothing
-
-        let today = Calendar.current.startOfDay(for: Date())
-
-        // Check if already granted today
-        if let lastGrant = lastCoinGrantDate,
-           Calendar.current.isDate(lastGrant, inSameDayAs: today) {
-            print("🪙 [Daily] Coins already granted today")
-            return
-        }
-
-        aetherCoins += amount
-        lastCoinGrantDate = today
-        print("🪙 [Daily] Granted \(amount) daily coins (tier: \(currentMembershipTier))")
-
-        await syncEntitlementsWithSupabase()
-    }
-
     // MARK: - Helpers
 
     /// Check if a product has been purchased
@@ -735,14 +654,10 @@ final class StoreKitManager: ObservableObject {
         purchasedProductIDs.contains(productID)
     }
 
-    /// Check if user has a specific permanent unlock
-    func hasUnlock(_ productID: String) -> Bool {
-        permanentUnlocks.contains(productID)
-    }
-
-    /// Check if current plan matches a product
+    /// Check if current plan matches a product (checks both monthly and yearly for same tier)
     func isCurrentPlan(_ product: Product) -> Bool {
-        guard let tier = membershipTier(for: product.id) else { return false }
+        guard let storeProduct = StoreProductID(rawValue: product.id),
+              let tier = storeProduct.tier else { return false }
         return tier == currentMembershipTier
     }
 
@@ -775,11 +690,19 @@ final class StoreKitManager: ObservableObject {
             .sorted { $0.price < $1.price }
     }
 
-    /// Filter products to coin packs only
-    var coinPackProducts: [Product] {
-        let coinIDs = Set(StoreProductID.coinPacks.map { $0.rawValue })
-        return consumableProducts
-            .filter { coinIDs.contains($0.id) }
+    /// Get monthly subscription products (one per tier, sorted by price)
+    var monthlySubscriptionProducts: [Product] {
+        let monthlyIDs = Set(StoreProductID.monthlySubscriptions.map { $0.rawValue })
+        return subscriptionProducts
+            .filter { monthlyIDs.contains($0.id) }
+            .sorted { $0.price < $1.price }
+    }
+
+    /// Get yearly subscription products (one per tier, sorted by price)
+    var yearlySubscriptionProducts: [Product] {
+        let yearlyIDs = Set(StoreProductID.yearlySubscriptions.map { $0.rawValue })
+        return subscriptionProducts
+            .filter { yearlyIDs.contains($0.id) }
             .sorted { $0.price < $1.price }
     }
 
@@ -792,12 +715,8 @@ final class StoreKitManager: ObservableObject {
 
         purchasedProductIDs.insert(productID.rawValue)
 
-        if let tier = membershipTier(for: productID.rawValue) {
+        if let tier = productID.tier {
             currentMembershipTier = tier
-        } else if productID == .storageLarge {
-            permanentUnlocks.append(productID.rawValue)
-        } else if let coinAmount = productID.coinAmount {
-            aetherCoins += coinAmount
         } else if let energyAmount = productID.energyAmount {
             addAetherEnergy(energyAmount)
         }
@@ -810,9 +729,7 @@ final class StoreKitManager: ObservableObject {
         print("💰 [StoreKit] DEBUG: Resetting all entitlements")
         purchasedProductIDs.removeAll()
         currentMembershipTier = .free
-        aetherCoins = 0
         aetherEnergy = 0
-        permanentUnlocks.removeAll()
     }
     #endif
 }

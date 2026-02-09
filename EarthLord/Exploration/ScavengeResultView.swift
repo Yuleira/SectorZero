@@ -108,17 +108,6 @@ struct ScavengeResultView: View {
                 }
                 .foregroundColor(dangerLevelColor)
 
-                // 金币奖励
-                if result.coinsEarned > 0 {
-                    HStack(spacing: 4) {
-                        Image(systemName: "bitcoinsign.circle.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(ApocalypseTheme.primary)
-                        Text("+\(result.coinsEarned)")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(ApocalypseTheme.primary)
-                    }
-                }
             }
         }
         .padding(.top, 24)
@@ -405,7 +394,6 @@ struct ScavengeResultView: View {
                     isAIGenerated: true
                 )
             ],
-            coinsEarned: 3,
             storageWarning: false
         ),
         onDismiss: {}

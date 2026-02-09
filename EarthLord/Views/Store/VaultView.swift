@@ -2,7 +2,7 @@
 //  VaultView.swift
 //  EarthLord
 //
-//  Vault tab — displays Aether Energy, Aether Coins,
+//  Vault tab — displays Aether Energy, Storage,
 //  and View Subscription entry point.
 //
 
@@ -19,9 +19,6 @@ struct VaultView: View {
                 // Aether Energy Card
                 aetherEnergyCard
 
-                // Aether Coins Card
-                aetherCoinsCard
-
                 // Storage Card
                 storageCard
 
@@ -32,7 +29,7 @@ struct VaultView: View {
                         Text(LocalizedString.profileViewSubscription)
                     }
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(
@@ -104,46 +101,6 @@ struct VaultView: View {
         .cornerRadius(12)
     }
 
-    // MARK: - Aether Coins Card
-
-    private var aetherCoinsCard: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(ApocalypseTheme.primary.opacity(0.2))
-                    .frame(width: 50, height: 50)
-                Image(systemName: "bitcoinsign.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(ApocalypseTheme.primary)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(LocalizedString.vaultAetherCoins)
-                    .font(.caption)
-                    .foregroundColor(ApocalypseTheme.textSecondary)
-                Text("\(storeManager.aetherCoins)")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(ApocalypseTheme.textPrimary)
-            }
-
-            Spacer()
-
-            NavigationLink(destination: StoreView(initialSection: .coins)) {
-                Text(LocalizedString.vaultTopUp)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(ApocalypseTheme.primary)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-        }
-        .padding()
-        .background(ApocalypseTheme.cardBackground)
-        .cornerRadius(12)
-    }
     // MARK: - Storage Card
 
     private var storageCard: some View {
