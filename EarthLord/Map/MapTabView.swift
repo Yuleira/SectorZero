@@ -162,16 +162,6 @@ struct MapTabView: View {
                         .padding(.bottom, 12)
                 }
 
-                // 确认登记按钮（仅在验证通过时显示，独立显示在上方）
-                if locationManager.territoryValidationPassed {
-                    HStack {
-                        Spacer()
-                        confirmButton
-                            .padding(.trailing, 16)
-                            .padding(.bottom, 12)
-                    }
-                }
-
                 // 水平按钮栏
                 HStack(spacing: 12) {
                     // 圈地按钮
@@ -249,17 +239,24 @@ struct MapTabView: View {
             }
         }
         .onReceive(locationManager.$isPathClosed) { isClosed in
-            // 监听闭环状态，闭环后根据验证结果显示横幅
+            // 监听闭环状态，闭环后自动上传（不需要手动确认）
             if isClosed {
                 // 闭环后延迟一点点，等待验证结果
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation {
-                        showValidationBanner = true
-                    }
-                    // 3 秒后自动隐藏
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    if locationManager.territoryValidationPassed {
+                        // 验证通过 → 自动上传
+                        Task {
+                            await uploadCurrentTerritory()
+                        }
+                    } else {
+                        // 验证失败 → 显示错误横幅
                         withAnimation {
-                            showValidationBanner = false
+                            showValidationBanner = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                showValidationBanner = false
+                            }
                         }
                     }
                 }
@@ -729,40 +726,13 @@ struct MapTabView: View {
 
     /// Day 19: 带碰撞检测的开始圈地
     private func startClaimingWithCollisionCheck() {
-        guard let location = locationManager.userLocation,
-              let userId = currentUserId else {
+        guard let _ = locationManager.userLocation,
+              let _ = currentUserId else {
             return
         }
 
-        // 检测起始点是否在他人领地内
-        let result = territoryManager.checkPointCollision(
-            location: location,
-            currentUserId: userId
-        )
-
-        if result.hasCollision {
-            // 起点在他人领地内，显示错误并震动
-            collisionWarning = result.message
-            collisionWarningLevel = .violation
-            showCollisionWarning = true
-
-            // 错误震动
-            triggerHapticFeedback(level: .violation)
-
-            TerritoryLogger.shared.log("起点碰撞：阻止圈地", type: .error)
-
-            // 3秒后隐藏警告
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                showCollisionWarning = false
-                collisionWarning = nil
-                collisionWarningLevel = .safe
-            }
-
-            return
-        }
-
-        // 起点安全，开始圈地
-        TerritoryLogger.shared.log("起始点安全，开始圈地", type: .info)
+        // 直接开始圈地（进入他人领地只警告，不阻止）
+        TerritoryLogger.shared.log("开始圈地", type: .info)
         trackingStartTime = Date()
         locationManager.startPathTracking()
         startCollisionMonitoring()
@@ -843,31 +813,12 @@ struct MapTabView: View {
             triggerHapticFeedback(level: .danger)
 
         case .violation:
-            // 【关键修复】违规处理 - 必须先显示横幅，再停止！
-
-            // 1. 先设置警告状态（让横幅显示出来）
+            // 进入他人领地 — 只警告，不终止圈地
             collisionWarning = result.message
-            collisionWarningLevel = .violation
+            collisionWarningLevel = .danger
             showCollisionWarning = true
-
-            // 2. 触发震动
-            triggerHapticFeedback(level: .violation)
-
-            // 3. 只停止定时器，不清除警告状态！
-            stopCollisionCheckTimer()
-
-            // 4. 停止圈地追踪
-            locationManager.stopPathTracking()
-            trackingStartTime = nil
-
-            TerritoryLogger.shared.log("碰撞违规，自动停止圈地", type: .error)
-
-            // 5. 5秒后再清除警告横幅
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                showCollisionWarning = false
-                collisionWarning = nil
-                collisionWarningLevel = .safe
-            }
+            triggerHapticFeedback(level: .danger)
+            TerritoryLogger.shared.log("进入他人领地范围，警告提醒", type: .warning)
         }
     }
 
