@@ -3436,13 +3436,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Become an Archon — the ultimate SectorZero commander. Claim up to 25 territories, enjoy unlimited AI exploration scans with no energy cost, earn 30 Aether Coins daily, and store up to 600 items."
+            "value" : "Become an Archon — the ultimate SectorZero commander. Claim up to 25 territories, enjoy unlimited scans, and expand your storage to 600 slots."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "成为执政官——零号区域的终极指挥官。可占领最多25块领地，享受无限次AI探索扫描且无需消耗能量，每日领取30枚以太币，背包可存储多达600件物品。"
+            "value" : "成为执政官——零号区域的终极指挥官。可占领最多25块领地，享受无限次扫描，背包容量扩展至600格。"
           }
         }
       }
@@ -3725,13 +3725,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Level up to Pioneer for enhanced exploration. Claim up to 10 territories across the map, receive 5 daily energy recharges, earn 15 Aether Coins daily, and unlock 300 storage slots for your growing collection."
+            "value" : "Level up to Pioneer for enhanced exploration. Claim up to 10 territories, receive 10 daily scans, and expand your storage to 300 slots."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "升级为先驱者，增强探索能力。可在地图上占领最多10块领地，每日获得5点能量，每日领取15枚以太币，解锁300格背包空间容纳更多收藏。"
+            "value" : "升级为先驱者，增强探索能力。可占领最多10块领地，每日获得10次扫描，背包容量扩展至300格。"
           }
         }
       }
@@ -3759,13 +3759,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start your journey as a Scavenger. Claim up to 5 territories, receive 3 daily energy recharges for AI exploration scans, earn 5 Aether Coins daily, and expand your storage to 150 slots."
+            "value" : "Start your journey as a Scavenger. Claim up to 5 territories, receive 5 daily scans, and expand your storage to 150 slots."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "以拾荒者身份开启旅程。可占领最多5块领地，每日获得3点能量用于AI探索扫描，每日领取5枚以太币，背包容量扩展至150格。"
+            "value" : "以拾荒者身份开启旅程。可占领最多5块领地，每日获得5次扫描，背包容量扩展至150格。"
           }
         }
       }
@@ -10960,13 +10960,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5 Daily AI Scans"
+            "value" : "Receive 5 Daily Scans"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每日 5 次 AI 扫描"
+            "value" : "每日获得 5 次扫描"
           }
         }
       }
@@ -10976,13 +10976,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "10 Daily AI Scans"
+            "value" : "Receive 10 Daily Scans"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每日 10 次 AI 扫描"
+            "value" : "每日获得 10 次扫描"
           }
         }
       }
@@ -10992,13 +10992,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Storage Limit 150"
+            "value" : "Expand to 150 Storage"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "存储上限 150"
+            "value" : "扩展至 150 存储空间"
           }
         }
       }
@@ -11008,13 +11008,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Storage Limit 300"
+            "value" : "Expand to 300 Storage"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "存储上限 300"
+            "value" : "扩展至 300 存储空间"
           }
         }
       }
@@ -11024,13 +11024,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Storage Limit 600"
+            "value" : "Expand to 600 Storage"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "存储上限 600"
+            "value" : "扩展至 600 存储空间"
           }
         }
       }
@@ -11040,13 +11040,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5 Territories"
+            "value" : "Claim up to 5 Territories"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5 个领地"
+            "value" : "最多占领 5 块领地"
           }
         }
       }
@@ -11056,13 +11056,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "10 Territories"
+            "value" : "Claim up to 10 Territories"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "10 个领地"
+            "value" : "最多占领 10 块领地"
           }
         }
       }
@@ -11072,13 +11072,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "25 Territories"
+            "value" : "Claim up to 25 Territories"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "25 个领地"
+            "value" : "最多占领 25 块领地"
           }
         }
       }

@@ -77,7 +77,7 @@ struct ProductDetailInfo {
         case .pioneerMonthly, .pioneerYearly:
             return ProductDetailInfo(
                 icon: "star.fill",
-                accentColor: .gray,
+                accentColor: ApocalypseTheme.info,
                 buttonTextColor: .white,
                 headline: LocalizedString.detailPioneerHeadline,
                 description: LocalizedString.detailPioneerDesc,
@@ -272,7 +272,7 @@ struct ProductDetailSheet: View {
                 HStack(spacing: 10) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.subheadline)
-                        .foregroundColor(info.accentColor)
+                        .foregroundColor(ApocalypseTheme.info)
                     Text(benefit.text)
                         .font(.subheadline)
                         .foregroundColor(ApocalypseTheme.textPrimary)
@@ -304,7 +304,7 @@ struct ProductDetailSheet: View {
                 Text(LocalizedString.detailAfter)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundColor(ApocalypseTheme.success)
+                    .foregroundColor(ApocalypseTheme.info)
                     .frame(width: 70)
             }
 
@@ -329,7 +329,7 @@ struct ProductDetailSheet: View {
                     Text(row.newValue)
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundColor(row.improved ? ApocalypseTheme.success : ApocalypseTheme.textSecondary)
+                        .foregroundColor(row.improved ? ApocalypseTheme.info : ApocalypseTheme.textSecondary)
                         .frame(width: 70)
                 }
             }

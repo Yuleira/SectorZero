@@ -17,6 +17,12 @@ struct TerritoryMapView: UIViewRepresentable {
     let buildings: [PlayerBuilding]
     let buildingTemplates: [String: BuildingTemplate]
 
+    /// 放置模式：点击地图的回调（nil = 不可点击）
+    var onTap: ((CLLocationCoordinate2D) -> Void)?
+
+    /// 放置模式：选中的放置位置
+    var selectedPlacementLocation: CLLocationCoordinate2D?
+
     // MARK: - UIViewRepresentable
 
     func makeUIView(context: Context) -> MKMapView {
@@ -27,10 +33,20 @@ struct TerritoryMapView: UIViewRepresentable {
         mapView.isRotateEnabled = true
         mapView.isPitchEnabled = false
 
+        // 添加点击手势（放置模式用）
+        let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
+        mapView.addGestureRecognizer(tapGesture)
+        context.coordinator.tapGesture = tapGesture
+        tapGesture.isEnabled = false
+
         return mapView
     }
 
     func updateUIView(_ mapView: MKMapView, context: Context) {
+        // 启用/禁用点击手势
+        context.coordinator.onTap = onTap
+        context.coordinator.tapGesture?.isEnabled = onTap != nil
+
         // 清除旧的覆盖层和标注
         mapView.removeOverlays(mapView.overlays)
         mapView.removeAnnotations(mapView.annotations)
@@ -59,6 +75,14 @@ struct TerritoryMapView: UIViewRepresentable {
             )
             mapView.addAnnotation(annotation)
         }
+
+        // 3. 添加放置模式选中位置标注
+        if let selected = selectedPlacementLocation {
+            let selectedAnnotation = MKPointAnnotation()
+            selectedAnnotation.coordinate = selected
+            selectedAnnotation.title = String(localized: "building_selected_location")
+            mapView.addAnnotation(selectedAnnotation)
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -68,6 +92,17 @@ struct TerritoryMapView: UIViewRepresentable {
     // MARK: - Coordinator
 
     class Coordinator: NSObject, MKMapViewDelegate {
+
+        var onTap: ((CLLocationCoordinate2D) -> Void)?
+        weak var tapGesture: UITapGestureRecognizer?
+
+        @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+            guard let mapView = gesture.view as? MKMapView else { return }
+            let point = gesture.location(in: mapView)
+            let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
+            // ⚠️ coordinate 来自地图点击，已经是 GCJ-02
+            onTap?(coordinate)
+        }
 
         // 渲染多边形覆盖层 — Tactical Aurora 霓虹绿边界
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -85,6 +120,21 @@ struct TerritoryMapView: UIViewRepresentable {
 
         // 渲染建筑标注 — 自定义六角底座 + 辉光
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            // 放置模式选中位置标注
+            if annotation is MKPointAnnotation {
+                let identifier = "PlacementSelectedLocation"
+                var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+                if annotationView == nil {
+                    annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                    annotationView?.canShowCallout = false
+                } else {
+                    annotationView?.annotation = annotation
+                }
+                annotationView?.markerTintColor = UIColor(ApocalypseTheme.success)
+                annotationView?.glyphImage = UIImage(systemName: "checkmark")
+                return annotationView
+            }
+
             guard let buildingAnnotation = annotation as? BuildingAnnotation else {
                 return nil
             }
@@ -99,45 +149,62 @@ struct TerritoryMapView: UIViewRepresentable {
                 annotationView?.annotation = annotation
             }
 
-            // 生成六角底座 + 图标的合成图像
+            // 生成渐变圆角徽章 + 白色图标的合成图像
             let isActive = buildingAnnotation.building.status == .active
             let template = buildingAnnotation.template
-            let categoryColor = categoryUIColor(for: template)
+            let gradientColors = categoryGradientColors(for: template)
             let iconName = template?.icon ?? "building.2.fill"
 
-            let size = CGSize(width: 52, height: 52)
+            let size = CGSize(width: 56, height: 56)
             let renderer = UIGraphicsImageRenderer(size: size)
 
             let compositeImage = renderer.image { ctx in
                 let context = ctx.cgContext
                 let rect = CGRect(origin: .zero, size: size)
-                let insetRect = rect.insetBy(dx: 4, dy: 4)
+                // Inset for shadow + glow space
+                let badgeRect = rect.insetBy(dx: 4, dy: 4)
+                let cornerRadius: CGFloat = 12
+                let badgePath = UIBezierPath(roundedRect: badgeRect, cornerRadius: cornerRadius)
 
-                // 外辉光（Active 建筑）
+                // 3D 阴影
+                context.saveGState()
+                context.setShadow(offset: CGSize(width: 0, height: 3), blur: 6, color: UIColor.black.withAlphaComponent(0.3).cgColor)
+
+                // Active 建筑：外层分类色辉光
                 if isActive {
-                    let glowColor = UIColor(ApocalypseTheme.auroraGlow).withAlphaComponent(0.4)
-                    context.setShadow(offset: .zero, blur: 8, color: glowColor.cgColor)
+                    context.setShadow(offset: CGSize(width: 0, height: 3), blur: 10, color: gradientColors.glow.withAlphaComponent(0.5).cgColor)
                 }
 
-                // 六角形底座
-                let hexPath = hexagonPath(in: insetRect)
-                context.addPath(hexPath)
-                context.setFillColor(categoryColor.withAlphaComponent(0.25).cgColor)
-                context.fillPath()
+                // 渐变填充（左上→右下）
+                context.saveGState()
+                badgePath.addClip()
+                let colorSpace = CGColorSpaceCreateDeviceRGB()
+                if let gradient = CGGradient(
+                    colorsSpace: colorSpace,
+                    colors: [gradientColors.top.cgColor, gradientColors.bottom.cgColor] as CFArray,
+                    locations: [0.0, 1.0]
+                ) {
+                    context.drawLinearGradient(
+                        gradient,
+                        start: CGPoint(x: badgeRect.minX, y: badgeRect.minY),
+                        end: CGPoint(x: badgeRect.maxX, y: badgeRect.maxY),
+                        options: []
+                    )
+                }
+                context.restoreGState()
 
-                // 六角形边框
-                context.addPath(hexPath)
-                context.setStrokeColor(categoryColor.withAlphaComponent(0.7).cgColor)
-                context.setLineWidth(1.5)
-                context.strokePath()
+                // 白色边框 2pt, 80% opacity
+                let borderColor = UIColor.white.withAlphaComponent(0.8)
+                borderColor.setStroke()
+                badgePath.lineWidth = 2
+                badgePath.stroke()
 
-                // 重置阴影再画图标
-                context.setShadow(offset: .zero, blur: 0, color: nil)
+                context.restoreGState()
 
-                // SF Symbol 图标
-                let iconConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+                // 白色 SF Symbol 图标 24pt semibold
+                let iconConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
                 if let iconImage = UIImage(systemName: iconName, withConfiguration: iconConfig) {
-                    let tinted = iconImage.withTintColor(categoryColor, renderingMode: .alwaysOriginal)
+                    let tinted = iconImage.withTintColor(.white, renderingMode: .alwaysOriginal)
                     let iconSize = tinted.size
                     let iconOrigin = CGPoint(
                         x: (size.width - iconSize.width) / 2,
@@ -148,40 +215,17 @@ struct TerritoryMapView: UIViewRepresentable {
             }
 
             annotationView?.image = compositeImage
-            annotationView?.centerOffset = CGPoint(x: 0, y: -size.height / 2)
+            annotationView?.centerOffset = CGPoint(x: 0, y: -28)
 
             // Active 建筑的脉冲动画
             if isActive {
                 addPulseAnimation(to: annotationView!)
             } else {
                 annotationView?.layer.removeAllAnimations()
-                annotationView?.alpha = 0.7
+                annotationView?.alpha = 0.75
             }
 
             return annotationView
-        }
-
-        // MARK: - Helper: 六角形路径
-
-        private func hexagonPath(in rect: CGRect) -> CGPath {
-            let path = CGMutablePath()
-            let center = CGPoint(x: rect.midX, y: rect.midY)
-            let radius = min(rect.width, rect.height) / 2
-
-            for i in 0..<6 {
-                let angle = CGFloat(Double.pi / 3.0 * Double(i)) - CGFloat(Double.pi / 6.0)
-                let point = CGPoint(
-                    x: center.x + radius * cos(angle),
-                    y: center.y + radius * sin(angle)
-                )
-                if i == 0 {
-                    path.move(to: point)
-                } else {
-                    path.addLine(to: point)
-                }
-            }
-            path.closeSubpath()
-            return path
         }
 
         // MARK: - Helper: 脉冲动画
@@ -200,11 +244,39 @@ struct TerritoryMapView: UIViewRepresentable {
             view.layer.add(pulse, forKey: "tacticalPulse")
         }
 
-        // MARK: - Helper: 建筑标注颜色（统一使用主题橘红色）
+        // MARK: - Helper: 建筑分类渐变色 + 辉光色
 
-        private func categoryUIColor(for template: BuildingTemplate?) -> UIColor {
-            guard template != nil else { return .gray }
-            return UIColor(ApocalypseTheme.primary)
+        private func categoryGradientColors(for template: BuildingTemplate?) -> (top: UIColor, bottom: UIColor, glow: UIColor) {
+            guard let category = template?.category else {
+                let gray = UIColor.gray
+                return (gray, gray.withAlphaComponent(0.7), gray)
+            }
+            switch category {
+            case .survival:
+                return (
+                    UIColor(red: 1.0, green: 0.55, blue: 0.0, alpha: 1),
+                    UIColor(red: 0.9, green: 0.3, blue: 0.1, alpha: 1),
+                    UIColor(red: 1.0, green: 0.55, blue: 0.0, alpha: 1)
+                )
+            case .storage:
+                return (
+                    UIColor(red: 0.6, green: 0.4, blue: 0.2, alpha: 1),
+                    UIColor(red: 0.45, green: 0.28, blue: 0.15, alpha: 1),
+                    UIColor(red: 0.6, green: 0.4, blue: 0.2, alpha: 1)
+                )
+            case .production:
+                return (
+                    UIColor(red: 0.4, green: 0.3, blue: 0.85, alpha: 1),
+                    UIColor(red: 0.55, green: 0.25, blue: 0.85, alpha: 1),
+                    UIColor(red: 0.5, green: 0.3, blue: 0.85, alpha: 1)
+                )
+            case .energy:
+                return (
+                    UIColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1),
+                    UIColor(red: 1.0, green: 0.6, blue: 0.0, alpha: 1),
+                    UIColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1)
+                )
+            }
         }
     }
 }

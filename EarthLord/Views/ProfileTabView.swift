@@ -59,6 +59,7 @@ struct ProfileTabView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     identityCard
+                    vaultSection
                     dataDashboard
                 }
             }
@@ -66,11 +67,22 @@ struct ProfileTabView: View {
             .navigationTitle(Text(LocalizedString.profileSurvivorTitle))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink {
+                        ProfileSettingsView()
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundColor(ApocalypseTheme.textSecondary)
+                    }
+                }
+            }
             .id(languageManager.refreshID)
             .task {
                 let _ = try? await territoryManager.loadMyTerritories()
                 await buildingManager.fetchPlayerBuildings()
                 await inventoryManager.loadItems()
+                await storeKitManager.loadEntitlementsFromSupabase()
             }
         }
     }
@@ -122,9 +134,6 @@ struct ProfileTabView: View {
 
             // Summary Stats Row
             summaryStatsRow
-
-            // Action Buttons Grid
-            actionButtonsGrid
         }
         .padding(20)
         .background(ApocalypseTheme.cardBackground)
@@ -186,48 +195,158 @@ struct ProfileTabView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Action Buttons Row
+    // MARK: - Vault Section
 
-    private var actionButtonsGrid: some View {
-        HStack(spacing: 10) {
-            // Edit Profile
-            NavigationLink {
-                EditProfileView()
-            } label: {
-                actionButtonLabel(
-                    icon: "pencil",
-                    title: LocalizedString.profileEditProfile,
-                    background: AnyShapeStyle(ApocalypseTheme.cardBackground)
+    private var vaultSection: some View {
+        VStack(spacing: 10) {
+            // Row 1: View Subscription (full width)
+            NavigationLink(destination: StoreView(initialSection: .subscriptions)) {
+                HStack(spacing: 6) {
+                    Image(systemName: "star.fill")
+                    Text(LocalizedString.profileViewSubscription)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(
+                    LinearGradient(
+                        colors: [.teal, .cyan],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
                 )
+                .cornerRadius(12)
             }
 
-            // Settings
-            NavigationLink {
-                ProfileSettingsView()
-            } label: {
-                actionButtonLabel(
-                    icon: "gearshape",
-                    title: LocalizedString.profileSettings,
-                    background: AnyShapeStyle(ApocalypseTheme.cardBackground)
-                )
+            // Row 2: Energy card (left) + Storage card (right)
+            HStack(spacing: 10) {
+                aetherEnergyCard
+                    .frame(maxHeight: .infinity)
+                storageCard
+                    .frame(maxHeight: .infinity)
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
     }
 
-    private func actionButtonLabel(icon: String, title: LocalizedStringResource, background: AnyShapeStyle) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.subheadline.bold())
-            Text(title)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
+    // MARK: - Aether Energy Card
+
+    private var aetherEnergyCard: some View {
+        HStack(spacing: 10) {
+            ZStack {
+                Circle()
+                    .fill(Color.yellow.opacity(0.2))
+                    .frame(width: 32, height: 32)
+                Image(systemName: "bolt.fill")
+                    .font(.callout)
+                    .foregroundColor(.yellow)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(LocalizedString.vaultAetherEnergy)
+                    .font(.caption2)
+                    .foregroundColor(ApocalypseTheme.textSecondary)
+                    .lineLimit(1)
+
+                HStack(spacing: 8) {
+                    if storeKitManager.isInfiniteEnergyEnabled {
+                        Text(LocalizedString.vaultUnlimited)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(ApocalypseTheme.success)
+                    } else {
+                        Text("\(storeKitManager.aetherEnergy)")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(ApocalypseTheme.textPrimary)
+                    }
+
+                    if !storeKitManager.isInfiniteEnergyEnabled {
+                        NavigationLink(destination: StoreView(initialSection: .energy)) {
+                            Text(LocalizedString.vaultBuyMore)
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(Color.yellow)
+                                .foregroundColor(.black)
+                                .cornerRadius(6)
+                        }
+                    }
+                }
+            }
+
+            Spacer(minLength: 0)
         }
-        .font(.subheadline.bold())
-        .foregroundColor(.white)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .padding(.horizontal, 8)
-        .background(background)
+        .padding(12)
+        .background(ApocalypseTheme.cardBackground)
+        .cornerRadius(12)
+    }
+
+    // MARK: - Storage Card
+
+    private var storageCard: some View {
+        let usage = inventoryManager.currentUsage
+        let limit = storeKitManager.currentStorageLimit
+        let progress = limit > 0 ? Double(usage) / Double(limit) : 0
+        let isFull = usage >= limit
+
+        return VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill((isFull ? ApocalypseTheme.danger : ApocalypseTheme.info).opacity(0.2))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: "archivebox.fill")
+                        .font(.callout)
+                        .foregroundColor(isFull ? ApocalypseTheme.danger : ApocalypseTheme.info)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(LocalizedString.vaultStorage)
+                        .font(.caption2)
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                        .lineLimit(1)
+                    Text("\(usage) / \(limit)")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(isFull ? ApocalypseTheme.danger : Color(red: 1.0, green: 0.4, blue: 0.2))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            // Progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 6)
+
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(isFull ? ApocalypseTheme.danger : ApocalypseTheme.info)
+                        .frame(width: geo.size.width * min(progress, 1.0), height: 6)
+                }
+            }
+            .frame(height: 6)
+
+            if isFull {
+                Text(LocalizedString.vaultStorageFull)
+                    .font(.caption2)
+                    .foregroundColor(ApocalypseTheme.danger)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(12)
+        .background(ApocalypseTheme.cardBackground)
         .cornerRadius(12)
     }
 
@@ -294,7 +413,7 @@ struct ProfileTabView: View {
                     .font(.caption)
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
 
             // Time Period Picker
             timePeriodPicker

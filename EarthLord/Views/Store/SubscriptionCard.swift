@@ -30,7 +30,7 @@ struct SubscriptionCard: View {
         }
         switch storeID.tier {
         case .scavenger: return Color.brown
-        case .pioneer: return Color.gray
+        case .pioneer: return ApocalypseTheme.info
         case .archon: return Color.yellow
         default: return ApocalypseTheme.primary
         }

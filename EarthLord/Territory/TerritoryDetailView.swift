@@ -45,8 +45,15 @@ struct TerritoryDetailView: View {
     /// 待删除的建筑
     @State private var buildingToDelete: PlayerBuilding?
 
-    /// 显示位置选择器（位置优先流程）
-    @State private var showLocationPicker = false
+    /// 放置模式（位置优先流程：直接在地图上点击放置）
+    @State private var isInPlacementMode = false
+
+    /// 放置模式选中的位置
+    @State private var placementSelectedLocation: CLLocationCoordinate2D?
+
+    /// 放置模式验证错误
+    @State private var showPlacementError = false
+    @State private var placementErrorMessage = ""
 
     /// 预选位置（位置优先流程：先选位置，再选建筑）
     @State private var preSelectedLocation: CLLocationCoordinate2D?
@@ -70,6 +77,14 @@ struct TerritoryDetailView: View {
     /// 领地坐标
     private var coordinates: [CLLocationCoordinate2D] {
         territory.toCoordinates()
+    }
+
+    /// 放置模式地图点击回调（nil = 非放置模式）
+    private var placementTapHandler: ((CLLocationCoordinate2D) -> Void)? {
+        guard isInPlacementMode else { return nil }
+        return { coordinate in
+            self.handlePlacementTap(coordinate)
+        }
     }
 
     /// 该领地的建筑列表
@@ -111,38 +126,72 @@ struct TerritoryDetailView: View {
             TerritoryMapView(
                 territoryCoordinates: coordinates,
                 buildings: territoryBuildings,
-                buildingTemplates: templateDict
+                buildingTemplates: templateDict,
+                onTap: placementTapHandler,
+                selectedPlacementLocation: placementSelectedLocation
             )
             .ignoresSafeArea()
             
             // 顶部浮动工具栏
             VStack {
-                TerritoryToolbarView(
-                    territoryName: currentDisplayName,
-                    onBack: {
-                        dismiss()
-                    },
-                    onTitleTap: {
-                        newTerritoryName = currentDisplayName
-                        renameErrorMessage = nil
-                        showRenameDialog = true
+                if !isInPlacementMode {
+                    TerritoryToolbarView(
+                        territoryName: currentDisplayName,
+                        onBack: {
+                            dismiss()
+                        },
+                        onTitleTap: {
+                            newTerritoryName = currentDisplayName
+                            renameErrorMessage = nil
+                            showRenameDialog = true
+                        }
+                    )
+
+                    // 放置模式提示横幅（仅在选中模板时显示）
+                    if selectedTemplateForConstruction != nil {
+                        placementModeBanner
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedTemplateForConstruction != nil)
                     }
-                )
-                
-                // 放置模式提示横幅（仅在选中模板时显示）
-                if selectedTemplateForConstruction != nil {
-                    placementModeBanner
+                } else {
+                    // 放置模式顶栏：Cancel + Tap to place building
+                    placementModeTopBar
                         .transition(.move(edge: .top).combined(with: .opacity))
-                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: selectedTemplateForConstruction != nil)
                 }
-                
+
                 Spacer()
             }
-            
-            // 底部建筑列表面板
-            VStack {
-                Spacer()
-                buildingListPanel
+
+            // 放置模式确认按钮
+            if isInPlacementMode, placementSelectedLocation != nil {
+                VStack {
+                    Spacer()
+                    Button {
+                        confirmPlacementLocation()
+                    } label: {
+                        Text(LocalizedString.buildingConfirmLocation)
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(ApocalypseTheme.primary)
+                                    .shadow(color: ApocalypseTheme.primary.opacity(0.4), radius: 8, x: 0, y: 4)
+                            )
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
+            // 底部建筑列表面板（放置模式时隐藏）
+            if !isInPlacementMode {
+                VStack {
+                    Spacer()
+                    buildingListPanel
+                }
             }
         }
         .task {
@@ -166,20 +215,10 @@ struct TerritoryDetailView: View {
                 initialLocation: preSelectedLocation
             )
         }
-        .sheet(isPresented: $showLocationPicker, onDismiss: {
-            // 位置选择完毕后，自动打开建筑浏览器让用户选择要建造的建筑
-            if preSelectedLocation != nil {
-                showBuildingBrowser = true
-            }
-        }) {
-            BuildingLocationPickerView(
-                territoryCoordinates: coordinates,
-                existingBuildings: territoryBuildings,
-                buildingTemplates: templateDict,
-                onLocationSelected: { location in
-                    preSelectedLocation = location
-                }
-            )
+        .alert(LocalizedString.buildingLocationInvalid, isPresented: $showPlacementError) {
+            Button(LocalizedString.commonConfirm, role: .cancel) {}
+        } message: {
+            Text(placementErrorMessage)
         }
         .sheet(isPresented: $showRenameDialog) {
             renameSheet
@@ -227,6 +266,51 @@ struct TerritoryDetailView: View {
         )
         .padding(.horizontal, 16)
         .padding(.top, 8)
+    }
+
+    /// 放置模式顶栏
+    private var placementModeTopBar: some View {
+        HStack {
+            // 取消按钮
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isInPlacementMode = false
+                    placementSelectedLocation = nil
+                }
+            } label: {
+                Text(LocalizedString.commonCancel)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(ApocalypseTheme.textPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(ApocalypseTheme.cardBackground.opacity(0.95))
+                            .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                    )
+            }
+
+            Spacer()
+
+            // 提示文字
+            Text(LocalizedString.buildingTapToPlace)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(ApocalypseTheme.textPrimary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(ApocalypseTheme.cardBackground.opacity(0.95))
+                        .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                )
+
+            Spacer()
+
+            // 占位（对称布局）
+            Color.clear.frame(width: 80)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
     }
 
     /// 建筑列表面板（底部可折叠）
@@ -288,7 +372,10 @@ struct TerritoryDetailView: View {
 
                     // 建造位置按钮 — 先选位置，再选建筑
                     Button {
-                        showLocationPicker = true
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            placementSelectedLocation = nil
+                            isInPlacementMode = true
+                        }
                     } label: {
                         Image(systemName: "mappin.circle.fill")
                             .font(.system(size: 15, weight: .semibold))
@@ -444,6 +531,50 @@ struct TerritoryDetailView: View {
         }
         
         buildingToDelete = nil
+    }
+
+    /// 处理放置模式地图点击
+    private func handlePlacementTap(_ coordinate: CLLocationCoordinate2D) {
+        let isInside = isPointInPolygon(point: coordinate, polygon: coordinates)
+        if isInside {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                placementSelectedLocation = coordinate
+            }
+        } else {
+            placementErrorMessage = String(localized: "building_location_outside_territory")
+            showPlacementError = true
+        }
+    }
+
+    /// 确认放置位置，进入建筑选择
+    private func confirmPlacementLocation() {
+        guard let location = placementSelectedLocation else { return }
+        preSelectedLocation = location
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            isInPlacementMode = false
+            placementSelectedLocation = nil
+        }
+        showBuildingBrowser = true
+    }
+
+    /// 射线法判断点是否在多边形内
+    private func isPointInPolygon(point: CLLocationCoordinate2D, polygon: [CLLocationCoordinate2D]) -> Bool {
+        guard polygon.count >= 3 else { return false }
+        var inside = false
+        let x = point.longitude
+        let y = point.latitude
+        var j = polygon.count - 1
+        for i in 0..<polygon.count {
+            let xi = polygon[i].longitude
+            let yi = polygon[i].latitude
+            let xj = polygon[j].longitude
+            let yj = polygon[j].latitude
+            let intersect = ((yi > y) != (yj > y)) &&
+                           (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+            if intersect { inside.toggle() }
+            j = i
+        }
+        return inside
     }
 
     /// 执行重命名操作

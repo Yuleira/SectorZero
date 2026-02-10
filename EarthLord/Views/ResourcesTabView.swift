@@ -5,7 +5,7 @@
 //  Created by Claude on 09/01/2026.
 //
 //  资源模块主入口页面
-//  包含背包、金库、交易三个分段
+//  包含背包、交易两个分段
 //
 
 import SwiftUI
@@ -13,15 +13,12 @@ import SwiftUI
 /// 资源分段类型
 enum ResourceSegment: Int, CaseIterable {
     case backpack = 0
-    case vault
     case trade
 
     var title: LocalizedStringKey {
         switch self {
         case .backpack:
             return "segment_backpack"
-        case .vault:
-            return "segment_vault"
         case .trade:
             return "segment_trade"
         }
@@ -81,9 +78,6 @@ struct ResourcesTabView: View {
         switch selectedSegment {
         case .backpack:
             BackpackView()
-
-        case .vault:
-            VaultView()
 
         case .trade:
             TradeTabView()

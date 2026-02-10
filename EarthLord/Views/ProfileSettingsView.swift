@@ -25,6 +25,20 @@ struct ProfileSettingsView: View {
             VStack(spacing: 16) {
                 // MARK: - 设置列表
                 VStack(spacing: 0) {
+                    // 编辑资料
+                    NavigationLink {
+                        EditProfileView()
+                    } label: {
+                        settingsRow(
+                            icon: "pencil",
+                            title: LocalizedString.profileEditProfile,
+                            trailingText: nil
+                        )
+                    }
+
+                    Divider()
+                        .background(ApocalypseTheme.textMuted.opacity(0.3))
+
                     // 语言
                     NavigationLink {
                         LanguageSettingsView()
