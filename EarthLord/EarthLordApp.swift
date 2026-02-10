@@ -7,12 +7,19 @@
 
 import SwiftUI
 import GoogleSignIn
+import UIKit
 
 @main
 struct EarthLordApp: App {
-    
+
     /// Language manager for locale injection at root level
     @StateObject private var languageManager = LanguageManager.shared
+
+    /// Scene phase for background/foreground lifecycle
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// Background task identifier to keep app alive during claiming/exploration
+    @State private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
 
     init() {
         // Validate configuration (DEBUG only)
@@ -32,6 +39,55 @@ struct EarthLordApp: App {
                     GIDSignIn.sharedInstance.handle(url)
                 }
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            handleScenePhaseChange(newPhase)
+        }
+    }
+
+    // MARK: - Background Lifecycle
+
+    /// Handle app going to background/foreground during active claiming or exploration
+    private func handleScenePhaseChange(_ phase: ScenePhase) {
+        let isClaiming = LocationManager.shared.isTracking
+        let isExploring = ExplorationManager.shared.isExploring
+
+        switch phase {
+        case .background:
+            if isClaiming || isExploring {
+                print("🔄 [App生命周期] 进入后台 — 活跃任务进行中，请求后台执行时间")
+                beginBackgroundTask()
+            }
+        case .active:
+            print("🔄 [App生命周期] 回到前台")
+            endBackgroundTask()
+            // Re-enable background tracking if still claiming/exploring
+            if isClaiming || isExploring {
+                LocationManager.shared.enableBackgroundTracking()
+            }
+        case .inactive:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+    /// Request background execution time from iOS to prevent suspension
+    private func beginBackgroundTask() {
+        guard backgroundTaskID == .invalid else { return }
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "ActiveClaiming") {
+            // Expiration handler — iOS is about to kill us, clean up
+            print("🔄 [App生命周期] ⚠️ 后台执行时间即将耗尽")
+            self.endBackgroundTask()
+        }
+        print("🔄 [App生命周期] 后台任务已启动 (id: \(backgroundTaskID.rawValue))")
+    }
+
+    /// End background task when no longer needed
+    private func endBackgroundTask() {
+        guard backgroundTaskID != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        print("🔄 [App生命周期] 后台任务已结束 (id: \(backgroundTaskID.rawValue))")
+        backgroundTaskID = .invalid
     }
 }
 

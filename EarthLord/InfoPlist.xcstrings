@@ -37,7 +37,6 @@
     },
     "NSLocationAlwaysAndWhenInUseUsageDescription" : {
       "comment" : "Background location permission dialog",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

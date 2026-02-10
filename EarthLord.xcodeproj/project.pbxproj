@@ -844,6 +844,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EarthLord/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SectorZero;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "SectorZero needs continuous location access so territory claiming and exploration can keep tracking your path even when the screen is locked.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "SectorZero requires your location to display your coordinates in the wasteland and help you explore and establish resonance zones.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -880,6 +881,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EarthLord/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SectorZero;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "SectorZero needs continuous location access so territory claiming and exploration can keep tracking your path even when the screen is locked.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "SectorZero requires your location to display your coordinates in the wasteland and help you explore and establish resonance zones.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

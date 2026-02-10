@@ -773,10 +773,12 @@ struct MapTabView: View {
         // 先停止已有定时器
         stopCollisionCheckTimer()
 
-        // 每 10 秒检测一次
-        collisionCheckTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [self] _ in
+        // 每 10 秒检测一次（使用 .common 模式确保锁屏/后台时仍触发）
+        let timer = Timer(timeInterval: 10.0, repeats: true) { [self] _ in
             performCollisionCheck()
         }
+        RunLoop.main.add(timer, forMode: .common)
+        collisionCheckTimer = timer
 
         TerritoryLogger.shared.log("碰撞检测定时器已启动", type: .info)
     }

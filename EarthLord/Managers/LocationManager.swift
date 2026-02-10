@@ -283,6 +283,17 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.requestWhenInUseAuthorization()
     }
 
+    /// 请求 Always 定位权限（后台圈地/探索需要）
+    /// 必须先获得 WhenInUse 授权后才能调用
+    func requestAlwaysPermission() {
+        guard authorizationStatus == .authorizedWhenInUse else {
+            print("📍 [定位管理器] 需要先获得 WhenInUse 授权才能请求 Always")
+            return
+        }
+        print("📍 [定位管理器] 请求 Always 定位权限...")
+        locationManager.requestAlwaysAuthorization()
+    }
+
     /// 开始更新位置
     func startUpdatingLocation() {
         guard isAuthorized else {
@@ -323,6 +334,7 @@ final class LocationManager: NSObject, ObservableObject {
     func enableBackgroundTracking() {
         locationManager.allowsBackgroundLocationUpdates = true
         locationManager.pausesLocationUpdatesAutomatically = false
+        locationManager.showsBackgroundLocationIndicator = true
         locationManager.activityType = .fitness
         print("📍 [定位管理器] 后台定位已启用")
     }
@@ -331,6 +343,7 @@ final class LocationManager: NSObject, ObservableObject {
     func disableBackgroundTracking() {
         locationManager.allowsBackgroundLocationUpdates = false
         locationManager.pausesLocationUpdatesAutomatically = true
+        locationManager.showsBackgroundLocationIndicator = false
         print("📍 [定位管理器] 后台定位已关闭")
     }
 
@@ -363,6 +376,11 @@ final class LocationManager: NSObject, ObservableObject {
 
         // 启用后台定位（黑屏/锁屏时继续追踪）
         enableBackgroundTracking()
+
+        // 如果只有 WhenInUse 权限，请求升级为 Always（更可靠的后台定位）
+        if authorizationStatus == .authorizedWhenInUse {
+            requestAlwaysPermission()
+        }
 
         // 确保正在定位
         if !isUpdatingLocation {
@@ -526,8 +544,7 @@ final class LocationManager: NSObject, ObservableObject {
             isTracking = false
 
             // 关闭后台定位（省电）
-            locationManager.allowsBackgroundLocationUpdates = false
-            locationManager.pausesLocationUpdatesAutomatically = true
+            disableBackgroundTracking()
 
             // 重置速度检测状态
             speedWarning = nil
