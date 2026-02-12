@@ -48,9 +48,13 @@ struct ProfileTabView: View {
     @ObservedObject private var buildingManager = BuildingManager.shared
     @ObservedObject private var storeKitManager = StoreKitManager.shared
     @ObservedObject private var inventoryManager = InventoryManager.shared
+    @ObservedObject private var explorationManager = ExplorationManager.shared
 
     @State private var selectedDashboardTab: DashboardTab = .statistics
     @State private var selectedTimePeriod: TimePeriod = .thisWeek
+    @State private var showTerritorySheet = false
+    @State private var showBackpackSheet = false
+    @State private var showPOISheet = false
 
     // MARK: - Body
 
@@ -84,6 +88,15 @@ struct ProfileTabView: View {
                 await inventoryManager.loadItems()
                 await storeKitManager.loadEntitlementsFromSupabase()
             }
+            .sheet(isPresented: $showTerritorySheet) {
+                sheetWrapper { TerritoryTabView() }
+            }
+            .sheet(isPresented: $showBackpackSheet) {
+                sheetWrapper { BackpackView() }
+            }
+            .sheet(isPresented: $showPOISheet) {
+                sheetWrapper { POIListView() }
+            }
         }
     }
 
@@ -94,7 +107,7 @@ struct ProfileTabView: View {
             // Avatar
             ZStack {
                 Circle()
-                    .stroke(ApocalypseTheme.primary, lineWidth: 3)
+                    .stroke(Color(.systemGray3).opacity(0.4), lineWidth: 3)
                     .frame(width: 126, height: 126)
 
                 Circle()
@@ -109,21 +122,23 @@ struct ProfileTabView: View {
 
             // Username
             Text(username)
-                .font(.title2)
+                .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
-            // Membership Badge
-            Text(storeKitManager.currentMembershipTier.displayName)
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(tierColor(for: storeKitManager.currentMembershipTier))
-                )
+            // Tier Badge
+            NavigationLink(destination: StoreView(initialSection: .subscriptions)) {
+                Text(storeKitManager.currentMembershipTier.displayName)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(ApocalypseTheme.primary)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(ApocalypseTheme.primary.opacity(0.15))
+                    )
+            }
 
             if storeKitManager.currentMembershipTier != .free,
                let text = storeKitManager.formattedExpirationDate {
@@ -132,65 +147,53 @@ struct ProfileTabView: View {
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }
 
-            // Summary Stats Row
-            summaryStatsRow
+            // Stats Row with dividers
+            HStack(spacing: 0) {
+                identityStat(
+                    icon: "mappin.and.ellipse",
+                    value: "\(territoryCount)",
+                    label: LocalizedString.profileStatTerritories
+                )
+
+                Divider()
+                    .frame(height: 40)
+                    .overlay(Color.gray.opacity(0.4))
+
+                identityStat(
+                    icon: "calendar",
+                    value: "\(daysSurvived)Days",
+                    label: LocalizedString.profileDaysSurvival
+                )
+
+                Divider()
+                    .frame(height: 40)
+                    .overlay(Color.gray.opacity(0.4))
+
+                identityStat(
+                    icon: "building.2.fill",
+                    value: "\(buildingCount)",
+                    label: LocalizedString.profileStatBuildingsCount
+                )
+            }
+            .padding(.top, 4)
         }
-        .padding(20)
-        .background(ApocalypseTheme.cardBackground)
-        .cornerRadius(20)
         .padding(.horizontal, 16)
-        .padding(.top, 8)
+        .padding(.bottom, 20)
     }
 
-    // MARK: - Summary Stats Row
-
-    private var summaryStatsRow: some View {
-        HStack(spacing: 0) {
-            summaryStatColumn(
-                icon: "calendar",
-                value: "\(daysSurvived)",
-                label: LocalizedString.profileDaysSurvival
-            )
-
-            // Divider
-            Rectangle()
-                .fill(ApocalypseTheme.textMuted.opacity(0.3))
-                .frame(width: 1, height: 50)
-
-            summaryStatColumn(
-                icon: "shield.fill",
-                value: "\(territoryCount)",
-                label: LocalizedString.profileStatTerritories
-            )
-
-            // Divider
-            Rectangle()
-                .fill(ApocalypseTheme.textMuted.opacity(0.3))
-                .frame(width: 1, height: 50)
-
-            summaryStatColumn(
-                icon: "building.2.fill",
-                value: "\(buildingCount)",
-                label: LocalizedString.profileStatBuildingsCount
-            )
-        }
-        .padding(.vertical, 12)
-    }
-
-    private func summaryStatColumn(icon: String, value: String, label: LocalizedStringResource) -> some View {
-        VStack(spacing: 6) {
+    private func identityStat(icon: String, value: String, label: LocalizedStringResource) -> some View {
+        VStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.caption)
-                .foregroundColor(ApocalypseTheme.textSecondary)
-
+                .font(.body)
+                .frame(height: 20)
+                .foregroundColor(.blue)
             Text(value)
-                .font(.title3)
+                .font(.callout)
                 .fontWeight(.bold)
                 .foregroundColor(ApocalypseTheme.textPrimary)
-
             Text(label)
                 .font(.caption2)
-                .foregroundColor(ApocalypseTheme.textSecondary)
+                .foregroundColor(ApocalypseTheme.textMuted)
         }
         .frame(maxWidth: .infinity)
     }
@@ -199,92 +202,104 @@ struct ProfileTabView: View {
 
     private var vaultSection: some View {
         VStack(spacing: 10) {
-            // Row 1: View Subscription (full width)
-            NavigationLink(destination: StoreView(initialSection: .subscriptions)) {
-                HStack(spacing: 6) {
-                    Image(systemName: "star.fill")
-                    Text(LocalizedString.profileViewSubscription)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                }
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(
-                    LinearGradient(
-                        colors: [.teal, .cyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .cornerRadius(12)
-            }
-
-            // Row 2: Energy card (left) + Storage card (right)
+            // Row 1: Subscription + Energy side by side
             HStack(spacing: 10) {
-                aetherEnergyCard
+                subscriptionButton
                     .frame(maxHeight: .infinity)
-                storageCard
+                aetherEnergyCard
                     .frame(maxHeight: .infinity)
             }
             .fixedSize(horizontal: false, vertical: true)
+
+            // Row 2: Storage card (full width)
+            NavigationLink(destination: BackpackView()) {
+                storageCard
+            }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
     }
 
+    // MARK: - Subscription Button
+
+    private var subscriptionButton: some View {
+        NavigationLink(destination: StoreView(initialSection: .subscriptions)) {
+            HStack(spacing: 6) {
+                Image(systemName: "star.fill")
+                    .font(.callout)
+                Text(LocalizedString.profileViewSubscription)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 8)
+            .background(
+                LinearGradient(
+                    colors: [.orange, .yellow],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .cornerRadius(12)
+        }
+    }
+
     // MARK: - Aether Energy Card
 
     private var aetherEnergyCard: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             ZStack {
                 Circle()
                     .fill(Color.yellow.opacity(0.2))
-                    .frame(width: 32, height: 32)
+                    .frame(width: 28, height: 28)
                 Image(systemName: "bolt.fill")
-                    .font(.callout)
+                    .font(.caption)
                     .foregroundColor(.yellow)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(LocalizedString.vaultAetherEnergy)
-                    .font(.caption2)
+                    .font(.system(size: 10))
                     .foregroundColor(ApocalypseTheme.textSecondary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.8)
 
-                HStack(spacing: 8) {
-                    if storeKitManager.isInfiniteEnergyEnabled {
-                        Text(LocalizedString.vaultUnlimited)
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(ApocalypseTheme.success)
-                    } else {
-                        Text("\(storeKitManager.aetherEnergy)")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(ApocalypseTheme.textPrimary)
-                    }
-
-                    if !storeKitManager.isInfiniteEnergyEnabled {
-                        NavigationLink(destination: StoreView(initialSection: .energy)) {
-                            Text(LocalizedString.vaultBuyMore)
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.yellow)
-                                .foregroundColor(.black)
-                                .cornerRadius(6)
-                        }
-                    }
+                if storeKitManager.isInfiniteEnergyEnabled {
+                    Text(LocalizedString.vaultUnlimited)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(ApocalypseTheme.success)
+                } else {
+                    Text("\(storeKitManager.aetherEnergy)")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(ApocalypseTheme.textPrimary)
                 }
             }
 
             Spacer(minLength: 0)
+
+            if !storeKitManager.isInfiniteEnergyEnabled {
+                NavigationLink(destination: StoreView(initialSection: .energy)) {
+                    Text(LocalizedString.vaultBuyMore)
+                        .font(.system(size: 10))
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.yellow.opacity(0.2))
+                        .foregroundColor(.yellow)
+                        .cornerRadius(6)
+                }
+            }
         }
-        .padding(12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
         .background(ApocalypseTheme.cardBackground)
         .cornerRadius(12)
     }
@@ -402,19 +417,6 @@ struct ProfileTabView: View {
 
     private var statisticsContent: some View {
         VStack(spacing: 16) {
-            // Section Title
-            VStack(spacing: 4) {
-                Text(LocalizedString.profileStatistics)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(ApocalypseTheme.textPrimary)
-
-                Text(LocalizedString.profileDataDriven)
-                    .font(.caption)
-                    .foregroundColor(ApocalypseTheme.textSecondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .center)
-
             // Time Period Picker
             timePeriodPicker
 
@@ -461,33 +463,45 @@ struct ProfileTabView: View {
             GridItem(.flexible(), spacing: 12),
             GridItem(.flexible(), spacing: 12)
         ], spacing: 12) {
-            statCard(
-                icon: "figure.walk",
-                iconColor: .blue,
-                value: "0 m",
-                label: LocalizedString.profileStatDistance
-            )
+            Button { showTerritorySheet = true } label: {
+                statCard(
+                    icon: "figure.walk",
+                    iconColor: .blue,
+                    value: formattedTotalDistance,
+                    label: LocalizedString.profileStatDistance
+                )
+            }
+            .buttonStyle(.plain)
 
-            statCard(
-                icon: "map",
-                iconColor: .green,
-                value: formattedArea,
-                label: LocalizedString.profileStatArea
-            )
+            Button { showTerritorySheet = true } label: {
+                statCard(
+                    icon: "map",
+                    iconColor: .green,
+                    value: formattedArea,
+                    label: LocalizedString.profileStatArea
+                )
+            }
+            .buttonStyle(.plain)
 
-            statCard(
-                icon: "flame",
-                iconColor: .orange,
-                value: "\(resourceCount)",
-                label: LocalizedString.profileStatResources
-            )
+            Button { showBackpackSheet = true } label: {
+                statCard(
+                    icon: "flame",
+                    iconColor: .orange,
+                    value: "\(resourceCount)",
+                    label: LocalizedString.profileStatResources
+                )
+            }
+            .buttonStyle(.plain)
 
-            statCard(
-                icon: "building.2",
-                iconColor: .purple,
-                value: "\(buildingCount)",
-                label: LocalizedString.profileStatBuildingsCount
-            )
+            Button { showPOISheet = true } label: {
+                statCard(
+                    icon: "mappin.circle",
+                    iconColor: .purple,
+                    value: "\(poiCount)",
+                    label: LocalizedString.profileStatPOI
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -568,6 +582,8 @@ struct ProfileTabView: View {
 
     private var buildingCount: Int { buildingManager.playerBuildings.count }
 
+    private var poiCount: Int { explorationManager.nearbyPOIs.count }
+
     private var totalArea: Double { territoryManager.territories.reduce(0) { $0 + $1.area } }
 
     private var resourceCount: Int { inventoryManager.items.count }
@@ -577,7 +593,31 @@ struct ProfileTabView: View {
         return String(format: "%.0f m²", totalArea)
     }
 
+    private var formattedTotalDistance: String {
+        let d = territoryManager.totalDistanceWalked
+        if d >= 1000 { return String(format: "%.2f km", d / 1000) }
+        return String(format: "%.0f m", d)
+    }
+
     // MARK: - Helpers
+
+    private func sheetWrapper<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    showTerritorySheet = false
+                    showBackpackSheet = false
+                    showPOISheet = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, Color.gray.opacity(0.5))
+                }
+                .padding(.top, 14)
+                .padding(.trailing, 16)
+            }
+    }
 
     private func tierColor(for tier: MembershipTier) -> Color {
         switch tier {

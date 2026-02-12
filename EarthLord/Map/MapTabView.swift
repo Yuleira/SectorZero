@@ -249,10 +249,19 @@ struct MapTabView: View {
                             await uploadCurrentTerritory()
                         }
                     } else {
-                        // 验证失败 → 显示错误横幅
+                        // 验证失败 → 仍然累计行走距离
+                        let distance = locationManager.totalDistance
+                        Task {
+                            await territoryManager.addCumulativeDistance(distance)
+                        }
+                        // 显示错误横幅
                         withAnimation {
                             showValidationBanner = true
                         }
+                        // 停止追踪（清除路径数据）
+                        locationManager.stopPathTracking()
+                        stopCollisionMonitoring()
+                        trackingStartTime = nil
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             withAnimation {
                                 showValidationBanner = false
@@ -710,8 +719,12 @@ struct MapTabView: View {
     /// 切换圈地状态
     private func toggleTracking() {
         if locationManager.isTracking {
-            // 停止圈地
+            // 停止圈地 — 累计行走距离（即使未闭环）
             print("🗺️ [地图页面] 用户停止圈地")
+            let distance = locationManager.totalDistance
+            Task {
+                await territoryManager.addCumulativeDistance(distance)
+            }
             stopCollisionMonitoring()  // 完全停止，清除警告
             locationManager.stopPathTracking()
             trackingStartTime = nil
@@ -884,6 +897,7 @@ struct MapTabView: View {
         let coordinates = locationManager.pathCoordinates
         let area = locationManager.calculatedArea
         let startTime = trackingStartTime ?? Date()
+        let distance = locationManager.totalDistance
 
         isUploading = true
 
@@ -891,11 +905,15 @@ struct MapTabView: View {
             try await territoryManager.uploadTerritory(
                 coordinates: coordinates,
                 area: area,
-                startTime: startTime
+                startTime: startTime,
+                distanceWalked: distance
             )
 
             // 上传成功
             print("🗺️ [地图页面] 领地上传成功")
+
+            // 累计行走距离
+            await territoryManager.addCumulativeDistance(distance)
 
             // 停止碰撞监控
             stopCollisionMonitoring()

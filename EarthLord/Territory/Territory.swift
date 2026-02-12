@@ -24,6 +24,7 @@ struct Territory: Codable, Identifiable {
     let completedAt: String?      // 完成时间
     let startedAt: String?        // 开始时间
     let createdAt: String?        // 创建时间
+    let distanceWalked: Double?   // 行走距离（米）
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -37,6 +38,7 @@ struct Territory: Codable, Identifiable {
         case completedAt = "completed_at"
         case startedAt = "started_at"
         case createdAt = "created_at"
+        case distanceWalked = "distance_walked"
     }
 
     /// 将 path 转换为 CLLocationCoordinate2D 数组
@@ -54,6 +56,15 @@ struct Territory: Codable, Identifiable {
         } else {
             return String(format: "%.0f m²", area)
         }
+    }
+
+    /// 格式化距离显示
+    var formattedDistance: String {
+        let d = distanceWalked ?? 0
+        if d >= 1000 {
+            return String(format: "%.2f km", d / 1000)
+        }
+        return String(format: "%.0f m", d)
     }
 
     /// 显示名称（如果没有名称则显示默认值）

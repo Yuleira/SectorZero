@@ -618,7 +618,8 @@ struct TerritoryDetailView: View {
             isActive: true,
             completedAt: "2026-01-07T10:30:00Z",
             startedAt: "2026-01-07T10:25:00Z",
-            createdAt: "2026-01-07T10:30:00Z"
+            createdAt: "2026-01-07T10:30:00Z",
+            distanceWalked: 320
         )
     )
 }

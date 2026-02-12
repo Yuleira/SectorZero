@@ -31,6 +31,9 @@ final class TerritoryManager: ObservableObject {
     /// 错误信息
     @Published var errorMessage: String?
 
+    /// 累计行走总距离（米）
+    @Published private(set) var totalDistanceWalked: Double = 0
+
     // MARK: - 私有属性
 
     private init() {}
@@ -98,7 +101,8 @@ final class TerritoryManager: ObservableObject {
     ///   - coordinates: 坐标数组
     ///   - area: 面积（平方米）
     ///   - startTime: 开始时间
-    func uploadTerritory(coordinates: [CLLocationCoordinate2D], area: Double, startTime: Date) async throws {
+    ///   - distanceWalked: 行走距离（米）
+    func uploadTerritory(coordinates: [CLLocationCoordinate2D], area: Double, startTime: Date, distanceWalked: Double = 0) async throws {
         // 获取当前用户
         guard let userId = AuthManager.shared.currentUser?.id else {
             throw TerritoryError.notAuthenticated
@@ -141,7 +145,8 @@ final class TerritoryManager: ObservableObject {
             "point_count": .integer(coordinates.count),
             "started_at": .string(startTime.ISO8601Format()),
             "completed_at": .string(Date().ISO8601Format()),
-            "is_active": .bool(true)
+            "is_active": .bool(true),
+            "distance_walked": .double(distanceWalked)
         ]
 
         print("📤 [领地上传] 开始上传，点数: \(coordinates.count), 面积: \(String(format: "%.0f", area))m²")
@@ -181,7 +186,65 @@ final class TerritoryManager: ObservableObject {
               }
     }
 
-    
+    // MARK: - 累计距离
+
+    /// 将本次行走距离累加到 player_profiles.total_distance_walked
+    /// - Parameter distance: 本次行走距离（米）
+    func addCumulativeDistance(_ distance: Double) async {
+        guard distance > 0 else { return }
+        guard let userId = AuthManager.shared.currentUser?.id else { return }
+
+        do {
+            // 读取当前值
+            struct DistanceRow: Decodable { let totalDistanceWalked: Double?
+                enum CodingKeys: String, CodingKey { case totalDistanceWalked = "total_distance_walked" }
+            }
+            let rows: [DistanceRow] = try await supabase
+                .from("player_profiles")
+                .select("total_distance_walked")
+                .eq("id", value: userId.uuidString)
+                .execute()
+                .value
+
+            let current = rows.first?.totalDistanceWalked ?? 0
+            let newTotal = current + distance
+
+            // 写回
+            try await supabase
+                .from("player_profiles")
+                .update(["total_distance_walked": AnyJSON.double(newTotal)])
+                .eq("id", value: userId.uuidString)
+                .execute()
+
+            totalDistanceWalked = newTotal
+            print("📏 [距离累计] ✅ +\(String(format: "%.0f", distance))m → 总计 \(String(format: "%.0f", newTotal))m")
+        } catch {
+            print("📏 [距离累计] ❌ 更新失败: \(error.localizedDescription)")
+        }
+    }
+
+    /// 从 player_profiles 加载累计行走总距离
+    func loadTotalDistanceWalked() async {
+        guard let userId = AuthManager.shared.currentUser?.id else { return }
+
+        do {
+            struct DistanceRow: Decodable { let totalDistanceWalked: Double?
+                enum CodingKeys: String, CodingKey { case totalDistanceWalked = "total_distance_walked" }
+            }
+            let rows: [DistanceRow] = try await supabase
+                .from("player_profiles")
+                .select("total_distance_walked")
+                .eq("id", value: userId.uuidString)
+                .execute()
+                .value
+
+            totalDistanceWalked = rows.first?.totalDistanceWalked ?? 0
+            print("📏 [距离加载] 总计行走距离: \(String(format: "%.0f", totalDistanceWalked))m")
+        } catch {
+            print("📏 [距离加载] ❌ 加载失败: \(error.localizedDescription)")
+        }
+    }
+
     // MARK: - 拉取方法
 
     /// 加载所有有效领地
@@ -232,6 +295,10 @@ final class TerritoryManager: ObservableObject {
                 .value
 
             print("📥 [领地加载] ✅ 加载完成，共 \(response.count) 个我的领地")
+
+            // 同时加载累计行走距离
+            await loadTotalDistanceWalked()
+
             return response
         } catch {
             print("📥 [领地加载] ❌ 加载我的领地失败: \(error.localizedDescription)")
