@@ -55,6 +55,7 @@ struct ProfileTabView: View {
     @State private var showTerritorySheet = false
     @State private var showBackpackSheet = false
     @State private var showPOISheet = false
+    @State private var showDetailedStatsSheet = false
 
     // MARK: - Body
 
@@ -96,6 +97,9 @@ struct ProfileTabView: View {
             }
             .sheet(isPresented: $showPOISheet) {
                 sheetWrapper { POIListView() }
+            }
+            .sheet(isPresented: $showDetailedStatsSheet) {
+                DetailedStatisticsSheet()
             }
         }
     }
@@ -149,11 +153,14 @@ struct ProfileTabView: View {
 
             // Stats Row with dividers
             HStack(spacing: 0) {
-                identityStat(
-                    icon: "mappin.and.ellipse",
-                    value: "\(territoryCount)",
-                    label: LocalizedString.profileStatTerritories
-                )
+                Button { showTerritorySheet = true } label: {
+                    identityStat(
+                        icon: "mappin.and.ellipse",
+                        value: "\(territoryCount)",
+                        label: LocalizedString.profileStatTerritories
+                    )
+                }
+                .buttonStyle(.plain)
 
                 Divider()
                     .frame(height: 40)
@@ -169,11 +176,14 @@ struct ProfileTabView: View {
                     .frame(height: 40)
                     .overlay(Color.gray.opacity(0.4))
 
-                identityStat(
-                    icon: "building.2.fill",
-                    value: "\(buildingCount)",
-                    label: LocalizedString.profileStatBuildingsCount
-                )
+                Button { showTerritorySheet = true } label: {
+                    identityStat(
+                        icon: "building.2.fill",
+                        value: "\(buildingCount)",
+                        label: LocalizedString.profileStatBuildingsCount
+                    )
+                }
+                .buttonStyle(.plain)
             }
             .padding(.top, 4)
         }
@@ -373,10 +383,15 @@ struct ProfileTabView: View {
             dashboardTabPicker
 
             // Content based on selected tab
-            if selectedDashboardTab == .statistics {
+            switch selectedDashboardTab {
+            case .statistics:
                 statisticsContent
-            } else {
-                comingSoonPlaceholder
+            case .leaderboard:
+                LeaderboardView()
+            case .achievements:
+                AchievementsView()
+            case .vitals:
+                VitalsView()
             }
         }
         .padding(16)
@@ -422,6 +437,25 @@ struct ProfileTabView: View {
 
             // Stat Cards Grid
             statCardsGrid
+
+            // View Detailed Stats button
+            Button {
+                showDetailedStatsSheet = true
+            } label: {
+                HStack {
+                    Text(LocalizedString.profileViewDetailedStats)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                }
+                .foregroundColor(ApocalypseTheme.primary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(ApocalypseTheme.cardBackground)
+                .cornerRadius(12)
+            }
         }
     }
 
@@ -530,24 +564,6 @@ struct ProfileTabView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(ApocalypseTheme.cardBackground)
-        .cornerRadius(16)
-    }
-
-    // MARK: - Coming Soon Placeholder
-
-    private var comingSoonPlaceholder: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "clock.badge.questionmark")
-                .font(.system(size: 40))
-                .foregroundColor(ApocalypseTheme.textMuted)
-
-            Text(LocalizedString.profileComingSoon)
-                .font(.headline)
-                .foregroundColor(ApocalypseTheme.textSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 60)
         .background(ApocalypseTheme.cardBackground)
         .cornerRadius(16)
     }

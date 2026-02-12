@@ -432,6 +432,9 @@ enum LocalizedString {
     /// 建筑统计 (profile_stat_buildings_count)
     static let profileStatBuildingsCount: LocalizedStringResource = "profile_stat_buildings_count"
 
+    /// POI统计 (profile_stat_poi)
+    static let profileStatPOI: LocalizedStringResource = "profile_stat_poi"
+
     /// 编辑档案 (profile_edit_profile)
     static let profileEditProfile: LocalizedStringResource = "profile_edit_profile"
 
@@ -1566,6 +1569,158 @@ enum LocalizedString {
     static let detailEnergyScanPois: LocalizedStringResource = "detail_energy_scan_pois"
     /// Get N AI scans (detail_energy_scans_count)
     static let detailEnergyScansCount: LocalizedStringResource = "detail_energy_scans_count"
+
+    // MARK: - Leaderboard (15 keys)
+
+    /// Leaderboard category: Territory Area (leaderboard_category_territory)
+    static let leaderboardCategoryTerritory: LocalizedStringResource = "leaderboard_category_territory"
+
+    /// Leaderboard category: POI (leaderboard_category_poi)
+    static let leaderboardCategoryPOI: LocalizedStringResource = "leaderboard_category_poi"
+
+    /// Leaderboard category: Building (leaderboard_category_building)
+    static let leaderboardCategoryBuilding: LocalizedStringResource = "leaderboard_category_building"
+
+    /// My Score (leaderboard_my_score)
+    static let leaderboardMyScore: LocalizedStringResource = "leaderboard_my_score"
+
+    /// My Rank (leaderboard_my_rank)
+    static let leaderboardMyRank: LocalizedStringResource = "leaderboard_my_rank"
+
+    /// No leaderboard data (leaderboard_no_data)
+    static let leaderboardNoData: LocalizedStringResource = "leaderboard_no_data"
+
+    // MARK: - Achievements (25 keys)
+
+    /// Achievement Progress (achievement_progress)
+    static let achievementProgress: LocalizedStringResource = "achievement_progress"
+
+    /// Unlocked (achievement_unlocked)
+    static let achievementUnlocked: LocalizedStringResource = "achievement_unlocked"
+
+    /// Locked (achievement_locked)
+    static let achievementLocked: LocalizedStringResource = "achievement_locked"
+
+    /// All category (achievement_category_all)
+    static let achievementCategoryAll: LocalizedStringResource = "achievement_category_all"
+
+    /// Exploration category (achievement_category_exploration)
+    static let achievementCategoryExploration: LocalizedStringResource = "achievement_category_exploration"
+
+    /// Building category (achievement_category_building)
+    static let achievementCategoryBuilding: LocalizedStringResource = "achievement_category_building"
+
+    /// Survival category (achievement_category_survival)
+    static let achievementCategorySurvival: LocalizedStringResource = "achievement_category_survival"
+
+    /// Show Unlocked Only (achievement_show_unlocked)
+    static let achievementShowUnlocked: LocalizedStringResource = "achievement_show_unlocked"
+
+    /// No achievements yet (achievement_empty)
+    static let achievementEmpty: LocalizedStringResource = "achievement_empty"
+
+    // Achievement names + descriptions (10 pairs)
+    static let achievementFirstClaimName: LocalizedStringResource = "achievement_first_claim_name"
+    static let achievementFirstClaimDesc: LocalizedStringResource = "achievement_first_claim_desc"
+    static let achievementLandBaronName: LocalizedStringResource = "achievement_land_baron_name"
+    static let achievementLandBaronDesc: LocalizedStringResource = "achievement_land_baron_desc"
+    static let achievementFirstStepsName: LocalizedStringResource = "achievement_first_steps_name"
+    static let achievementFirstStepsDesc: LocalizedStringResource = "achievement_first_steps_desc"
+    static let achievementMarathonName: LocalizedStringResource = "achievement_marathon_name"
+    static let achievementMarathonDesc: LocalizedStringResource = "achievement_marathon_desc"
+    static let achievementTerritoryLordName: LocalizedStringResource = "achievement_territory_lord_name"
+    static let achievementTerritoryLordDesc: LocalizedStringResource = "achievement_territory_lord_desc"
+    static let achievementConstructorName: LocalizedStringResource = "achievement_constructor_name"
+    static let achievementConstructorDesc: LocalizedStringResource = "achievement_constructor_desc"
+    static let achievementArchitectName: LocalizedStringResource = "achievement_architect_name"
+    static let achievementArchitectDesc: LocalizedStringResource = "achievement_architect_desc"
+    static let achievementScoutName: LocalizedStringResource = "achievement_scout_name"
+    static let achievementScoutDesc: LocalizedStringResource = "achievement_scout_desc"
+    static let achievementWeekSurvivorName: LocalizedStringResource = "achievement_week_survivor_name"
+    static let achievementWeekSurvivorDesc: LocalizedStringResource = "achievement_week_survivor_desc"
+    static let achievementVeteranName: LocalizedStringResource = "achievement_veteran_name"
+    static let achievementVeteranDesc: LocalizedStringResource = "achievement_veteran_desc"
+
+    // MARK: - Vitals (10 keys)
+
+    /// Active Buffs (vitals_active_buffs)
+    static let vitalsActiveBuffs: LocalizedStringResource = "vitals_active_buffs"
+
+    /// No Active Buffs (vitals_no_active_buffs)
+    static let vitalsNoActiveBuffs: LocalizedStringResource = "vitals_no_active_buffs"
+
+    /// Buff hint (vitals_buff_hint)
+    static let vitalsBuffHint: LocalizedStringResource = "vitals_buff_hint"
+
+    /// Core Health (vitals_core_health)
+    static let vitalsCoreHealth: LocalizedStringResource = "vitals_core_health"
+
+    /// Basic Vitals (vitals_basic_vitals)
+    static let vitalsBasicVitals: LocalizedStringResource = "vitals_basic_vitals"
+
+    /// Status Good (vitals_status_good)
+    static let vitalsStatusGood: LocalizedStringResource = "vitals_status_good"
+
+    /// Fullness (vitals_fullness)
+    static let vitalsFullness: LocalizedStringResource = "vitals_fullness"
+
+    /// Hydration (vitals_hydration)
+    static let vitalsHydration: LocalizedStringResource = "vitals_hydration"
+
+    /// Tip (vitals_tip)
+    static let vitalsTip: LocalizedStringResource = "vitals_tip"
+
+    // MARK: - Detailed Stats (10 keys)
+
+    /// Detailed Statistics title (detailed_stats_title)
+    static let detailedStatsTitle: LocalizedStringResource = "detailed_stats_title"
+
+    /// Exploration Stats section (detailed_stats_exploration)
+    static let detailedStatsExploration: LocalizedStringResource = "detailed_stats_exploration"
+
+    /// Activity Stats section (detailed_stats_activity)
+    static let detailedStatsActivity: LocalizedStringResource = "detailed_stats_activity"
+
+    /// Resource Stats section (detailed_stats_resources)
+    static let detailedStatsResources: LocalizedStringResource = "detailed_stats_resources"
+
+    /// Distance label (detailed_stats_distance)
+    static let detailedStatsDistance: LocalizedStringResource = "detailed_stats_distance"
+
+    /// Area label (detailed_stats_area)
+    static let detailedStatsArea: LocalizedStringResource = "detailed_stats_area"
+
+    /// Territories label (detailed_stats_territories)
+    static let detailedStatsTerritories: LocalizedStringResource = "detailed_stats_territories"
+
+    /// POIs Found label (detailed_stats_pois)
+    static let detailedStatsPOIs: LocalizedStringResource = "detailed_stats_pois"
+
+    /// Calories label (detailed_stats_calories)
+    static let detailedStatsCalories: LocalizedStringResource = "detailed_stats_calories"
+
+    /// Game Time label (detailed_stats_game_time)
+    static let detailedStatsGameTime: LocalizedStringResource = "detailed_stats_game_time"
+
+    /// Steps label (detailed_stats_steps)
+    static let detailedStatsSteps: LocalizedStringResource = "detailed_stats_steps"
+
+    /// Active Days label (detailed_stats_active_days)
+    static let detailedStatsActiveDays: LocalizedStringResource = "detailed_stats_active_days"
+
+    /// Items Collected label (detailed_stats_items)
+    static let detailedStatsItems: LocalizedStringResource = "detailed_stats_items"
+
+    /// Buildings Owned label (detailed_stats_buildings)
+    static let detailedStatsBuildings: LocalizedStringResource = "detailed_stats_buildings"
+
+    /// Storage Capacity label (detailed_stats_storage)
+    static let detailedStatsStorage: LocalizedStringResource = "detailed_stats_storage"
+
+    // MARK: - Profile View Detailed Stats
+
+    /// View Detailed Stats button (profile_view_detailed_stats)
+    static let profileViewDetailedStats: LocalizedStringResource = "profile_view_detailed_stats"
 
     // MARK: - Key Strings (for statusKey parameters)
 
