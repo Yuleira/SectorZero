@@ -449,116 +449,22 @@ struct MapViewRepresentable: UIViewRepresentable {
                 return annotationView
             }
             
-            // 处理建筑标注 — Tactical Aurora 六角底座 + 辉光
+            // 处理建筑标注 — 3D SceneKit 全息投影
             if let buildingAnnotation = annotation as? BuildingAnnotation {
-                let identifier = "TacticalBuildingAnnotation"
-                var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-
+                let identifier = Building3DAnnotationView.reuseID
+                var annotationView = mapView.dequeueReusableAnnotationView(
+                    withIdentifier: identifier) as? Building3DAnnotationView
                 if annotationView == nil {
-                    annotationView = MKAnnotationView(annotation: buildingAnnotation, reuseIdentifier: identifier)
-                    annotationView?.canShowCallout = true
+                    annotationView = Building3DAnnotationView(
+                        annotation: buildingAnnotation, reuseIdentifier: identifier)
                 } else {
                     annotationView?.annotation = buildingAnnotation
                 }
-
-                let building = buildingAnnotation.building
-                let template = buildingAnnotation.template
-                let isActive = building.status == .active
-                let categoryColor = buildingCategoryUIColor(for: template)
-                let iconName = template?.icon ?? "building.2.fill"
-
-                let size = CGSize(width: 52, height: 52)
-                let renderer = UIGraphicsImageRenderer(size: size)
-
-                let compositeImage = renderer.image { ctx in
-                    let context = ctx.cgContext
-                    let rect = CGRect(origin: .zero, size: size)
-                    let insetRect = rect.insetBy(dx: 4, dy: 4)
-
-                    // Active 建筑辉光
-                    if isActive {
-                        let glowColor = UIColor(ApocalypseTheme.auroraGlow).withAlphaComponent(0.4)
-                        context.setShadow(offset: .zero, blur: 8, color: glowColor.cgColor)
-                    }
-
-                    // 六角形底座
-                    let hexPath = buildingHexagonPath(in: insetRect)
-                    context.addPath(hexPath)
-                    context.setFillColor(categoryColor.withAlphaComponent(0.25).cgColor)
-                    context.fillPath()
-
-                    context.addPath(hexPath)
-                    context.setStrokeColor(categoryColor.withAlphaComponent(0.7).cgColor)
-                    context.setLineWidth(1.5)
-                    context.strokePath()
-
-                    context.setShadow(offset: .zero, blur: 0, color: nil)
-
-                    // SF Symbol 图标
-                    let iconConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
-                    if let iconImage = UIImage(systemName: iconName, withConfiguration: iconConfig) {
-                        let tinted = iconImage.withTintColor(categoryColor, renderingMode: .alwaysOriginal)
-                        let iconSize = tinted.size
-                        let iconOrigin = CGPoint(
-                            x: (size.width - iconSize.width) / 2,
-                            y: (size.height - iconSize.height) / 2
-                        )
-                        tinted.draw(at: iconOrigin)
-                    }
-                }
-
-                annotationView?.image = compositeImage
-                annotationView?.centerOffset = CGPoint(x: 0, y: -size.height / 2)
-
-                // Active 脉冲动画
-                if isActive {
-                    if annotationView?.layer.animation(forKey: "tacticalPulse") == nil {
-                        let pulse = CABasicAnimation(keyPath: "opacity")
-                        pulse.fromValue = 1.0
-                        pulse.toValue = 0.7
-                        pulse.duration = 1.5
-                        pulse.autoreverses = true
-                        pulse.repeatCount = .infinity
-                        pulse.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                        annotationView?.layer.add(pulse, forKey: "tacticalPulse")
-                    }
-                } else {
-                    annotationView?.layer.removeAllAnimations()
-                    annotationView?.alpha = 0.7
-                }
-
+                annotationView?.configure(with: buildingAnnotation)
                 return annotationView
             }
 
             return nil
-        }
-
-        /// 建筑标注颜色（统一使用主题橘红色）
-        private func buildingCategoryUIColor(for template: BuildingTemplate?) -> UIColor {
-            guard template != nil else { return .gray }
-            return UIColor(ApocalypseTheme.primary)
-        }
-
-        /// 六角形路径
-        private func buildingHexagonPath(in rect: CGRect) -> CGPath {
-            let path = CGMutablePath()
-            let center = CGPoint(x: rect.midX, y: rect.midY)
-            let radius = min(rect.width, rect.height) / 2
-
-            for i in 0..<6 {
-                let angle = CGFloat(Double.pi / 3.0 * Double(i)) - CGFloat(Double.pi / 6.0)
-                let point = CGPoint(
-                    x: center.x + radius * cos(angle),
-                    y: center.y + radius * sin(angle)
-                )
-                if i == 0 {
-                    path.move(to: point)
-                } else {
-                    path.addLine(to: point)
-                }
-            }
-            path.closeSubpath()
-            return path
         }
 
         /// POI标记颜色

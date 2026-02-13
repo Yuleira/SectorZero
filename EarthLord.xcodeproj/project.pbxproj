@@ -85,6 +85,7 @@
 		E6E50DC12F12898D0096D2BB /* TerritoryTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50D9E2F12898D0096D2BB /* TerritoryTestView.swift */; };
 		E6E50DC22F12898D0096D2BB /* TerritoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50D9B2F12898D0096D2BB /* TerritoryDetailView.swift */; };
 		E6E50DC32F12898D0096D2BB /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50D892F12898D0096D2BB /* AppConfig.swift */; };
+		B3D0001A2F3E000000000001 /* Building3DAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0001A2F3E000000000002 /* Building3DAnnotationView.swift */; };
 		E6E50DC42F12898D0096D2BB /* CoordinateConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50D922F12898D0096D2BB /* CoordinateConverter.swift */; };
 		E6E50DC62F12898D0096D2BB /* ResourcesTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DAC2F12898D0096D2BB /* ResourcesTabView.swift */; };
 		E6E50DC72F12898D0096D2BB /* CollisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E50DAF2F12898D0096D2BB /* CollisionModels.swift */; };
@@ -194,6 +195,7 @@
 		E6E50D8E2F12898D0096D2BB /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		E6E50D8F2F12898D0096D2BB /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		E6E50D902F12898D0096D2BB /* TerritoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryManager.swift; sourceTree = "<group>"; };
+		B3D0001A2F3E000000000002 /* Building3DAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Building3DAnnotationView.swift; sourceTree = "<group>"; };
 		E6E50D922F12898D0096D2BB /* CoordinateConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinateConverter.swift; sourceTree = "<group>"; };
 		E6E50D932F12898D0096D2BB /* MapTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTabView.swift; sourceTree = "<group>"; };
 		E6E50D942F12898D0096D2BB /* MapViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewRepresentable.swift; sourceTree = "<group>"; };
@@ -385,6 +387,7 @@
 		E6E50D952F12898D0096D2BB /* Map */ = {
 			isa = PBXGroup;
 			children = (
+				B3D0001A2F3E000000000002 /* Building3DAnnotationView.swift */,
 				E6E50D922F12898D0096D2BB /* CoordinateConverter.swift */,
 				E6E50D932F12898D0096D2BB /* MapTabView.swift */,
 				E6E50D942F12898D0096D2BB /* MapViewRepresentable.swift */,
@@ -685,6 +688,7 @@
 				E62484F92F152D4D001B6ABC /* ExplorationManager.swift in Sources */,
 				E6E50DC22F12898D0096D2BB /* TerritoryDetailView.swift in Sources */,
 				E6E50DC32F12898D0096D2BB /* AppConfig.swift in Sources */,
+				B3D0001A2F3E000000000001 /* Building3DAnnotationView.swift in Sources */,
 				E6E50DC42F12898D0096D2BB /* CoordinateConverter.swift in Sources */,
 				E6E50DC62F12898D0096D2BB /* ResourcesTabView.swift in Sources */,
 				E6E50DC72F12898D0096D2BB /* CollisionModels.swift in Sources */,
