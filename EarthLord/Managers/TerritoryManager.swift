@@ -130,6 +130,13 @@ final class TerritoryManager: ObservableObject {
             throw TerritoryError.invalidCoordinates
         }
 
+        // 重叠检测：检查新领地是否与任何已有领地重叠（含自己的）
+        if checkOverlapWithAllTerritories(path: coordinates) {
+            print("📤 [领地上传] ❌ 与已有领地重叠，拒绝上传")
+            TerritoryLogger.shared.log(NSLocalizedString("error_territory_overlap", comment: ""), type: .error)
+            throw TerritoryError.territoryOverlap
+        }
+
         // 构建上传数据
         let territoryData: [String: AnyJSON] = [
             "user_id": .string(userId.uuidString),
@@ -625,6 +632,51 @@ final class TerritoryManager: ObservableObject {
             warningLevel: warningLevel
         )
     }
+
+    // MARK: - 上传前重叠检测（含自身领地）
+
+    /// 检查新路径是否与任何已有领地重叠（包括自己的领地）
+    /// - Parameter path: 新领地的坐标数组
+    /// - Returns: 是否存在重叠
+    func checkOverlapWithAllTerritories(path: [CLLocationCoordinate2D]) -> Bool {
+        guard path.count >= 3 else { return false }
+
+        for territory in territories {
+            let polygon = territory.toCoordinates()
+            guard polygon.count >= 3 else { continue }
+
+            // (a) 新路径的任意边是否与已有领地的任意边相交
+            for i in 0..<path.count {
+                let pA = path[i]
+                let pB = path[(i + 1) % path.count]
+
+                for j in 0..<polygon.count {
+                    let pC = polygon[j]
+                    let pD = polygon[(j + 1) % polygon.count]
+
+                    if segmentsIntersect(p1: pA, p2: pB, p3: pC, p4: pD) {
+                        return true
+                    }
+                }
+            }
+
+            // (b) 新路径的任意点在已有领地内部
+            for point in path {
+                if isPointInPolygon(point: point, polygon: polygon) {
+                    return true
+                }
+            }
+
+            // (c) 已有领地的任意点在新领地内部（捕获完全包含的情况）
+            for point in polygon {
+                if isPointInPolygon(point: point, polygon: path) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
 }
 
 // MARK: - 错误类型
@@ -635,6 +687,7 @@ enum TerritoryError: LocalizedError {
     case uploadFailed(String)
     case loadFailed(String)
     case territoryLimitReached(Int)
+    case territoryOverlap
 
     var errorDescription: String? {
         switch self {
@@ -648,6 +701,8 @@ enum TerritoryError: LocalizedError {
             return String(format: NSLocalizedString("error_load_failed_format", comment: ""), message)
         case .territoryLimitReached(let max):
             return String(format: NSLocalizedString("error_territory_limit_reached_format", comment: ""), max)
+        case .territoryOverlap:
+            return NSLocalizedString("error_territory_overlap", comment: "")
         }
     }
 }

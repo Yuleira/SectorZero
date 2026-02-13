@@ -216,7 +216,7 @@ struct TerritoryTabView: View {
             VStack(spacing: 4) {
                 Text("\(myTerritories.count)")
                     .font(.system(size: 28, weight: .bold, design: .monospaced))
-                    .foregroundColor(ApocalypseTheme.neonGreen)
+                    .foregroundColor(Color.orange)
 
                 Text(LocalizedString.territoryCountLabel)
                     .font(.caption)
@@ -226,14 +226,14 @@ struct TerritoryTabView: View {
 
             // 分隔线 — 霓虹绿
             Rectangle()
-                .fill(ApocalypseTheme.neonGreen.opacity(0.2))
+                .fill(Color.orange.opacity(0.2))
                 .frame(width: 1, height: 40)
 
             // 总面积
             VStack(spacing: 4) {
                 Text(formattedTotalArea)
                     .font(.system(size: 28, weight: .bold, design: .monospaced))
-                    .foregroundColor(ApocalypseTheme.neonGreen)
+                    .foregroundColor(Color.orange)
 
                 Text(LocalizedString.territoryTotalAreaLabel)
                     .font(.caption)
@@ -248,7 +248,7 @@ struct TerritoryTabView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ApocalypseTheme.neonGreen.opacity(0.15), lineWidth: 1)
+                .stroke(Color.orange.opacity(0.15), lineWidth: 1)
         )
     }
 
@@ -285,17 +285,17 @@ struct TerritoryCard: View {
             ZStack {
                 // 外层辉光环
                 Circle()
-                    .fill(ApocalypseTheme.neonGreen.opacity(0.15))
+                    .fill(Color.orange.opacity(0.15))
                     .frame(width: 56, height: 56)
-                    .shadow(color: ApocalypseTheme.auroraGlow.opacity(isGlowing ? 0.5 : 0.1), radius: isGlowing ? 10 : 4)
+                    .shadow(color: Color.orange.opacity(isGlowing ? 0.5 : 0.1), radius: isGlowing ? 10 : 4)
 
                 Circle()
-                    .fill(ApocalypseTheme.neonGreen.opacity(0.2))
+                    .fill(Color.orange.opacity(0.2))
                     .frame(width: 48, height: 48)
 
                 Image(systemName: "flag.fill")
                     .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(ApocalypseTheme.neonGreen)
+                    .foregroundColor(Color.orange)
             }
 
             // 中间信息
@@ -327,6 +327,18 @@ struct TerritoryCard: View {
                         }
                         .foregroundColor(ApocalypseTheme.textSecondary)
                     }
+
+                    // 距离 — Monospaced terminal
+                    if let dist = territory.distanceWalked, dist > 0 {
+                        Label {
+                            Text(territory.formattedDistance)
+                                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        } icon: {
+                            Image(systemName: "figure.walk")
+                                .font(.system(size: 10))
+                        }
+                        .foregroundColor(ApocalypseTheme.textSecondary)
+                    }
                 }
 
                 // 时间
@@ -342,7 +354,7 @@ struct TerritoryCard: View {
             // 右侧箭头 — 霓虹绿
             Image(systemName: "chevron.right")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(ApocalypseTheme.neonGreen.opacity(0.6))
+                .foregroundColor(Color.orange.opacity(0.6))
         }
         .padding()
         .background(
@@ -351,7 +363,7 @@ struct TerritoryCard: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ApocalypseTheme.neonGreen.opacity(0.1), lineWidth: 1)
+                .stroke(Color.orange.opacity(0.1), lineWidth: 1)
         )
         .onAppear {
             withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {

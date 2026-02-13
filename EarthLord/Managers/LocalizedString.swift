@@ -59,6 +59,9 @@ enum LocalizedString {
     /// Territory limit reached format (error_territory_limit_reached_format)
     static let errorTerritoryLimitReachedFormat: LocalizedStringResource = "error_territory_limit_reached_format"
 
+    /// Territory overlap error (error_territory_overlap)
+    static let errorTerritoryOverlap: LocalizedStringResource = "error_territory_overlap"
+
     // MARK: - Building (28 keys)
 
     /// 建造按钮 (building_build)
