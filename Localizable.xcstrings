@@ -9998,13 +9998,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "After deleting your account, all your data will be permanently deleted and cannot be recovered."
+            "value" : "After deleting your account, all your SectorZero data will be permanently deleted and cannot be recovered."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除账户后，您的所有数据将被永久删除且无法恢复。"
+            "value" : "删除账户后，您的所有 SectorZero 数据将被永久删除且无法恢复。"
           }
         }
       }
@@ -10139,13 +10139,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The following data will be permanently deleted:"
+            "value" : "The following SectorZero data will be permanently deleted:"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除账户后，以下数据将被永久删除："
+            "value" : "删除账户后，以下 SectorZero 数据将被永久删除："
           }
         }
       }
@@ -12860,6 +12860,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "领地数量"
+          }
+        }
+      }
+    },
+    "territory_delete_confirm_message" : {
+      "comment" : "Confirmation message when deleting a territory",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete this territory? All buildings within will also be removed. This action cannot be undone."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除这块领地吗？领地内的所有建筑也将被移除。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "territory_delete_confirm_title" : {
+      "comment" : "Title for the territory deletion confirmation alert",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Territory"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除领地"
           }
         }
       }

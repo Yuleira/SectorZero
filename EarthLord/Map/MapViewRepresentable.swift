@@ -222,22 +222,23 @@ struct MapViewRepresentable: UIViewRepresentable {
         print("🗺️ [地图视图] 已添加 \(nearbyPOIs.count) 个POI标记")
     }
     
-    /// 更新建筑标注 (Phase 4)
+    /// 更新建筑标注 (Phase 4) — Diff-based，避免全量删除导致闪烁
     /// ⚠️ 重要：building.locationLat/Lon 已经是 GCJ-02 坐标，直接使用！
     private func updateBuildingAnnotations(on mapView: MKMapView) {
-        // 移除旧的建筑标注
-        let existingBuildingAnnotations = mapView.annotations.filter { $0 is BuildingAnnotation }
-        mapView.removeAnnotations(existingBuildingAnnotations)
-        
-        // 没有建筑则返回
-        guard !playerBuildings.isEmpty else { return }
-        
-        // 添加建筑标注
+        let existingBuildings = mapView.annotations.compactMap { $0 as? BuildingAnnotation }
+        let existingIds = Set(existingBuildings.map { $0.building.id })
+        let newIds = Set(playerBuildings.compactMap { $0.coordinate != nil ? $0.id : nil })
+
+        // 移除不再存在的建筑
+        let toRemove = existingBuildings.filter { !newIds.contains($0.building.id) }
+        if !toRemove.isEmpty {
+            mapView.removeAnnotations(toRemove)
+        }
+
+        // 添加新的建筑（跳过已存在的）
         for building in playerBuildings {
-            // ⚠️ 重要：building.locationLat/Lon 已经是 GCJ-02 坐标
-            // 直接使用，不要调用 CoordinateConverter！
             guard let coordinate = building.coordinate else { continue }
-            
+            guard !existingIds.contains(building.id) else { continue }
             let annotation = BuildingAnnotation(
                 coordinate: coordinate,
                 building: building,
@@ -245,8 +246,6 @@ struct MapViewRepresentable: UIViewRepresentable {
             )
             mapView.addAnnotation(annotation)
         }
-        
-        print("🗺️ [地图视图] 已添加 \(playerBuildings.count) 个建筑标注")
     }
 
     /// 创建 Coordinator

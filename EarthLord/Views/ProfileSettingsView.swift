@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import SafariServices
+import MessageUI
+internal import Auth
 
 /// 设置页面
 /// 包含语言、技术支持、隐私政策、退出登录、删除账号
@@ -19,6 +22,25 @@ struct ProfileSettingsView: View {
     @State private var showDeleteError = false
     @State private var deleteErrorMessage = ""
     @State private var showOnboarding = false
+    @State private var showPrivacyPolicy = false
+    @State private var showTechSupportMail = false
+
+    @Environment(\.openURL) private var openURL
+
+    private var techSupportMailSubject: String {
+        let userEmail = authManager.currentUser?.email ?? "unknown"
+        return "[SectorZero Support] Feedback from \(userEmail)"
+    }
+
+    private var techSupportMailBody: String {
+        """
+        Please describe your issue below:
+
+        ---
+        Device: \(UIDevice.current.model)
+        OS: \(UIDevice.current.systemVersion)
+        """
+    }
 
     var body: some View {
         ScrollView {
@@ -54,8 +76,8 @@ struct ProfileSettingsView: View {
                         .background(ApocalypseTheme.textMuted.opacity(0.3))
 
                     // 技术支持
-                    NavigationLink {
-                        Text(LocalizedString.profileTechSupport)
+                    Button {
+                        openTechSupportMail()
                     } label: {
                         settingsRow(
                             icon: "questionmark.circle.fill",
@@ -68,8 +90,8 @@ struct ProfileSettingsView: View {
                         .background(ApocalypseTheme.textMuted.opacity(0.3))
 
                     // 隐私政策
-                    NavigationLink {
-                        Text(LocalizedString.profilePrivacyPolicy)
+                    Button {
+                        showPrivacyPolicy = true
                     } label: {
                         settingsRow(
                             icon: "hand.raised.fill",
@@ -174,6 +196,18 @@ struct ProfileSettingsView: View {
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView(isPresented: $showOnboarding)
         }
+        .sheet(isPresented: $showPrivacyPolicy) {
+            SafariView(url: URL(string: "https://sectorzero.app/privacy")!)
+        }
+        .sheet(isPresented: $showTechSupportMail) {
+            MailComposeView(
+                recipients: ["support@sectorzero.app"],
+                subject: techSupportMailSubject,
+                body: techSupportMailBody,
+                isPresented: $showTechSupportMail
+            )
+            .ignoresSafeArea()
+        }
     }
 
     // MARK: - 设置行辅助
@@ -205,6 +239,27 @@ struct ProfileSettingsView: View {
 
     // MARK: - 方法
 
+    /// 打开技术支持邮件：优先使用系统邮件组件，不可用时回退到 mailto
+    private func openTechSupportMail() {
+        if MFMailComposeViewController.canSendMail() {
+            showTechSupportMail = true
+        } else if let url = techSupportMailtoURL {
+            openURL(url)
+        }
+    }
+
+    /// 构建 mailto URL（当设备未配置邮件时回退使用）
+    private var techSupportMailtoURL: URL? {
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = "support@sectorzero.app"
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: techSupportMailSubject),
+            URLQueryItem(name: "body", value: techSupportMailBody)
+        ]
+        return components.url
+    }
+
     /// 执行退出登录
     private func performLogout() {
         isLoggingOut = true
@@ -213,6 +268,58 @@ struct ProfileSettingsView: View {
             await MainActor.run {
                 isLoggingOut = false
             }
+        }
+    }
+}
+
+// MARK: - Safari View
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        SFSafariViewController(url: url)
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
+
+// MARK: - Mail Compose View
+
+struct MailComposeView: UIViewControllerRepresentable {
+    let recipients: [String]
+    let subject: String
+    let body: String
+    @Binding var isPresented: Bool
+
+    func makeUIViewController(context: Context) -> MFMailComposeViewController {
+        let composer = MFMailComposeViewController()
+        composer.mailComposeDelegate = context.coordinator
+        composer.setToRecipients(recipients)
+        composer.setSubject(subject)
+        composer.setMessageBody(body, isHTML: false)
+        return composer
+    }
+
+    func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(isPresented: $isPresented)
+    }
+
+    final class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
+        @Binding var isPresented: Bool
+
+        init(isPresented: Binding<Bool>) {
+            _isPresented = isPresented
+        }
+
+        func mailComposeController(
+            _ controller: MFMailComposeViewController,
+            didFinishWith result: MFMailComposeResult,
+            error: Error?
+        ) {
+            isPresented = false
         }
     }
 }

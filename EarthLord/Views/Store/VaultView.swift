@@ -83,17 +83,15 @@ struct VaultView: View {
 
             Spacer()
 
-            if !storeManager.isInfiniteEnergyEnabled {
-                NavigationLink(destination: StoreView(initialSection: .energy)) {
-                    Text(LocalizedString.vaultBuyMore)
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Color.yellow)
-                        .foregroundColor(.black)
-                        .cornerRadius(8)
-                }
+            NavigationLink(destination: StoreView(initialSection: .energy)) {
+                Text(LocalizedString.vaultBuyMore)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Color.yellow)
+                    .foregroundColor(.black)
+                    .cornerRadius(8)
             }
         }
         .padding()

@@ -294,17 +294,15 @@ struct ProfileTabView: View {
 
             Spacer(minLength: 0)
 
-            if !storeKitManager.isInfiniteEnergyEnabled {
-                NavigationLink(destination: StoreView(initialSection: .energy)) {
-                    Text(LocalizedString.vaultBuyMore)
-                        .font(.system(size: 10))
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Color.yellow.opacity(0.2))
-                        .foregroundColor(.yellow)
-                        .cornerRadius(6)
-                }
+            NavigationLink(destination: StoreView(initialSection: .energy)) {
+                Text(LocalizedString.vaultBuyMore)
+                    .font(.system(size: 10))
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.yellow.opacity(0.2))
+                    .foregroundColor(.yellow)
+                    .cornerRadius(6)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

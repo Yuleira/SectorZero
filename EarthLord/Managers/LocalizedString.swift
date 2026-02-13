@@ -62,6 +62,12 @@ enum LocalizedString {
     /// Territory overlap error (error_territory_overlap)
     static let errorTerritoryOverlap: LocalizedStringResource = "error_territory_overlap"
 
+    /// 删除领地确认标题 (territory_delete_confirm_title)
+    static let territoryDeleteConfirmTitle: LocalizedStringResource = "territory_delete_confirm_title"
+
+    /// 删除领地确认消息 (territory_delete_confirm_message)
+    static let territoryDeleteConfirmMessage: LocalizedStringResource = "territory_delete_confirm_message"
+
     // MARK: - Building (28 keys)
 
     /// 建造按钮 (building_build)

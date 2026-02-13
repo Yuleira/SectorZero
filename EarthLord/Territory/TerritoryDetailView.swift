@@ -58,6 +58,9 @@ struct TerritoryDetailView: View {
     /// 预选位置（位置优先流程：先选位置，再选建筑）
     @State private var preSelectedLocation: CLLocationCoordinate2D?
 
+    /// 显示删除领地确认
+    @State private var showDeleteTerritoryAlert = false
+
     /// 领地重命名对话框
     @State private var showRenameDialog = false
     @State private var newTerritoryName = ""
@@ -237,6 +240,16 @@ struct TerritoryDetailView: View {
         } message: {
             demolishMessage
         }
+        .alert(LocalizedString.territoryDeleteConfirmTitle, isPresented: $showDeleteTerritoryAlert) {
+            Button(LocalizedString.commonCancel, role: .cancel) {}
+            Button(LocalizedString.commonDelete, role: .destructive) {
+                Task {
+                    await deleteTerritory()
+                }
+            }
+        } message: {
+            Text(LocalizedString.territoryDeleteConfirmMessage)
+        }
     }
 
     // MARK: - Subviews
@@ -332,7 +345,7 @@ struct TerritoryDetailView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(LocalizedString.territoryBuildings)
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 13, weight: .bold))
                         .foregroundColor(ApocalypseTheme.textPrimary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -355,20 +368,20 @@ struct TerritoryDetailView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "hammer.fill")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                             Text(LocalizedString.buildingBuild)
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                                 .lineLimit(1)
-                                .minimumScaleFactor(0.5)
                         }
                         .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 9)
                         .background(
                             Capsule()
                                 .fill(ApocalypseTheme.primary)
                         )
                     }
+                    .fixedSize(horizontal: true, vertical: false)
 
                     // 建造位置按钮 — 先选位置，再选建筑
                     Button {
@@ -380,6 +393,20 @@ struct TerritoryDetailView: View {
                         Image(systemName: "mappin.circle.fill")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(ApocalypseTheme.textSecondary)
+                            .frame(width: 32, height: 32)
+                            .background(
+                                Circle()
+                                    .fill(ApocalypseTheme.cardBackground)
+                            )
+                    }
+
+                    // 删除领地按钮
+                    Button {
+                        showDeleteTerritoryAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(ApocalypseTheme.danger)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
@@ -520,6 +547,15 @@ struct TerritoryDetailView: View {
         }
     }
     
+    /// 删除领地
+    private func deleteTerritory() async {
+        let success = await territoryManager.deleteTerritory(territoryId: territory.id)
+        if success {
+            onDelete?()
+            dismiss()
+        }
+    }
+
     /// 拆除建筑
     private func demolishBuilding(_ building: PlayerBuilding) async {
         let success = await buildingManager.demolishBuilding(buildingId: building.id)
