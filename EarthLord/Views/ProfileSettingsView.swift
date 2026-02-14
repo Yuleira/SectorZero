@@ -197,7 +197,7 @@ struct ProfileSettingsView: View {
             OnboardingView(isPresented: $showOnboarding)
         }
         .sheet(isPresented: $showPrivacyPolicy) {
-            SafariView(url: URL(string: "https://sectorzero.app/privacy")!)
+            SafariView(url: URL(string: "https://gist.github.com/Yuleira/893972104f2ece0a07ebd8b60f3dbdca")!)
         }
         .sheet(isPresented: $showTechSupportMail) {
             MailComposeView(
