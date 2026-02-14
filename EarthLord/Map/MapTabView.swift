@@ -546,6 +546,11 @@ struct MapTabView: View {
                     result: result,
                     onDismiss: {
                         showExplorationResult = false
+                        // Save exploration distance to cumulative total
+                        let distance = result.distanceWalked
+                        Task {
+                            await territoryManager.addCumulativeDistance(distance)
+                        }
                         explorationResult = nil
                     },
                     onRetry: nil as (() -> Void)?

@@ -5857,7 +5857,7 @@
       }
     },
     "exploration_coins_earned" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9663,9 +9663,1385 @@
         }
       }
     },
+    "privacy_last_updated" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Updated: February 22, 2026"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最后更新：2026年2月22日"
+          }
+        }
+      }
+    },
+    "privacy_s1_p1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero is a location-based interactive experience developed by Yuleira."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero 是由 Yuleira 开发的基于位置的互动体验。"
+          }
+        }
+      }
+    },
+    "privacy_s1_p2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We respect your privacy and are committed to protecting your personal data."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们尊重您的隐私，并致力于保护您的个人数据。"
+          }
+        }
+      }
+    },
+    "privacy_s1_p3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Privacy Policy explains what data we collect, how we use it, how it is stored, and your rights regarding that data."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本隐私政策说明了我们收集哪些数据、如何使用数据、如何存储数据以及您对这些数据的权利。"
+          }
+        }
+      }
+    },
+    "privacy_s1_p4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By using SectorZero, you agree to the practices described in this policy."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 SectorZero 即表示您同意本政策中描述的做法。"
+          }
+        }
+      }
+    },
+    "privacy_s1_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Introduction"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. 引言"
+          }
+        }
+      }
+    },
+    "privacy_s2_1_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email address (for authentication and account management)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "电子邮件地址（用于身份验证和账户管理）"
+          }
+        }
+      }
+    },
+    "privacy_s2_1_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name (Callsign)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示名称（呼号）"
+          }
+        }
+      }
+    },
+    "privacy_s2_1_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile picture (if voluntarily provided)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "头像（如自愿提供）"
+          }
+        }
+      }
+    },
+    "privacy_s2_1_b4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device identifiers for session security and fraud prevention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备标识符，用于会话安全和防欺诈"
+          }
+        }
+      }
+    },
+    "privacy_s2_1_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We collect the following information when you create and use an account:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当您创建和使用账户时，我们会收集以下信息："
+          }
+        }
+      }
+    },
+    "privacy_s2_1_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.1 Personal & Account Data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.1 个人与账户数据"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precise GPS location while the app is actively in use"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用活跃使用期间的精确 GPS 位置"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Movement coordinates (path history) to render territory zones and gameplay metrics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移动坐标（路径历史），用于渲染领地区域和游戏指标"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collected only while the app is in use"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅在应用使用期间收集"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_b4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Never accessed in the background without explicit user permission"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未经用户明确许可不会在后台访问"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_b5" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used strictly to enable gameplay mechanics and maintain system integrity"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "严格用于支持游戏机制和维护系统完整性"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_intro1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero is a location-based experience."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero 是一款基于位置的体验。"
+          }
+        }
+      }
+    },
+    "privacy_s2_2_intro2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We collect:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们收集："
+          }
+        }
+      }
+    },
+    "privacy_s2_2_note_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location data is:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置数据："
+          }
+        }
+      }
+    },
+    "privacy_s2_2_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.2 Location Data (Core Functionality)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.2 位置数据（核心功能）"
+          }
+        }
+      }
+    },
+    "privacy_s2_3_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Survival logs and territory metrics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生存日志和领地指标"
+          }
+        }
+      }
+    },
+    "privacy_s2_3_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exploration distance and gameplay statistics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索距离和游戏统计数据"
+          }
+        }
+      }
+    },
+    "privacy_s2_3_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resource inventory levels"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "资源库存水平"
+          }
+        }
+      }
+    },
+    "privacy_s2_3_b4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In-app purchase transaction records (processed securely via Apple StoreKit)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用内购买交易记录（通过 Apple StoreKit 安全处理）"
+          }
+        }
+      }
+    },
+    "privacy_s2_3_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We collect:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们收集："
+          }
+        }
+      }
+    },
+    "privacy_s2_3_note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We do not store full payment card information."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们不存储完整的支付卡信息。"
+          }
+        }
+      }
+    },
+    "privacy_s2_3_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.3 Gameplay & Financial Data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.3 游戏与财务数据"
+          }
+        }
+      }
+    },
+    "privacy_s2_4_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anonymous crash reports"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匿名崩溃报告"
+          }
+        }
+      }
+    },
+    "privacy_s2_4_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performance logs"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "性能日志"
+          }
+        }
+      }
+    },
+    "privacy_s2_4_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server interaction metrics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器交互指标"
+          }
+        }
+      }
+    },
+    "privacy_s2_4_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To maintain stability and performance, we may collect:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为了维持稳定性和性能，我们可能会收集："
+          }
+        }
+      }
+    },
+    "privacy_s2_4_note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These logs do not directly identify individual users."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这些日志不会直接识别个人用户。"
+          }
+        }
+      }
+    },
+    "privacy_s2_4_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.4 Diagnostic & Technical Data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.4 诊断与技术数据"
+          }
+        }
+      }
+    },
+    "privacy_s2_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. Information We Collect"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. 我们收集的信息"
+          }
+        }
+      }
+    },
+    "privacy_s3_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contractual necessity – to provide the game service"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合同必要性 – 提供游戏服务"
+          }
+        }
+      }
+    },
+    "privacy_s3_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User consent – for location tracking"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户同意 – 用于位置追踪"
+          }
+        }
+      }
+    },
+    "privacy_s3_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legitimate interest – for security, fraud prevention, and service optimization"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合法利益 – 用于安全、防欺诈和服务优化"
+          }
+        }
+      }
+    },
+    "privacy_s3_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you are located within the European Economic Area (EEA), we process your data under the following legal bases:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果您位于欧洲经济区（EEA），我们将根据以下法律依据处理您的数据："
+          }
+        }
+      }
+    },
+    "privacy_s3_note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may withdraw consent at any time by disabling permissions or deleting your account."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您可以随时通过禁用权限或删除账户来撤回同意。"
+          }
+        }
+      }
+    },
+    "privacy_s3_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3. Legal Basis for Processing (EEA / GDPR)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3. 数据处理的法律依据（EEA / GDPR）"
+          }
+        }
+      }
+    },
+    "privacy_s4_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable core gameplay mechanics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持核心游戏机制"
+          }
+        }
+      }
+    },
+    "privacy_s4_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verify location-based actions and maintain gameplay integrity"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证基于位置的操作并维护游戏完整性"
+          }
+        }
+      }
+    },
+    "privacy_s4_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable proximity-based communication features (e.g., PTT)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持基于距离的通讯功能（如 PTT）"
+          }
+        }
+      }
+    },
+    "privacy_s4_b4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintain leaderboards and progression systems"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "维护排行榜和进度系统"
+          }
+        }
+      }
+    },
+    "privacy_s4_b5" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Improve server performance and stability"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提升服务器性能和稳定性"
+          }
+        }
+      }
+    },
+    "privacy_s4_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We use collected data to:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们使用收集的数据来："
+          }
+        }
+      }
+    },
+    "privacy_s4_note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If voice communication features are enabled, voice data is transmitted in real-time and is not recorded or stored on our servers."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果启用了语音通讯功能，语音数据将实时传输，不会在我们的服务器上录制或存储。"
+          }
+        }
+      }
+    },
+    "privacy_s4_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4. How We Use Your Information"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4. 我们如何使用您的信息"
+          }
+        }
+      }
+    },
+    "privacy_s5_p1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User data is stored on secure servers located within the European Economic Area (EEA)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用户数据存储在位于欧洲经济区（EEA）的安全服务器上。"
+          }
+        }
+      }
+    },
+    "privacy_s5_p2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If data is transferred outside the EEA, appropriate safeguards are implemented in accordance with GDPR requirements."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果数据传输至 EEA 以外，将按照 GDPR 要求实施适当的保障措施。"
+          }
+        }
+      }
+    },
+    "privacy_s5_p3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All reasonable technical and organizational security measures are implemented to protect your data."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们已实施所有合理的技术和组织安全措施来保护您的数据。"
+          }
+        }
+      }
+    },
+    "privacy_s5_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5. Data Storage & International Transfers"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5. 数据存储与国际传输"
+          }
+        }
+      }
+    },
+    "privacy_s6_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active accounts: Data is retained while the account remains active."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活跃账户：账户保持活跃期间数据将被保留。"
+          }
+        }
+      }
+    },
+    "privacy_s6_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted accounts: All associated personal data is permanently erased within 30 days, except where retention is legally required (e.g., financial transaction records)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已删除账户：所有相关个人数据将在30天内永久删除，法律要求保留的除外（如财务交易记录）。"
+          }
+        }
+      }
+    },
+    "privacy_s6_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We retain personal data only as long as necessary to provide the service."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们仅在提供服务所必需的期限内保留个人数据。"
+          }
+        }
+      }
+    },
+    "privacy_s6_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6. Data Retention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6. 数据保留"
+          }
+        }
+      }
+    },
+    "privacy_s7_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supabase – Secure cloud database and authentication services"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supabase – 安全的云数据库和身份验证服务"
+          }
+        }
+      }
+    },
+    "privacy_s7_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple (StoreKit) – In-app purchase processing"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple (StoreKit) – 应用内购买处理"
+          }
+        }
+      }
+    },
+    "privacy_s7_note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These providers process data solely to support app functionality."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这些提供商仅为支持应用功能而处理数据。"
+          }
+        }
+      }
+    },
+    "privacy_s7_p1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We do not sell your personal data."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们不会出售您的个人数据。"
+          }
+        }
+      }
+    },
+    "privacy_s7_p2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We only share data with essential service providers:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们仅与必要的服务提供商共享数据："
+          }
+        }
+      }
+    },
+    "privacy_s7_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7. Data Sharing & Third Parties"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7. 数据共享与第三方"
+          }
+        }
+      }
+    },
+    "privacy_s8_b1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access your personal data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "访问您的个人数据"
+          }
+        }
+      }
+    },
+    "privacy_s8_b2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request correction"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求更正"
+          }
+        }
+      }
+    },
+    "privacy_s8_b3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request deletion"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求删除"
+          }
+        }
+      }
+    },
+    "privacy_s8_b4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request export of your account data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求导出您的账户数据"
+          }
+        }
+      }
+    },
+    "privacy_s8_b5" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Withdraw consent"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤回同意"
+          }
+        }
+      }
+    },
+    "privacy_s8_contact" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For additional requests, contact us via email."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如有其他请求，请通过电子邮件联系我们。"
+          }
+        }
+      }
+    },
+    "privacy_s8_delete_path" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings → Delete Account"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置 → 删除账户"
+          }
+        }
+      }
+    },
+    "privacy_s8_delete_via" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may delete your account at any time via:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "您可以随时通过以下方式删除账户："
+          }
+        }
+      }
+    },
+    "privacy_s8_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depending on your jurisdiction, you may have the right to:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "根据您所在的司法管辖区，您可能有权："
+          }
+        }
+      }
+    },
+    "privacy_s8_irreversible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account deletion is irreversible."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "账户删除不可逆。"
+          }
+        }
+      }
+    },
+    "privacy_s8_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8. Your Rights"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8. 您的权利"
+          }
+        }
+      }
+    },
+    "privacy_s9_p1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero is not intended for children under the age of 13."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero 不面向13岁以下的儿童。"
+          }
+        }
+      }
+    },
+    "privacy_s9_p2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We do not knowingly collect personal data from children under 13."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们不会故意收集13岁以下儿童的个人数据。"
+          }
+        }
+      }
+    },
+    "privacy_s9_p3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If such data is discovered, it will be deleted promptly."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果发现此类数据，将立即删除。"
+          }
+        }
+      }
+    },
+    "privacy_s9_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9. Children's Privacy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9. 儿童隐私"
+          }
+        }
+      }
+    },
+    "privacy_s10_p1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We may update this Privacy Policy from time to time."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们可能会不时更新本隐私政策。"
+          }
+        }
+      }
+    },
+    "privacy_s10_p2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continued use of the app after updates constitutes acceptance of the revised policy."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新后继续使用本应用即表示接受修订后的政策。"
+          }
+        }
+      }
+    },
+    "privacy_s10_p3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The latest version will always be available through our official channels."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新版本将始终通过我们的官方渠道提供。"
+          }
+        }
+      }
+    },
+    "privacy_s10_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10. Changes to This Policy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10. 本政策的变更"
+          }
+        }
+      }
+    },
+    "privacy_s11_intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you have questions regarding this policy or your data, please contact:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果您对本政策或您的数据有任何疑问，请联系："
+          }
+        }
+      }
+    },
+    "privacy_s11_name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero Support"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SectorZero 客服支持"
+          }
+        }
+      }
+    },
+    "privacy_s11_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "11. Contact"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "11. 联系方式"
+          }
+        }
+      }
+    },
+    "privacy_title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy – SectorZero"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私政策 – SectorZero"
+          }
+        }
+      }
+    },
     "product_shards_100" : {
       "comment" : "Localized key for a product with 100 shards price.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -9684,7 +11060,7 @@
     },
     "product_storage_large" : {
       "comment" : "Identifier for a product in the App Store catalog.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -9703,7 +11079,7 @@
     },
     "product_storage_large_desc" : {
       "comment" : "Description of the \"Large Storage\" in-app purchase.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -10914,6 +12290,9 @@
         }
       }
     },
+    "rachelyulei+sectorzero@gmail.com" : {
+
+    },
     "range_format" : {
       "comment" : "Range format string",
       "localizations" : {
@@ -11373,7 +12752,7 @@
     },
     "scavenge_coins_earned" : {
       "comment" : "Coins earned from scavenge",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11686,7 +13065,7 @@
     },
     "shards_balance_format" : {
       "comment" : "Format string for displaying the number of shards a user has.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -11773,7 +13152,7 @@
       }
     },
     "store_benefit_daily_coins_5" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11790,7 +13169,7 @@
       }
     },
     "store_benefit_daily_coins_15" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11807,7 +13186,7 @@
       }
     },
     "store_benefit_daily_coins_30" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11824,7 +13203,7 @@
       }
     },
     "store_benefit_daily_energy_3" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11841,7 +13220,7 @@
       }
     },
     "store_benefit_daily_energy_5" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12021,7 +13400,7 @@
     },
     "store_coin_topup" : {
       "comment" : "Header text for the \"Coin Top-up\" section in the store.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -12076,7 +13455,7 @@
     },
     "store_exchange_button" : {
       "comment" : "Label for the \"Exchange\" button in the Resource Exchange section of the store.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -12095,7 +13474,7 @@
     },
     "store_insufficient_coins" : {
       "comment" : "Alert message shown when the user tries to exchange resources but doesn't have enough coins.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -12327,7 +13706,7 @@
     },
     "store_resource_exchange" : {
       "comment" : "Header text for the \"Resource Exchange\" section in the store.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -12864,40 +14243,6 @@
         }
       }
     },
-    "territory_delete_confirm_message" : {
-      "comment" : "Confirmation message when deleting a territory",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure you want to delete this territory? All buildings within will also be removed. This action cannot be undone."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "确定要删除这块领地吗？领地内的所有建筑也将被移除。此操作无法撤销。"
-          }
-        }
-      }
-    },
-    "territory_delete_confirm_title" : {
-      "comment" : "Title for the territory deletion confirmation alert",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete Territory"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除领地"
-          }
-        }
-      }
-    },
     "territory_danger_entering_others_format" : {
       "localizations" : {
         "en" : {
@@ -12950,19 +14295,35 @@
       }
     },
     "territory_delete_confirm_message" : {
-      "comment" : "Territory delete confirmation message",
-      "extractionState" : "manual",
+      "comment" : "Confirmation message when deleting a territory",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This cannot be undone. Are you sure you want to delete this territory?"
+            "value" : "Are you sure you want to delete this territory? All buildings within will also be removed. This action cannot be undone."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除后无法恢复，确定要删除这块领地吗？"
+            "value" : "确定要删除这块领地吗？领地内的所有建筑也将被移除。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "territory_delete_confirm_title" : {
+      "comment" : "Title for the territory deletion confirmation alert",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Territory"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除领地"
           }
         }
       }
@@ -15795,7 +17156,7 @@
       }
     },
     "upgrade_go_to_store" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15812,7 +17173,7 @@
       }
     },
     "upgrade_instant_format" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15990,7 +17351,7 @@
     },
     "vault_aether_coins" : {
       "comment" : "Label for the Aether Coins value in the Vault tab.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -16111,7 +17472,7 @@
     },
     "vault_top_up" : {
       "comment" : "Button text in the Vault tab that allows users to top up their Aether Coins.",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {

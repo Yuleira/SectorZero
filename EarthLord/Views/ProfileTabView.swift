@@ -89,6 +89,11 @@ struct ProfileTabView: View {
                 await inventoryManager.loadItems()
                 await storeKitManager.loadEntitlementsFromSupabase()
             }
+            .onAppear {
+                Task {
+                    await territoryManager.loadTotalDistanceWalked()
+                }
+            }
             .sheet(isPresented: $showTerritorySheet) {
                 sheetWrapper { TerritoryTabView() }
             }

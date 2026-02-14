@@ -1731,6 +1731,128 @@ enum LocalizedString {
     /// View Detailed Stats button (profile_view_detailed_stats)
     static let profileViewDetailedStats: LocalizedStringResource = "profile_view_detailed_stats"
 
+    // MARK: - Privacy Policy (86 keys)
+
+    /// 隐私政策主标题 (privacy_title)
+    static let privacyTitle: LocalizedStringResource = "privacy_title"
+
+    /// 最后更新日期 (privacy_last_updated)
+    static let privacyLastUpdated: LocalizedStringResource = "privacy_last_updated"
+
+    // Section 1: Introduction
+    static let privacyS1Title: LocalizedStringResource = "privacy_s1_title"
+    static let privacyS1P1: LocalizedStringResource = "privacy_s1_p1"
+    static let privacyS1P2: LocalizedStringResource = "privacy_s1_p2"
+    static let privacyS1P3: LocalizedStringResource = "privacy_s1_p3"
+    static let privacyS1P4: LocalizedStringResource = "privacy_s1_p4"
+
+    // Section 2: Information We Collect
+    static let privacyS2Title: LocalizedStringResource = "privacy_s2_title"
+
+    // Section 2.1: Personal & Account Data
+    static let privacyS2_1Title: LocalizedStringResource = "privacy_s2_1_title"
+    static let privacyS2_1Intro: LocalizedStringResource = "privacy_s2_1_intro"
+    static let privacyS2_1B1: LocalizedStringResource = "privacy_s2_1_b1"
+    static let privacyS2_1B2: LocalizedStringResource = "privacy_s2_1_b2"
+    static let privacyS2_1B3: LocalizedStringResource = "privacy_s2_1_b3"
+    static let privacyS2_1B4: LocalizedStringResource = "privacy_s2_1_b4"
+
+    // Section 2.2: Location Data
+    static let privacyS2_2Title: LocalizedStringResource = "privacy_s2_2_title"
+    static let privacyS2_2Intro1: LocalizedStringResource = "privacy_s2_2_intro1"
+    static let privacyS2_2Intro2: LocalizedStringResource = "privacy_s2_2_intro2"
+    static let privacyS2_2B1: LocalizedStringResource = "privacy_s2_2_b1"
+    static let privacyS2_2B2: LocalizedStringResource = "privacy_s2_2_b2"
+    static let privacyS2_2NoteIntro: LocalizedStringResource = "privacy_s2_2_note_intro"
+    static let privacyS2_2B3: LocalizedStringResource = "privacy_s2_2_b3"
+    static let privacyS2_2B4: LocalizedStringResource = "privacy_s2_2_b4"
+    static let privacyS2_2B5: LocalizedStringResource = "privacy_s2_2_b5"
+
+    // Section 2.3: Gameplay & Financial Data
+    static let privacyS2_3Title: LocalizedStringResource = "privacy_s2_3_title"
+    static let privacyS2_3Intro: LocalizedStringResource = "privacy_s2_3_intro"
+    static let privacyS2_3B1: LocalizedStringResource = "privacy_s2_3_b1"
+    static let privacyS2_3B2: LocalizedStringResource = "privacy_s2_3_b2"
+    static let privacyS2_3B3: LocalizedStringResource = "privacy_s2_3_b3"
+    static let privacyS2_3B4: LocalizedStringResource = "privacy_s2_3_b4"
+    static let privacyS2_3Note: LocalizedStringResource = "privacy_s2_3_note"
+
+    // Section 2.4: Diagnostic & Technical Data
+    static let privacyS2_4Title: LocalizedStringResource = "privacy_s2_4_title"
+    static let privacyS2_4Intro: LocalizedStringResource = "privacy_s2_4_intro"
+    static let privacyS2_4B1: LocalizedStringResource = "privacy_s2_4_b1"
+    static let privacyS2_4B2: LocalizedStringResource = "privacy_s2_4_b2"
+    static let privacyS2_4B3: LocalizedStringResource = "privacy_s2_4_b3"
+    static let privacyS2_4Note: LocalizedStringResource = "privacy_s2_4_note"
+
+    // Section 3: Legal Basis for Processing
+    static let privacyS3Title: LocalizedStringResource = "privacy_s3_title"
+    static let privacyS3Intro: LocalizedStringResource = "privacy_s3_intro"
+    static let privacyS3B1: LocalizedStringResource = "privacy_s3_b1"
+    static let privacyS3B2: LocalizedStringResource = "privacy_s3_b2"
+    static let privacyS3B3: LocalizedStringResource = "privacy_s3_b3"
+    static let privacyS3Note: LocalizedStringResource = "privacy_s3_note"
+
+    // Section 4: How We Use Your Information
+    static let privacyS4Title: LocalizedStringResource = "privacy_s4_title"
+    static let privacyS4Intro: LocalizedStringResource = "privacy_s4_intro"
+    static let privacyS4B1: LocalizedStringResource = "privacy_s4_b1"
+    static let privacyS4B2: LocalizedStringResource = "privacy_s4_b2"
+    static let privacyS4B3: LocalizedStringResource = "privacy_s4_b3"
+    static let privacyS4B4: LocalizedStringResource = "privacy_s4_b4"
+    static let privacyS4B5: LocalizedStringResource = "privacy_s4_b5"
+    static let privacyS4Note: LocalizedStringResource = "privacy_s4_note"
+
+    // Section 5: Data Storage & International Transfers
+    static let privacyS5Title: LocalizedStringResource = "privacy_s5_title"
+    static let privacyS5P1: LocalizedStringResource = "privacy_s5_p1"
+    static let privacyS5P2: LocalizedStringResource = "privacy_s5_p2"
+    static let privacyS5P3: LocalizedStringResource = "privacy_s5_p3"
+
+    // Section 6: Data Retention
+    static let privacyS6Title: LocalizedStringResource = "privacy_s6_title"
+    static let privacyS6Intro: LocalizedStringResource = "privacy_s6_intro"
+    static let privacyS6B1: LocalizedStringResource = "privacy_s6_b1"
+    static let privacyS6B2: LocalizedStringResource = "privacy_s6_b2"
+
+    // Section 7: Data Sharing & Third Parties
+    static let privacyS7Title: LocalizedStringResource = "privacy_s7_title"
+    static let privacyS7P1: LocalizedStringResource = "privacy_s7_p1"
+    static let privacyS7P2: LocalizedStringResource = "privacy_s7_p2"
+    static let privacyS7B1: LocalizedStringResource = "privacy_s7_b1"
+    static let privacyS7B2: LocalizedStringResource = "privacy_s7_b2"
+    static let privacyS7Note: LocalizedStringResource = "privacy_s7_note"
+
+    // Section 8: Your Rights
+    static let privacyS8Title: LocalizedStringResource = "privacy_s8_title"
+    static let privacyS8Intro: LocalizedStringResource = "privacy_s8_intro"
+    static let privacyS8B1: LocalizedStringResource = "privacy_s8_b1"
+    static let privacyS8B2: LocalizedStringResource = "privacy_s8_b2"
+    static let privacyS8B3: LocalizedStringResource = "privacy_s8_b3"
+    static let privacyS8B4: LocalizedStringResource = "privacy_s8_b4"
+    static let privacyS8B5: LocalizedStringResource = "privacy_s8_b5"
+    static let privacyS8DeleteVia: LocalizedStringResource = "privacy_s8_delete_via"
+    static let privacyS8DeletePath: LocalizedStringResource = "privacy_s8_delete_path"
+    static let privacyS8Irreversible: LocalizedStringResource = "privacy_s8_irreversible"
+    static let privacyS8Contact: LocalizedStringResource = "privacy_s8_contact"
+
+    // Section 9: Children's Privacy
+    static let privacyS9Title: LocalizedStringResource = "privacy_s9_title"
+    static let privacyS9P1: LocalizedStringResource = "privacy_s9_p1"
+    static let privacyS9P2: LocalizedStringResource = "privacy_s9_p2"
+    static let privacyS9P3: LocalizedStringResource = "privacy_s9_p3"
+
+    // Section 10: Changes to This Policy
+    static let privacyS10Title: LocalizedStringResource = "privacy_s10_title"
+    static let privacyS10P1: LocalizedStringResource = "privacy_s10_p1"
+    static let privacyS10P2: LocalizedStringResource = "privacy_s10_p2"
+    static let privacyS10P3: LocalizedStringResource = "privacy_s10_p3"
+
+    // Section 11: Contact
+    static let privacyS11Title: LocalizedStringResource = "privacy_s11_title"
+    static let privacyS11Intro: LocalizedStringResource = "privacy_s11_intro"
+    static let privacyS11Name: LocalizedStringResource = "privacy_s11_name"
+
     // MARK: - Key Strings (for statusKey parameters)
 
     /// 仅需 key 字符串（如 statusKey）时使用

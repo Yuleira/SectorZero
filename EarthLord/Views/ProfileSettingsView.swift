@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SafariServices
 import MessageUI
 internal import Auth
 
@@ -22,23 +21,23 @@ struct ProfileSettingsView: View {
     @State private var showDeleteError = false
     @State private var deleteErrorMessage = ""
     @State private var showOnboarding = false
-    @State private var showPrivacyPolicy = false
     @State private var showTechSupportMail = false
 
     @Environment(\.openURL) private var openURL
 
     private var techSupportMailSubject: String {
-        let userEmail = authManager.currentUser?.email ?? "unknown"
-        return "[SectorZero Support] Feedback from \(userEmail)"
+        let email = authManager.currentUser?.email ?? "Survivor"
+        return "[SectorZero Support] Issue Report - \(email)"
     }
 
     private var techSupportMailBody: String {
-        """
+        let userID = authManager.currentUser?.id.uuidString ?? "N/A"
+        return """
         Please describe your issue below:
-
+        
         ---
-        Device: \(UIDevice.current.model)
-        OS: \(UIDevice.current.systemVersion)
+        User ID: \(userID)
+        ---
         """
     }
 
@@ -90,8 +89,8 @@ struct ProfileSettingsView: View {
                         .background(ApocalypseTheme.textMuted.opacity(0.3))
 
                     // 隐私政策
-                    Button {
-                        showPrivacyPolicy = true
+                    NavigationLink {
+                        PrivacyPolicyView()
                     } label: {
                         settingsRow(
                             icon: "hand.raised.fill",
@@ -196,12 +195,9 @@ struct ProfileSettingsView: View {
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView(isPresented: $showOnboarding)
         }
-        .sheet(isPresented: $showPrivacyPolicy) {
-            SafariView(url: URL(string: "https://gist.github.com/Yuleira/893972104f2ece0a07ebd8b60f3dbdca")!)
-        }
         .sheet(isPresented: $showTechSupportMail) {
             MailComposeView(
-                recipients: ["support@sectorzero.app"],
+                recipients: ["rachelyulei+sectorzero@gmail.com"],
                 subject: techSupportMailSubject,
                 body: techSupportMailBody,
                 isPresented: $showTechSupportMail
@@ -252,7 +248,7 @@ struct ProfileSettingsView: View {
     private var techSupportMailtoURL: URL? {
         var components = URLComponents()
         components.scheme = "mailto"
-        components.path = "support@sectorzero.app"
+        components.path = "rachelyulei+sectorzero@gmail.com"
         components.queryItems = [
             URLQueryItem(name: "subject", value: techSupportMailSubject),
             URLQueryItem(name: "body", value: techSupportMailBody)
@@ -270,18 +266,6 @@ struct ProfileSettingsView: View {
             }
         }
     }
-}
-
-// MARK: - Safari View
-
-struct SafariView: UIViewControllerRepresentable {
-    let url: URL
-
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        SFSafariViewController(url: url)
-    }
-
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
 
 // MARK: - Mail Compose View

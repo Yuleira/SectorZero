@@ -322,6 +322,8 @@ struct ProductDetailSheet: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(ApocalypseTheme.textSecondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                         .frame(width: 70)
                     Image(systemName: "arrow.right")
                         .font(.caption2)
@@ -330,6 +332,8 @@ struct ProductDetailSheet: View {
                         .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(row.improved ? ApocalypseTheme.info : ApocalypseTheme.textSecondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                         .frame(width: 70)
                 }
             }

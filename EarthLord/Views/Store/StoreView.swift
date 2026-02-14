@@ -283,8 +283,8 @@ struct StoreView: View {
                 color: .yellow
             )
 
-            // If Archon, show unlimited badge
             if storeManager.isInfiniteEnergyEnabled {
+                // Archon unlimited badge
                 HStack(spacing: 10) {
                     Image(systemName: "bolt.fill")
                         .font(.title2)
@@ -319,10 +319,10 @@ struct StoreView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
+            }
 
-                ForEach(storeManager.energyPackProducts, id: \.id) { product in
-                    energyPackRow(product: product)
-                }
+            ForEach(storeManager.energyPackProducts, id: \.id) { product in
+                energyPackRow(product: product)
             }
         }
         .sheet(item: $selectedEnergyProduct) { product in

@@ -266,6 +266,8 @@ struct SubscriptionCard: View {
             Text(text)
                 .font(.caption)
                 .foregroundColor(ApocalypseTheme.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
     }
 
