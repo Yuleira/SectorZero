@@ -133,8 +133,8 @@ final class ExplorationManager: NSObject, ObservableObject {
 
     private override init() {
         super.init()
-        print("🔍 [探索管理器] 初始化完成")
-        print("🔍 [探索管理器] 配置：最大速度=\(String(format: "%.1f", maxAllowedSpeed))m/s (\(String(format: "%.0f", maxAllowedSpeed * 3.6))km/h)")
+        debugLog("🔍 [探索管理器] 初始化完成")
+        debugLog("🔍 [探索管理器] 配置：最大速度=\(String(format: "%.1f", maxAllowedSpeed))m/s (\(String(format: "%.0f", maxAllowedSpeed * 3.6))km/h)")
     }
 
     // MARK: - 公共方法
@@ -142,22 +142,12 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 开始探索
     func startExploration() {
             guard canStartExploration() else {
-                print("🔍 [探索] ❌ 无法开始探索")
+                debugLog("🔍 [探索] ❌ 无法开始探索")
                 return
             }
 
-            print("🔍 [探索] ✅ 开始探索")
+            debugLog("🔍 [探索] ✅ 开始探索")
             
-            // 🔥🔥🔥 加上这几行，它才会动！🔥🔥🔥
-            
-            // 1. 修改状态 (让按钮文字变成 "停止探索")
-            state = .exploring
-            
-            // 2. 开始干活 (调用我们昨天写的搜索逻辑)
-            Task {
-                await searchAndSetupPOIs()
-            }
-
         // 重置状态
         resetExplorationData()
 
@@ -169,7 +159,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         // 确保定位服务运行，并启用后台定位
         locationManager.enableBackgroundTracking()
         if !locationManager.isUpdatingLocation {
-            print("🔍 [探索] 启动定位服务")
+            debugLog("🔍 [探索] 启动定位服务")
             locationManager.startUpdatingLocation()
         }
 
@@ -189,23 +179,23 @@ final class ExplorationManager: NSObject, ObservableObject {
 
             // 2. 查询附近玩家数量，确定密度等级
             currentDensityLevel = await PlayerPresenceManager.shared.fetchNearbyPlayerCount()
-            print("🔍 [探索] 当前密度等级: \(currentDensityLevel)，最多显示 \(currentDensityLevel.maxPOICount) 个POI")
+            debugLog("🔍 [探索] 当前密度等级: \(currentDensityLevel)，最多显示 \(currentDensityLevel.maxPOICount) 个POI")
 
             // 3. 根据密度搜索并设置POI
             await searchAndSetupPOIs()
         }
 
-        print("🔍 [探索] 所有定时器已启动")
+        debugLog("🔍 [探索] 所有定时器已启动")
     }
 
     /// 结束探索
     func stopExploration() async -> ExplorationResult? {
         guard isExploring else {
-            print("🔍 [探索] ⚠️ 当前未在探索状态，无法结束")
+            debugLog("🔍 [探索] ⚠️ 当前未在探索状态，无法结束")
             return nil
         }
 
-        print("🔍 [探索] 🏁 结束探索，开始计算奖励...")
+        debugLog("🔍 [探索] 🏁 结束探索，开始计算奖励...")
 
         state = .processing
         isExploring = false
@@ -219,24 +209,24 @@ final class ExplorationManager: NSObject, ObservableObject {
         let endTime = Date()
         let duration = startTime.map { endTime.timeIntervalSince($0) } ?? 0
 
-        print("🔍 [探索] 探索数据 - 距离: \(String(format: "%.1f", currentDistance))m，时长: \(Int(duration))秒，采点: \(trackPoints.count)个")
+        debugLog("🔍 [探索] 探索数据 - 距离: \(String(format: "%.1f", currentDistance))m，时长: \(Int(duration))秒，采点: \(trackPoints.count)个")
 
         // 计算奖励等级
         let tier = RewardTier.from(distance: currentDistance)
-        print("🔍 [探索] 奖励等级: \(LanguageManager.shared.translate(tier.localizedName))")
+        debugLog("🔍 [探索] 奖励等级: \(LanguageManager.shared.translate(tier.localizedName))")
 
         // 生成奖励物品
         var collectedItems: [CollectedItem] = []
         if tier != .none {
-            print("🔍 [探索] 开始生成奖励物品...")
+            debugLog("🔍 [探索] 开始生成奖励物品...")
             collectedItems = await RewardGenerator.shared.generateRewards(tier: tier)
-            print("🔍 [探索] 生成了 \(collectedItems.count) 个物品")
+            debugLog("🔍 [探索] 生成了 \(collectedItems.count) 个物品")
         } else {
-            print("🔍 [探索] 未达到奖励门槛，不生成物品")
+            debugLog("🔍 [探索] 未达到奖励门槛，不生成物品")
         }
 
         // 保存探索记录到数据库
-        print("🔍 [探索] 保存探索记录到数据库...")
+        debugLog("🔍 [探索] 保存探索记录到数据库...")
         let sessionId = await saveExplorationSession(
             startTime: startTime ?? endTime,
             endTime: endTime,
@@ -247,9 +237,10 @@ final class ExplorationManager: NSObject, ObservableObject {
         )
 
         // 将物品保存到背包（重置/捕获存储满警告）
+        // 即使探索记录保存失败(sessionId为nil)，也要保存物品到背包
         var hadStorageWarning = false
-        if let sessionId = sessionId, !collectedItems.isEmpty {
-            print("🔍 [探索] 将物品保存到背包...")
+        if !collectedItems.isEmpty {
+            debugLog("🔍 [探索] 将物品保存到背包...")
             InventoryManager.shared.storageFullWarning = false
             await InventoryManager.shared.addItems(
                 collectedItems,
@@ -258,8 +249,17 @@ final class ExplorationManager: NSObject, ObservableObject {
             )
             hadStorageWarning = InventoryManager.shared.storageFullWarning
             InventoryManager.shared.storageFullWarning = false
-            print("🔍 [探索] 物品已保存到背包")
+            debugLog("🔍 [探索] 物品已保存到背包")
         }
+
+        if sessionId == nil {
+            debugLog("🔍 [探索] ⚠️ 探索记录保存失败，但物品已保存到背包")
+            TerritoryLogger.shared.log("探索记录保存失败，物品已保存", type: .warning)
+        }
+
+        // 保存累计行走距离到 Profile
+        await TerritoryManager.shared.addCumulativeDistance(currentDistance)
+        debugLog("🔍 [探索] 累计距离已保存: \(String(format: "%.1f", currentDistance))m")
 
         // 构建结果
         let stats = ExplorationStats(
@@ -284,7 +284,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         latestResult = result
         state = .completed
 
-        print("🔍 [探索] ✅ 探索完成 - 距离: \(String(format: "%.1f", currentDistance))m，等级: \(LanguageManager.shared.translate(tier.localizedName))，物品: \(collectedItems.count)个，经验: \(result.experienceGained)")
+        debugLog("🔍 [探索] ✅ 探索完成 - 距离: \(String(format: "%.1f", currentDistance))m，等级: \(LanguageManager.shared.translate(tier.localizedName))，物品: \(collectedItems.count)个，经验: \(result.experienceGained)")
 
         return result
     }
@@ -293,7 +293,7 @@ final class ExplorationManager: NSObject, ObservableObject {
     func cancelExploration() {
         guard isExploring else { return }
 
-        print("🔍 [探索] ❌ 取消探索（不保存记录）")
+        debugLog("🔍 [探索] ❌ 取消探索（不保存记录）")
 
         stopTimers()
         resetExplorationData()
@@ -305,7 +305,7 @@ final class ExplorationManager: NSObject, ObservableObject {
     func stopExplorationDueToSpeeding() async {
         guard isExploring else { return }
 
-        print("🔍 [探索] 🚫 因超速停止探索")
+        debugLog("🔍 [探索] 🚫 因超速停止探索")
 
         state = .processing
         isExploring = false
@@ -338,7 +338,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         latestResult = result
         state = .failed(NSLocalizedString("map_speed_too_fast", comment: ""))
 
-        print("🔍 [探索] ❌ 探索失败 - 原因：超速")
+        debugLog("🔍 [探索] ❌ 探索失败 - 原因：超速")
 
         // 清理数据
         resetExplorationData()
@@ -349,7 +349,7 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 检查是否可以开始探索
     private func canStartExploration() -> Bool {
         guard state == .idle || state == .completed || isFailedState() else {
-            print("🔍 [探索] 当前状态不允许开始探索: \(state)")
+            debugLog("🔍 [探索] 当前状态不允许开始探索: \(state)")
             return false
         }
 
@@ -387,7 +387,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         currentPOI = nil
         latestScavengeResult = nil
         showScavengeResult = false
-        print("🔍 [探索] 探索数据已重置")
+        debugLog("🔍 [探索] 探索数据已重置")
     }
 
     /// 启动时长计时器（使用 .common 模式确保锁屏时继续运行）
@@ -431,17 +431,12 @@ final class ExplorationManager: NSObject, ObservableObject {
     private func checkSpeed() {
         guard isExploring else { return }
 
-        // 从 locationManager 获取当前速度（CLLocation 提供的速度，单位是 m/s）
-        guard let location = locationManager.userLocation else {
+        // 从 locationManager 获取当前完整位置
+        guard let clLocation = locationManager.currentLocation else {
             return
         }
 
-        // 创建 CLLocation 对象获取速度
-        let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
-
-        // 使用 CLLocationManager 的实时速度
-        // 注意：我们需要从 LocationManager 获取最新的 CLLocation 对象
-        // 这里我们使用两点间距离和时间差来计算速度
+        // 使用两点间距离和时间差来计算速度
         if let lastLocation = lastValidLocation, let lastTime = lastLocationTimestamp {
             let timeInterval = Date().timeIntervalSince(lastTime)
             if timeInterval > 0 {
@@ -451,7 +446,7 @@ final class ExplorationManager: NSObject, ObservableObject {
 
                 let speedKmh = speed * 3.6  // 转换为 km/h
 
-                print("🔍 [速度检测] 当前速度: \(String(format: "%.1f", speedKmh))km/h (\(String(format: "%.2f", speed))m/s)")
+                debugLog("🔍 [速度检测] 当前速度: \(String(format: "%.1f", speedKmh))km/h (\(String(format: "%.2f", speed))m/s)")
 
                 // 检查是否超速
                 if speed > maxAllowedSpeed {
@@ -459,7 +454,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 } else {
                     // 速度正常，清除警告
                     if speedWarning != nil {
-                        print("🔍 [速度检测] ✅ 速度已恢复正常")
+                        debugLog("🔍 [速度检测] ✅ 速度已恢复正常")
                         speedWarning = nil
                         speedWarningStartTime = nil
                     }
@@ -476,14 +471,15 @@ final class ExplorationManager: NSObject, ObservableObject {
             // 第一次超速，开始警告
             speedWarningStartTime = Date()
             speedWarning = String(format: NSLocalizedString("exploration_speed_warning_current", comment: ""), speedKmh)
-            print("🔍 [速度检测] ⚠️ 超速警告：当前速度 \(String(format: "%.1f", speedKmh))km/h，开始倒计时")
+            debugLog("🔍 [速度检测] ⚠️ 超速警告：当前速度 \(String(format: "%.1f", speedKmh))km/h，开始倒计时")
         } else {
             // 持续超速，检查是否超过容忍时间
-            let warningDuration = Date().timeIntervalSince(speedWarningStartTime!)
+            guard let startTime = speedWarningStartTime else { return }
+            let warningDuration = Date().timeIntervalSince(startTime)
 
             if warningDuration >= speedWarningTimeout {
                 // 超过10秒仍然超速，停止探索
-                print("🔍 [速度检测] 🚫 超速超过\(Int(speedWarningTimeout))秒，停止探索")
+                debugLog("🔍 [速度检测] 🚫 超速超过\(Int(speedWarningTimeout))秒，停止探索")
                 Task { [weak self] in
                     await self?.stopExplorationDueToSpeeding()
                 }
@@ -491,7 +487,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 // 更新警告消息，显示剩余时间
                 let remainingTime = Int(speedWarningTimeout - warningDuration)
                 speedWarning = String(format: NSLocalizedString("exploration_speed_warning_countdown", comment: ""), speedKmh, remainingTime)
-                print("🔍 [速度检测] ⚠️ 持续超速 \(String(format: "%.1f", warningDuration))秒，剩余 \(remainingTime) 秒")
+                debugLog("🔍 [速度检测] ⚠️ 持续超速 \(String(format: "%.1f", warningDuration))秒，剩余 \(remainingTime) 秒")
             }
         }
     }
@@ -506,30 +502,30 @@ final class ExplorationManager: NSObject, ObservableObject {
         speedCheckTimer = nil
         // 关闭后台定位（省电）
         locationManager.disableBackgroundTracking()
-        print("🔍 [探索] 所有定时器已停止，后台定位已关闭")
+        debugLog("🔍 [探索] 所有定时器已停止，后台定位已关闭")
     }
 
     /// 采集当前位置
     private func sampleCurrentLocation() {
         guard isExploring else {
-            print("🔍 [采点] ⚠️ 未在探索状态，跳过采点")
+            debugLog("🔍 [采点] ⚠️ 未在探索状态，跳过采点")
             return
         }
 
-        guard let coordinate = locationManager.userLocation else {
-            print("🔍 [采点] ⚠️ 当前位置为空，跳过采点")
+        // 使用完整的 CLLocation 对象（包含精度信息），避免用 CLLocation(latitude:longitude:) 创建导致精度为 -1
+        guard let location = locationManager.currentLocation else {
+            debugLog("🔍 [采点] ⚠️ 当前位置为空，跳过采点")
             return
         }
 
-        // 创建 CLLocation
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let coordinate = location.coordinate
         let now = Date()
 
-        print("🔍 [采点] 尝试采集位置 - 坐标: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 精度: \(String(format: "%.1f", location.horizontalAccuracy))m")
+        debugLog("🔍 [采点] 尝试采集位置 - 坐标: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 精度: \(String(format: "%.1f", location.horizontalAccuracy))m")
 
         // 位置过滤
         if !validateLocation(location, timestamp: now) {
-            print("🔍 [采点] ❌ 位置验证失败，跳过")
+            debugLog("🔍 [采点] ❌ 位置验证失败，跳过")
             return
         }
 
@@ -537,9 +533,9 @@ final class ExplorationManager: NSObject, ObservableObject {
         var distanceIncrement: Double = 0
         if let last = lastValidLocation {
             distanceIncrement = location.distance(from: last)
-            print("🔍 [采点] 距离增量: \(String(format: "%.2f", distanceIncrement))m")
+            debugLog("🔍 [采点] 距离增量: \(String(format: "%.2f", distanceIncrement))m")
         } else {
-            print("🔍 [采点] 这是第一个有效点")
+            debugLog("🔍 [采点] 这是第一个有效点")
         }
 
         // 记录轨迹点
@@ -557,14 +553,14 @@ final class ExplorationManager: NSObject, ObservableObject {
         lastValidLocation = location
         lastLocationTimestamp = now
 
-        print("🔍 [采点] ✅ 采点成功 #\(trackPoints.count) - 增加: \(String(format: "%.1f", distanceIncrement))m，总距离: \(String(format: "%.1f", currentDistance))m")
+        debugLog("🔍 [采点] ✅ 采点成功 #\(trackPoints.count) - 增加: \(String(format: "%.1f", distanceIncrement))m，总距离: \(String(format: "%.1f", currentDistance))m")
     }
 
     /// 位置有效性验证
     private func validateLocation(_ location: CLLocation, timestamp: Date) -> Bool {
         // 1. 精度过滤（负值表示无效）
         if location.horizontalAccuracy > minAccuracy || location.horizontalAccuracy < 0 {
-            print("🔍 [探索] 精度不足: \(location.horizontalAccuracy)m，跳过")
+            debugLog("🔍 [探索] 精度不足: \(location.horizontalAccuracy)m，跳过")
             return false
         }
 
@@ -572,7 +568,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         if let lastTime = lastLocationTimestamp {
             let interval = timestamp.timeIntervalSince(lastTime)
             if interval < minTimeInterval {
-                print("🔍 [探索] 时间间隔不足: \(interval)s，跳过")
+                debugLog("🔍 [探索] 时间间隔不足: \(interval)s，跳过")
                 return false
             }
         }
@@ -581,7 +577,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         if let lastLocation = lastValidLocation {
             let distance = location.distance(from: lastLocation)
             if distance > maxJumpDistance {
-                print("🔍 [探索] 位置跳变过大: \(distance)m，跳过")
+                debugLog("🔍 [探索] 位置跳变过大: \(distance)m，跳过")
                 return false
             }
         }
@@ -599,7 +595,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         itemsCount: Int
     ) async -> UUID? {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("🔍 [探索] 未登录，无法保存探索记录")
+            debugLog("🔍 [探索] 未登录，无法保存探索记录")
             return nil
         }
 
@@ -625,10 +621,10 @@ final class ExplorationManager: NSObject, ObservableObject {
                 .execute()
                 .value
 
-            print("🔍 [探索] 探索记录保存成功")
+            debugLog("🔍 [探索] 探索记录保存成功")
             return response.first?.id
         } catch {
-            print("🔍 [探索] 保存探索记录失败: \(error.localizedDescription)")
+            debugLog("🔍 [探索] 保存探索记录失败: \(error.localizedDescription)")
             return nil
         }
     }
@@ -656,32 +652,32 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 手动触发POI搜索（用于测试）
     /// 无需开始探索即可搜索附近POI
     public func manualSearchPOIs() async {
-        print("🏪 [POI] 手动触发POI搜索...")
+        debugLog("🏪 [POI] 手动触发POI搜索...")
         await searchAndSetupPOIs()
     }
 
     /// 搜索并设置附近POI
     private func searchAndSetupPOIs() async {
         isSearchingPOIs = true
-        print("🏪 [POI] 开始搜索附近POI...")
+        debugLog("🏪 [POI] 开始搜索附近POI...")
 
         // 等待用户位置准备好（最多等待5秒）
         var userLocation = locationManager.userLocation
         var waitCount = 0
         while userLocation == nil && waitCount < 10 {
-            print("🏪 [POI] 等待用户位置... (\(waitCount + 1)/10)")
+            debugLog("🏪 [POI] 等待用户位置... (\(waitCount + 1)/10)")
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5秒
             userLocation = locationManager.userLocation
             waitCount += 1
         }
 
         guard let location = userLocation else {
-            print("🏪 [POI] ❌ 无法获取用户位置，跳过POI搜索")
+            debugLog("🏪 [POI] ❌ 无法获取用户位置，跳过POI搜索")
             isSearchingPOIs = false
             return
         }
 
-        print("🏪 [POI] 用户位置: (\(String(format: "%.6f", location.latitude)), \(String(format: "%.6f", location.longitude)))")
+        debugLog("🏪 [POI] 用户位置: (\(String(format: "%.6f", location.latitude)), \(String(format: "%.6f", location.longitude)))")
 
         // 搜索附近POI
         let allPOIs = await POISearchManager.shared.searchNearbyPOIs(center: location)
@@ -691,12 +687,12 @@ final class ExplorationManager: NSObject, ObservableObject {
         let limitedPOIs = Array(allPOIs.prefix(maxCount))
         nearbyPOIs = limitedPOIs
 
-        print("🏪 [POI] ✅ 找到 \(allPOIs.count) 个POI，根据密度等级(\(currentDensityLevel))显示 \(limitedPOIs.count) 个")
+        debugLog("🏪 [POI] ✅ 找到 \(allPOIs.count) 个POI，根据密度等级(\(currentDensityLevel))显示 \(limitedPOIs.count) 个")
         for (index, poi) in limitedPOIs.enumerated() {
             let poiLocation = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
             let userCLLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
             let distance = userCLLocation.distance(from: poiLocation)
-            print("🏪 [POI]   #\(index + 1) \(poi.name) (\(poi.type.rawValue)) - 距离: \(String(format: "%.1f", distance))米")
+            debugLog("🏪 [POI]   #\(index + 1) \(poi.name) (\(poi.type.rawValue)) - 距离: \(String(format: "%.1f", distance))米")
         }
 
         // 启动POI接近检测定时器
@@ -716,8 +712,8 @@ final class ExplorationManager: NSObject, ObservableObject {
         }
         RunLoop.main.add(timer, forMode: .common)
         poiProximityTimer = timer
-        print("🏪 [POI] ✅ 接近检测定时器已启动 (每2秒检测一次，触发范围: \(poiTriggerRadius)米)")
-        print("🏪 [POI] 当前共有 \(nearbyPOIs.count) 个POI待检测")
+        debugLog("🏪 [POI] ✅ 接近检测定时器已启动 (每2秒检测一次，触发范围: \(poiTriggerRadius)米)")
+        debugLog("🏪 [POI] 当前共有 \(nearbyPOIs.count) 个POI待检测")
     }
 
     /// 检测POI接近
@@ -729,7 +725,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         }
         
         guard let userLocation = locationManager.userLocation else {
-            print("🏪 [POI] 检测跳过：无用户位置")
+            debugLog("🏪 [POI] 检测跳过：无用户位置")
             return
         }
 
@@ -742,12 +738,12 @@ final class ExplorationManager: NSObject, ObservableObject {
 
             // 调试日志：显示所有POI的距离
             if distance <= poiTriggerRadius * 2 {
-                print("🏪 [POI] 距离检测：\(poi.name) - \(String(format: "%.1f", distance))米 (触发范围: \(poiTriggerRadius)米)")
+                debugLog("🏪 [POI] 距离检测：\(poi.name) - \(String(format: "%.1f", distance))米 (触发范围: \(poiTriggerRadius)米)")
             }
 
             if distance <= poiTriggerRadius {
                         // 进入POI范围
-                        print("🏪 [POI] ✅ 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米），触发弹窗")
+                        debugLog("🏪 [POI] ✅ 进入 \(poi.name) 范围（\(String(format: "%.0f", distance))米），触发弹窗")
                         triggerPOIPopup(poi: poi)
                         return
             }
@@ -758,8 +754,8 @@ final class ExplorationManager: NSObject, ObservableObject {
     private func triggerPOIPopup(poi: NearbyPOI) {
         currentPOI = poi
         showPOIPopup = true
-        print("🏪 [POI] ✅ 触发弹窗：\(poi.name)")
-        print("🏪 [POI] 弹窗状态 - showPOIPopup: \(showPOIPopup), currentPOI: \(poi.name)")
+        debugLog("🏪 [POI] ✅ 触发弹窗：\(poi.name)")
+        debugLog("🏪 [POI] 弹窗状态 - showPOIPopup: \(showPOIPopup), currentPOI: \(poi.name)")
     }
 
     /// 清理POI和围栏
@@ -773,7 +769,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         currentPOI = nil
         showPOIPopup = false
 
-        print("🏪 [POI] POI数据已清理")
+        debugLog("🏪 [POI] POI数据已清理")
     }
 
     // MARK: - POI 搜刮
@@ -781,13 +777,13 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 执行搜刮（使用 AI 生成物品）
     /// - Parameter poi: 要搜刮的POI
     func scavengePOI(_ poi: NearbyPOI) async {
-        print("🏪 [搜刮] 开始搜刮：\(poi.name) (危险等级: \(poi.dangerLevel))")
+        debugLog("🏪 [搜刮] 开始搜刮：\(poi.name) (危险等级: \(poi.dangerLevel))")
 
         // Aether Energy gate: consume 1 energy before AI scan
         if !StoreKitManager.shared.isInfiniteEnergyEnabled {
             guard StoreKitManager.shared.consumeAetherEnergy() else {
                 showEnergyDepletedAlert = true
-                print("🏪 [搜刮] ⚡ 能量不足，无法进行 AI 扫描")
+                debugLog("🏪 [搜刮] ⚡ 能量不足，无法进行 AI 扫描")
                 return
             }
         }
@@ -807,11 +803,11 @@ final class ExplorationManager: NSObject, ObservableObject {
         if let items = aiItems {
             generatedItems = items
             isAIGenerated = true
-            print("🏪 [搜刮] 使用 AI 生成的物品")
+            debugLog("🏪 [搜刮] 使用 AI 生成的物品")
         } else {
             generatedItems = AIItemGenerator.shared.generateFallbackItems(for: poi, count: itemCount)
             isAIGenerated = false
-            print("🏪 [搜刮] 使用降级方案生成物品")
+            debugLog("🏪 [搜刮] 使用降级方案生成物品")
         }
 
         // 转换为 CollectedItem
@@ -846,11 +842,11 @@ final class ExplorationManager: NSObject, ObservableObject {
             )
             collectedItems.append(item)
 
-            print("🏪 [搜刮] 获得：\(aiItem.name) [\(aiItem.rarity)] [\(quality.rawValue)] (定义ID: \(definitionId))")
+            debugLog("🏪 [搜刮] 获得：\(aiItem.name) [\(aiItem.rarity)] [\(quality.rawValue)] (定义ID: \(definitionId))")
         }
 
         // 将物品存入背包（重置/捕获存储满警告）
-        print("🏪 [搜刮] 正在保存 \(collectedItems.count) 个物品到背包...")
+        debugLog("🏪 [搜刮] 正在保存 \(collectedItems.count) 个物品到背包...")
         InventoryManager.shared.storageFullWarning = false
         await InventoryManager.shared.addItems(
             collectedItems,
@@ -859,7 +855,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         )
         let hadStorageWarning = InventoryManager.shared.storageFullWarning
         InventoryManager.shared.storageFullWarning = false
-        print("🏪 [搜刮] 物品保存完成")
+        debugLog("🏪 [搜刮] 物品保存完成")
 
         // 标记POI为已搜刮
         if let index = nearbyPOIs.firstIndex(where: { $0.id == poi.id }) {
@@ -873,7 +869,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         showPOIPopup = false
         showScavengeResult = true
 
-        print("🏪 [搜刮] 完成，获得 \(collectedItems.count) 个物品 (AI生成: \(isAIGenerated))")
+        debugLog("🏪 [搜刮] 完成，获得 \(collectedItems.count) 个物品 (AI生成: \(isAIGenerated))")
     }
 
     /// 随机生成品质
@@ -919,13 +915,49 @@ final class ExplorationManager: NSObject, ObservableObject {
     func dismissPOIPopup() {
         showPOIPopup = false
         currentPOI = nil
-        print("🏪 [POI] 用户选择稍后再说")
+        debugLog("🏪 [POI] 用户选择稍后再说")
     }
 
     /// 关闭搜刮结果
     func dismissScavengeResult() {
         showScavengeResult = false
         latestScavengeResult = nil
+    }
+
+    // MARK: - Exploration Stats (DB-backed)
+
+    /// 从数据库加载探索统计（支持时间过滤）
+    /// - Parameter since: 可选的起始日期，nil 表示全部时间
+    /// - Returns: (sessions: 总探索次数, totalDistance: 总距离, totalItems: 总物品数)
+    func loadExplorationStats(since: Date? = nil) async -> (sessions: Int, totalDistance: Double, totalItems: Int) {
+        guard let userId = AuthManager.shared.currentUser?.id else {
+            return (0, 0, 0)
+        }
+
+        do {
+            var query = supabase
+                .from("exploration_sessions")
+                .select()
+                .eq("user_id", value: userId.uuidString)
+
+            if let since = since {
+                let formatter = ISO8601DateFormatter()
+                formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                query = query.gte("started_at", value: formatter.string(from: since))
+            }
+
+            let sessions: [ExplorationSession] = try await query.execute().value
+
+            let totalDistance = sessions.reduce(0.0) { $0 + $1.totalDistance }
+            let totalItems = sessions.reduce(0) { $0 + $1.itemsCount }
+
+            debugLog("🔍 [探索统计] 查询完成 — 会话: \(sessions.count), 距离: \(String(format: "%.1f", totalDistance))m, 物品: \(totalItems)")
+
+            return (sessions.count, totalDistance, totalItems)
+        } catch {
+            debugLog("🔍 [探索统计] 查询失败: \(error.localizedDescription)")
+            return (0, 0, 0)
+        }
     }
 
     /// 随机物品定义（用于探索奖励等非 AI 场景）
@@ -943,7 +975,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "matches", name: "item_matches", description: "item_matches_desc", category: .tool, icon: "flame.fill", rarity: .common),
                 ItemDefinition(id: "cloth", name: "item_cloth", description: "item_cloth_desc", category: .material, icon: "tshirt.fill", rarity: .common)
             ]
-            return items.randomElement()!
+            return items.randomElement() ?? items[0]
         case .uncommon:
             let items = [
                 ItemDefinition(id: "energy_drink", name: "item_energy_drink", description: "item_energy_drink_desc", category: .food, icon: "bolt.fill", rarity: .uncommon),
@@ -952,7 +984,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "canned_fruit", name: "item_canned_fruit", description: "item_canned_fruit_desc", category: .food, icon: "leaf.fill", rarity: .uncommon),
                 ItemDefinition(id: "duct_tape", name: "item_duct_tape", description: "item_duct_tape_desc", category: .material, icon: "rectangle.fill", rarity: .uncommon)
             ]
-            return items.randomElement()!
+            return items.randomElement() ?? items[0]
         case .rare:
             let items = [
                 ItemDefinition(id: "first_aid_kit", name: "item_first_aid_kit", description: "item_first_aid_kit_desc", category: .medical, icon: "cross.case.fill", rarity: .rare),
@@ -961,7 +993,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "painkillers", name: "item_painkillers", description: "item_painkillers_desc", category: .medical, icon: "pills.fill", rarity: .rare),
                 ItemDefinition(id: "batteries", name: "item_batteries", description: "item_batteries_desc", category: .material, icon: "battery.100", rarity: .rare)
             ]
-            return items.randomElement()!
+            return items.randomElement() ?? items[0]
         case .epic:
             let items = [
                 ItemDefinition(id: "antibiotics", name: "item_antibiotics", description: "item_antibiotics_desc", category: .medical, icon: "pills.fill", rarity: .epic),
@@ -969,7 +1001,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "solar_charger", name: "item_solar_charger", description: "item_solar_charger_desc", category: .tool, icon: "sun.max.fill", rarity: .epic),
                 ItemDefinition(id: "military_ration", name: "item_military_ration", description: "item_military_ration_desc", category: .food, icon: "bag.fill", rarity: .epic)
             ]
-            return items.randomElement()!
+            return items.randomElement() ?? items[0]
         case .legendary:
             let items = [
                 ItemDefinition(id: "hazmat_suit", name: "item_hazmat_suit", description: "item_hazmat_suit_desc", category: .tool, icon: "figure.dress.line.vertical.figure", rarity: .legendary),
@@ -977,7 +1009,7 @@ final class ExplorationManager: NSObject, ObservableObject {
                 ItemDefinition(id: "surgical_kit", name: "item_surgical_kit", description: "item_surgical_kit_desc", category: .medical, icon: "scissors", rarity: .legendary),
                 ItemDefinition(id: "water_purifier", name: "item_water_purifier", description: "item_water_purifier_desc", category: .tool, icon: "drop.triangle.fill", rarity: .legendary)
             ]
-            return items.randomElement()!
+            return items.randomElement() ?? items[0]
         }
     }
 

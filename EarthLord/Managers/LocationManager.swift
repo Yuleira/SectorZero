@@ -199,8 +199,8 @@ final class LocationManager: NSObject, ObservableObject {
     /// CoreLocation 定位管理器
     private let locationManager = CLLocationManager()
 
-    /// 当前位置（用于 Timer 采点）
-    private var currentLocation: CLLocation?
+    /// 当前位置（包含精度等完整信息，用于 Timer 采点）
+    private(set) var currentLocation: CLLocation?
 
     /// 路径采点定时器
     private var pathUpdateTimer: Timer?
@@ -272,14 +272,14 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest  // 最高精度
         locationManager.distanceFilter = 10  // 移动 10 米才更新
 
-        print("📍 [定位管理器] 初始化完成，当前授权状态: \(authorizationStatusDescription)")
+        debugLog("📍 [定位管理器] 初始化完成，当前授权状态: \(authorizationStatusDescription)")
     }
 
     // MARK: - 公共方法
 
     /// 请求定位权限
     func requestPermission() {
-        print("📍 [定位管理器] 请求定位权限...")
+        debugLog("📍 [定位管理器] 请求定位权限...")
         locationManager.requestWhenInUseAuthorization()
     }
 
@@ -287,24 +287,24 @@ final class LocationManager: NSObject, ObservableObject {
     /// 必须先获得 WhenInUse 授权后才能调用
     func requestAlwaysPermission() {
         guard authorizationStatus == .authorizedWhenInUse else {
-            print("📍 [定位管理器] 需要先获得 WhenInUse 授权才能请求 Always")
+            debugLog("📍 [定位管理器] 需要先获得 WhenInUse 授权才能请求 Always")
             return
         }
-        print("📍 [定位管理器] 请求 Always 定位权限...")
+        debugLog("📍 [定位管理器] 请求 Always 定位权限...")
         locationManager.requestAlwaysAuthorization()
     }
 
     /// 开始更新位置
     func startUpdatingLocation() {
         guard isAuthorized else {
-            print("📍 [定位管理器] ⚠️ 未授权，无法开始定位")
+            debugLog("📍 [定位管理器] ⚠️ 未授权，无法开始定位")
             if isNotDetermined {
                 requestPermission()
             }
             return
         }
 
-        print("📍 [定位管理器] 开始更新位置...")
+        debugLog("📍 [定位管理器] 开始更新位置...")
         isUpdatingLocation = true
         locationError = nil
         locationManager.startUpdatingLocation()
@@ -312,7 +312,7 @@ final class LocationManager: NSObject, ObservableObject {
 
     /// 停止更新位置
     func stopUpdatingLocation() {
-        print("📍 [定位管理器] 停止更新位置")
+        debugLog("📍 [定位管理器] 停止更新位置")
         isUpdatingLocation = false
         locationManager.stopUpdatingLocation()
     }
@@ -320,11 +320,11 @@ final class LocationManager: NSObject, ObservableObject {
     /// 请求单次位置更新
     func requestLocation() {
         guard isAuthorized else {
-            print("📍 [定位管理器] ⚠️ 未授权，无法请求位置")
+            debugLog("📍 [定位管理器] ⚠️ 未授权，无法请求位置")
             return
         }
 
-        print("📍 [定位管理器] 请求单次位置...")
+        debugLog("📍 [定位管理器] 请求单次位置...")
         locationManager.requestLocation()
     }
 
@@ -336,7 +336,7 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.pausesLocationUpdatesAutomatically = false
         locationManager.showsBackgroundLocationIndicator = true
         locationManager.activityType = .fitness
-        print("📍 [定位管理器] 后台定位已启用")
+        debugLog("📍 [定位管理器] 后台定位已启用")
     }
 
     /// 关闭后台定位（省电）
@@ -344,7 +344,7 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.allowsBackgroundLocationUpdates = false
         locationManager.pausesLocationUpdatesAutomatically = true
         locationManager.showsBackgroundLocationIndicator = false
-        print("📍 [定位管理器] 后台定位已关闭")
+        debugLog("📍 [定位管理器] 后台定位已关闭")
     }
 
     // MARK: - 路径追踪方法
@@ -352,11 +352,11 @@ final class LocationManager: NSObject, ObservableObject {
     /// 开始路径追踪
     func startPathTracking() {
         guard isAuthorized else {
-            print("📍 [路径追踪] ⚠️ 未授权，无法开始追踪")
+            debugLog("📍 [路径追踪] ⚠️ 未授权，无法开始追踪")
             return
         }
 
-        print("📍 [路径追踪] 开始追踪...")
+        debugLog("📍 [路径追踪] 开始追踪...")
         TerritoryLogger.shared.log(NSLocalizedString("territory_start_claiming_tracking", comment: ""), type: .info)
 
         // 清除旧路径
@@ -387,15 +387,18 @@ final class LocationManager: NSObject, ObservableObject {
             startUpdatingLocation()
         }
 
-        // 如果有当前位置，立即记录第一个点
-        if let location = currentLocation {
+        // 如果有当前位置且精度足够，立即记录第一个点
+        if let location = currentLocation,
+           location.horizontalAccuracy >= 0 && location.horizontalAccuracy <= 50 {
             let coordinate = location.coordinate
             pathCoordinates.append(coordinate)
             pathUpdateVersion += 1
             // 初始化速度检测的起始点
             lastLocationForSpeed = location
             lastLocationTimestamp = Date()
-            print("📍 [路径追踪] 记录起始点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
+            debugLog("📍 [路径追踪] 记录起始点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 精度: \(String(format: "%.0f", location.horizontalAccuracy))m")
+        } else if let location = currentLocation {
+            debugLog("📍 [路径追踪] ⚠️ 起始点 GPS 精度不足（\(String(format: "%.0f", location.horizontalAccuracy))m），等待更好信号")
         }
 
         // 启动定时器，每 2 秒检查一次是否需要记录新点
@@ -409,7 +412,7 @@ final class LocationManager: NSObject, ObservableObject {
 
     /// 停止路径追踪
     func stopPathTracking() {
-        print("📍 [路径追踪] 停止追踪，共记录 \(pathCoordinates.count) 个点")
+        debugLog("📍 [路径追踪] 停止追踪，共记录 \(pathCoordinates.count) 个点")
         TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_stop_tracking_points_format", comment: ""), pathCoordinates.count), type: .info)
 
         // 停止定时器
@@ -442,7 +445,7 @@ final class LocationManager: NSObject, ObservableObject {
 
     /// 清除路径
     func clearPath() {
-        print("📍 [路径追踪] 清除路径")
+        debugLog("📍 [路径追踪] 清除路径")
         pathCoordinates.removeAll()
         pathUpdateVersion += 1
         isPathClosed = false
@@ -457,7 +460,13 @@ final class LocationManager: NSObject, ObservableObject {
         guard isTracking else { return }
         guard !isPathClosed else { return }  // 已闭环则不再记录
         guard let location = currentLocation else {
-            print("📍 [路径追踪] ⚠️ 当前位置为空，跳过采点")
+            debugLog("📍 [路径追踪] ⚠️ 当前位置为空，跳过采点")
+            return
+        }
+
+        // 过滤低精度 GPS 数据（真机常见问题：室内/遮挡环境下精度差）
+        if location.horizontalAccuracy < 0 || location.horizontalAccuracy > 50 {
+            debugLog("📍 [路径追踪] ⚠️ GPS 精度不足（\(String(format: "%.0f", location.horizontalAccuracy))m），跳过采点")
             return
         }
 
@@ -469,7 +478,7 @@ final class LocationManager: NSObject, ObservableObject {
             pathUpdateVersion += 1
             lastLocationForSpeed = location
             lastLocationTimestamp = Date()
-            print("📍 [路径追踪] 记录第一个点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
+            debugLog("📍 [路径追踪] 记录第一个点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
             TerritoryLogger.shared.log(NSLocalizedString("territory_record_first_point", comment: ""), type: .info)
             return
         }
@@ -493,7 +502,7 @@ final class LocationManager: NSObject, ObservableObject {
         // 3. 速度正常（或只是警告），记录新点
         pathCoordinates.append(coordinate)
         pathUpdateVersion += 1
-        print("📍 [路径追踪] 记录新点 #\(pathCoordinates.count): 距离上点 \(String(format: "%.1f", distance))m")
+        debugLog("📍 [路径追踪] 记录新点 #\(pathCoordinates.count): 距离上点 \(String(format: "%.1f", distance))m")
         TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_record_point_format", comment: ""), pathCoordinates.count, distance), type: .info)
 
         // 4. 记录后，更新速度检测的参考点
@@ -513,7 +522,7 @@ final class LocationManager: NSObject, ObservableObject {
 
         // 点数不足，不检测
         guard pathCoordinates.count >= minimumPathPoints else {
-            print("📍 [闭环检测] 点数不足（\(pathCoordinates.count)/\(minimumPathPoints)），跳过检测")
+            debugLog("📍 [闭环检测] 点数不足（\(pathCoordinates.count)/\(minimumPathPoints)），跳过检测")
             return
         }
 
@@ -528,14 +537,14 @@ final class LocationManager: NSObject, ObservableObject {
         let currentLocation = CLLocation(latitude: currentCoordinate.latitude, longitude: currentCoordinate.longitude)
         let distanceToStart = currentLocation.distance(from: startLocation)
 
-        print("📍 [闭环检测] 距起点 \(String(format: "%.1f", distanceToStart))m（阈值 \(closureDistanceThreshold)m）")
+        debugLog("📍 [闭环检测] 距起点 \(String(format: "%.1f", distanceToStart))m（阈值 \(closureDistanceThreshold)m）")
         TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_distance_from_start_format", comment: ""), distanceToStart), type: .info)
 
         // 判断是否闭环
         if distanceToStart <= closureDistanceThreshold {
             isPathClosed = true
             pathUpdateVersion += 1  // 触发 UI 更新
-            print("📍 [闭环检测] ✅ 闭环成功！共 \(pathCoordinates.count) 个点")
+            debugLog("📍 [闭环检测] ✅ 闭环成功！共 \(pathCoordinates.count) 个点")
             TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_loop_closed_format", comment: ""), distanceToStart), type: .success)
 
             // 停止追踪（但保留路径数据供验证和上传使用）
@@ -725,12 +734,8 @@ final class LocationManager: NSObject, ObservableObject {
         }
         TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_distance_check_passed_format", comment: ""), totalDistance), type: .info)
 
-        // 3. 自交检测
-        if hasPathSelfIntersection() {
-            let error = NSLocalizedString("error_trajectory_self_intersection", comment: "")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("error_territory_validation_failed_format", comment: ""), error), type: .error)
-            return (false, error)
-        }
+        // 3. Self-intersection check removed — real GPS tracks almost always
+        //    self-intersect due to GPS drift. Points, distance, and area checks suffice.
 
         // 4. 面积检查
         let area = calculatePolygonArea()
@@ -759,7 +764,7 @@ final class LocationManager: NSObject, ObservableObject {
         // 优先使用 GPS 硬件提供的速度（更准确）
         if newLocation.speed >= 0 {
             speedKMH = newLocation.speed * 3.6  // m/s 转 km/h
-            print("📍 [速度检测] GPS 速度: \(String(format: "%.1f", speedKMH)) km/h")
+            debugLog("📍 [速度检测] GPS 速度: \(String(format: "%.1f", speedKMH)) km/h")
         } else {
             // GPS 速度无效时，回退到位置差计算
             guard let lastLocation = lastLocationForSpeed,
@@ -773,14 +778,14 @@ final class LocationManager: NSObject, ObservableObject {
             guard timeDelta > 0 else { return true }
 
             speedKMH = (distance / timeDelta) * 3.6
-            print("📍 [速度检测] 计算速度: \(String(format: "%.1f", speedKMH)) km/h")
+            debugLog("📍 [速度检测] 计算速度: \(String(format: "%.1f", speedKMH)) km/h")
         }
 
         // 超过暂停阈值（30 km/h）
         if speedKMH > speedStopThreshold {
             speedWarning = String(format: NSLocalizedString("map_speed_too_fast_tracking_paused_format", comment: ""), speedKMH)
             isOverSpeed = true
-            print("📍 [速度检测] ❌ 严重超速！自动停止追踪")
+            debugLog("📍 [速度检测] ❌ 严重超速！自动停止追踪")
             TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
             stopPathTracking()
             return false
@@ -790,7 +795,7 @@ final class LocationManager: NSObject, ObservableObject {
         if speedKMH >= speedWarningThreshold {
             speedWarning = String(format: NSLocalizedString("map_moving_too_fast_format", comment: ""), speedKMH)
             isOverSpeed = true
-            print("📍 [速度检测] ⚠️ 速度较快，显示警告但继续记录")
+            debugLog("📍 [速度检测] ⚠️ 速度较快，显示警告但继续记录")
             TerritoryLogger.shared.log(String(format: NSLocalizedString("map_speed_fast_continuing_format", comment: ""), speedKMH), type: .warning)
             return true  // 警告但继续记录
         }
@@ -840,7 +845,7 @@ extension LocationManager: CLLocationManagerDelegate {
         let oldStatus = authorizationStatus
         authorizationStatus = manager.authorizationStatus
 
-        print("📍 [定位管理器] 授权状态变化: \(oldStatus.rawValue) -> \(authorizationStatus.rawValue) (\(authorizationStatusDescription))")
+        debugLog("📍 [定位管理器] 授权状态变化: \(oldStatus.rawValue) -> \(authorizationStatus.rawValue) (\(authorizationStatusDescription))")
 
         // 如果刚刚授权，自动开始定位
         if isAuthorized && !isUpdatingLocation {
@@ -851,6 +856,12 @@ extension LocationManager: CLLocationManagerDelegate {
     /// 位置更新回调
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
+
+        // 过滤无效定位数据
+        guard location.horizontalAccuracy >= 0 else {
+            debugLog("📍 [定位管理器] ⚠️ 无效定位数据，跳过")
+            return
+        }
 
         let coordinate = location.coordinate
         userLocation = coordinate
@@ -879,7 +890,7 @@ extension LocationManager: CLLocationManagerDelegate {
             checkRealtimeSpeed(location: location)
         }
 
-        print("📍 [定位管理器] 位置更新: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 速度: \(String(format: "%.1f", currentSpeed)) km/h")
+        debugLog("📍 [定位管理器] 位置更新: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude))), 速度: \(String(format: "%.1f", currentSpeed)) km/h")
 
         // 追踪时或调试模式下记录位置更新日志
         if isTracking || TerritoryLogger.shared.isDebugMode {
@@ -909,7 +920,7 @@ extension LocationManager: CLLocationManagerDelegate {
         if speedKMH > speedStopThreshold {
             speedWarning = String(format: NSLocalizedString("map_speed_too_fast_tracking_paused_format", comment: ""), speedKMH)
             isOverSpeed = true
-            print("📍 [速度检测] ❌ 严重超速！自动停止追踪")
+            debugLog("📍 [速度检测] ❌ 严重超速！自动停止追踪")
             TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
             stopPathTracking()
             return
@@ -928,7 +939,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
     /// 定位失败回调
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("📍 [定位管理器] ❌ 定位失败: \(error.localizedDescription)")
+        debugLog("📍 [定位管理器] ❌ 定位失败: \(error.localizedDescription)")
 
         // 处理不同的错误类型
         if let clError = error as? CLError {

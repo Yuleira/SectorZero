@@ -57,6 +57,12 @@ struct MapTabView: View {
     /// 上传错误信息
     @State private var uploadError: String?
 
+    /// 领地验证失败弹窗
+    @State private var showValidationFailedAlert = false
+
+    /// 验证失败原因
+    @State private var validationFailedReason: String = ""
+
     /// 是否显示探索结果
     @State private var showExplorationResult = false
 
@@ -254,19 +260,13 @@ struct MapTabView: View {
                         Task {
                             await territoryManager.addCumulativeDistance(distance)
                         }
-                        // 显示错误横幅
-                        withAnimation {
-                            showValidationBanner = true
-                        }
+                        // 保存失败原因，显示持久 alert
+                        validationFailedReason = locationManager.territoryValidationError ?? NSLocalizedString("map_validation_failed", comment: "")
+                        showValidationFailedAlert = true
                         // 停止追踪（清除路径数据）
                         locationManager.stopPathTracking()
                         stopCollisionMonitoring()
                         trackingStartTime = nil
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation {
-                                showValidationBanner = false
-                            }
-                        }
                     }
                 }
             }
@@ -282,6 +282,12 @@ struct MapTabView: View {
             Button(String(localized: LocalizedString.commonCancel), role: .cancel) {}
         } message: {
             Text(LocalizedString.energyDepletedMessage)
+        }
+        .alert(NSLocalizedString("map_validation_failed", comment: "Territory validation failed"),
+               isPresented: $showValidationFailedAlert) {
+            Button(NSLocalizedString("common_ok", comment: "OK"), role: .cancel) {}
+        } message: {
+            Text(validationFailedReason)
         }
     }
 
@@ -546,11 +552,6 @@ struct MapTabView: View {
                     result: result,
                     onDismiss: {
                         showExplorationResult = false
-                        // Save exploration distance to cumulative total
-                        let distance = result.distanceWalked
-                        Task {
-                            await territoryManager.addCumulativeDistance(distance)
-                        }
                         explorationResult = nil
                     },
                     onRetry: nil as (() -> Void)?
@@ -693,16 +694,16 @@ struct MapTabView: View {
 
     /// 页面出现时处理
     private func handleOnAppear() {
-        print("🗺️ [地图页面] 页面出现")
+        debugLog("🗺️ [地图页面] 页面出现")
 
         // 检查授权状态
         if locationManager.isNotDetermined {
             // 首次使用，请求权限
-            print("🗺️ [地图页面] 首次使用，请求定位权限")
+            debugLog("🗺️ [地图页面] 首次使用，请求定位权限")
             locationManager.requestPermission()
         } else if locationManager.isAuthorized {
             // 已授权，开始定位
-            print("🗺️ [地图页面] 已授权，开始定位")
+            debugLog("🗺️ [地图页面] 已授权，开始定位")
             locationManager.startUpdatingLocation()
         }
 
@@ -714,7 +715,7 @@ struct MapTabView: View {
 
     /// 居中到用户位置（不重置 hasLocatedUser，避免 “Locating...” 无法关闭）
     private func centerToUserLocation() {
-        print("🗺️ [地图页面] 用户点击定位按钮")
+        debugLog("🗺️ [地图页面] 用户点击定位按钮")
         centerToUserRequestVersion += 1
         if !locationManager.isUpdatingLocation {
             locationManager.startUpdatingLocation()
@@ -725,7 +726,7 @@ struct MapTabView: View {
     private func toggleTracking() {
         if locationManager.isTracking {
             // 停止圈地 — 累计行走距离（即使未闭环）
-            print("🗺️ [地图页面] 用户停止圈地")
+            debugLog("🗺️ [地图页面] 用户停止圈地")
             let distance = locationManager.totalDistance
             Task {
                 await territoryManager.addCumulativeDistance(distance)
@@ -744,8 +745,23 @@ struct MapTabView: View {
 
     /// Day 19: 带碰撞检测的开始圈地
     private func startClaimingWithCollisionCheck() {
-        guard let _ = locationManager.userLocation,
-              let _ = currentUserId else {
+        guard let _ = currentUserId else {
+            withAnimation {
+                uploadError = NSLocalizedString("error_not_logged_in", comment: "")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                withAnimation { uploadError = nil }
+            }
+            return
+        }
+
+        guard let _ = locationManager.userLocation else {
+            withAnimation {
+                uploadError = NSLocalizedString("map_waiting_for_gps", comment: "")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                withAnimation { uploadError = nil }
+            }
             return
         }
 
@@ -884,13 +900,19 @@ struct MapTabView: View {
 
     /// 上传当前领地
     private func uploadCurrentTerritory() async {
+        // 防止重复上传
+        guard !isUploading else {
+            debugLog("🗺️ [地图页面] ⚠️ 已在上传中，跳过重复调用")
+            return
+        }
+
         // 再次检查验证状态
         guard locationManager.territoryValidationPassed else {
             withAnimation {
                 uploadError = "map_validation_failed_upload"
             }
-            // 3 秒后清除错误
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // 8 秒后清除错误（给用户足够时间阅读）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
                 withAnimation {
                     uploadError = nil
                 }
@@ -915,7 +937,7 @@ struct MapTabView: View {
             )
 
             // 上传成功
-            print("🗺️ [地图页面] 领地上传成功")
+            debugLog("🗺️ [地图页面] 领地上传成功")
 
             // 累计行走距离
             await territoryManager.addCumulativeDistance(distance)
@@ -943,7 +965,7 @@ struct MapTabView: View {
             await loadTerritories()
 
         } catch {
-            print("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
+            debugLog("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
 
             // 显示错误提示
             withAnimation {
@@ -951,8 +973,8 @@ struct MapTabView: View {
                 uploadError = String(format: format, error.localizedDescription)
             }
 
-            // 3 秒后清除错误
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // 8 秒后清除错误（给用户足够时间阅读）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
                 withAnimation {
                     uploadError = nil
                 }
@@ -967,10 +989,10 @@ struct MapTabView: View {
         do {
             territories = try await territoryManager.loadAllTerritories()
             TerritoryLogger.shared.log("加载了 \(territories.count) 个领地", type: .info)
-            print("🗺️ [地图页面] 加载了 \(territories.count) 个领地")
+            debugLog("🗺️ [地图页面] 加载了 \(territories.count) 个领地")
         } catch {
             TerritoryLogger.shared.log("加载领地失败: \(error.localizedDescription)", type: .error)
-            print("🗺️ [地图页面] 加载领地失败: \(error.localizedDescription)")
+            debugLog("🗺️ [地图页面] 加载领地失败: \(error.localizedDescription)")
         }
     }
 }

@@ -146,16 +146,16 @@ struct ExplorationResultView: View {
             VStack(spacing: 12) {
                 statRow(
                     icon: "figure.walk",
-                    label: "exploration_distance",
+                    label: NSLocalizedString("exploration_distance", comment: ""),
                     value: String(format: NSLocalizedString("exploration_distance_value", comment: ""), String(format: "%.1f", result.distanceWalked))
                 )
-                statRow(icon: "clock.fill", label: "exploration_duration", value: result.stats.durationString)
+                statRow(icon: "clock.fill", label: NSLocalizedString("exploration_duration", comment: ""), value: result.stats.durationString)
                 statRow(
                     icon: "mappin.circle.fill",
-                    label: "exploration_points_verified",
+                    label: NSLocalizedString("exploration_points_verified", comment: ""),
                     value: String(format: NSLocalizedString("exploration_points_count", comment: ""), result.stats.pointsVerified)
                 )
-                statRow(icon: "chart.bar.fill", label: "exploration_distance_rank", value: result.stats.distanceRank)
+                statRow(icon: "chart.bar.fill", label: NSLocalizedString("exploration_distance_rank", comment: ""), value: result.stats.distanceRank)
             }
             .padding(16)
             .background(ApocalypseTheme.cardBackground)
@@ -266,7 +266,7 @@ struct ExplorationResultView: View {
         ),
         onDismiss: {},
         onRetry: {
-            print("重试探索")
+            debugLog("重试探索")
         }
     )
 }

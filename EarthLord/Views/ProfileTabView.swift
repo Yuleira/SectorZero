@@ -57,6 +57,11 @@ struct ProfileTabView: View {
     @State private var showPOISheet = false
     @State private var showDetailedStatsSheet = false
 
+    // DB-backed exploration stats
+    @State private var explorationSessionCount: Int = 0
+    @State private var explorationTotalDistance: Double = 0
+    @State private var explorationTotalItems: Int = 0
+
     // MARK: - Body
 
     var body: some View {
@@ -88,11 +93,15 @@ struct ProfileTabView: View {
                 await buildingManager.fetchPlayerBuildings()
                 await inventoryManager.loadItems()
                 await storeKitManager.loadEntitlementsFromSupabase()
+                await refreshExplorationStats()
             }
             .onAppear {
                 Task {
                     await territoryManager.loadTotalDistanceWalked()
                 }
+            }
+            .onChange(of: selectedTimePeriod) { _, _ in
+                Task { await refreshExplorationStats() }
             }
             .sheet(isPresented: $showTerritorySheet) {
                 sheetWrapper { TerritoryTabView() }
@@ -601,7 +610,7 @@ struct ProfileTabView: View {
 
     private var buildingCount: Int { buildingManager.playerBuildings.count }
 
-    private var poiCount: Int { explorationManager.nearbyPOIs.count }
+    private var poiCount: Int { explorationTotalItems }
 
     private var totalArea: Double { territoryManager.territories.reduce(0) { $0 + $1.area } }
 
@@ -613,9 +622,39 @@ struct ProfileTabView: View {
     }
 
     private var formattedTotalDistance: String {
-        let d = territoryManager.totalDistanceWalked
+        // Use time-filtered exploration stats when not "all time"
+        let d: Double
+        if selectedTimePeriod == .allTime {
+            d = territoryManager.totalDistanceWalked
+        } else {
+            d = explorationTotalDistance
+        }
         if d >= 1000 { return String(format: "%.2f km", d / 1000) }
         return String(format: "%.0f m", d)
+    }
+
+    // MARK: - Exploration Stats
+
+    private func refreshExplorationStats() async {
+        let since = sinceDate(for: selectedTimePeriod)
+        let stats = await explorationManager.loadExplorationStats(since: since)
+        explorationSessionCount = stats.sessions
+        explorationTotalDistance = stats.totalDistance
+        explorationTotalItems = stats.totalItems
+    }
+
+    private func sinceDate(for period: TimePeriod) -> Date? {
+        let calendar = Calendar.current
+        switch period {
+        case .today:
+            return calendar.startOfDay(for: Date())
+        case .thisWeek:
+            return calendar.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Date()).date
+        case .thisMonth:
+            return calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))
+        case .allTime:
+            return nil
+        }
     }
 
     // MARK: - Helpers
@@ -763,7 +802,7 @@ struct DeleteAccountConfirmView: View {
                 }
             }
             .onAppear {
-                print("📱 [删除账户] 显示删除确认页面")
+                debugLog("📱 [删除账户] 显示删除确认页面")
             }
         }
         .presentationDetents([.medium, .large])
