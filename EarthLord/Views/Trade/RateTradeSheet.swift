@@ -145,7 +145,7 @@ struct RateTradeSheet: View {
 
             dismiss()
         } catch {
-            print("❌ Failed to submit rating: \(error)")
+            debugLog("❌ Failed to submit rating: \(error)")
             errorMessage = error.localizedDescription
             showErrorAlert = true
         }

@@ -1396,6 +1396,12 @@ enum LocalizedString {
     /// Manage subscription button (manage_subscription)
     static let manageSubscription: LocalizedStringResource = "manage_subscription"
 
+    /// Auto-renewal disclosure text for App Store compliance (store_auto_renewal_disclosure)
+    static let storeAutoRenewalDisclosure: LocalizedStringResource = "store_auto_renewal_disclosure"
+
+    /// Terms of Service link text (store_terms_of_service)
+    static let storeTermsOfService: LocalizedStringResource = "store_terms_of_service"
+
     // MARK: - Subscription Tier Names (4 keys)
 
     /// Free tier name (tier_free)

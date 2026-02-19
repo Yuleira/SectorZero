@@ -67,7 +67,7 @@ final class PlayerPresenceManager: ObservableObject {
     // MARK: - 初始化
 
     private init() {
-        print("📍 [玩家在线] 管理器初始化")
+        debugLog("📍 [玩家在线] 管理器初始化")
         setupNotificationObservers()
     }
 
@@ -86,16 +86,16 @@ final class PlayerPresenceManager: ObservableObject {
     /// - Note: 应在用户登录后调用
     func startPresenceTracking() {
         guard !isTracking else {
-            print("📍 [玩家在线] 已在追踪中，跳过")
+            debugLog("📍 [玩家在线] 已在追踪中，跳过")
             return
         }
 
         guard AuthManager.shared.isAuthenticated else {
-            print("📍 [玩家在线] 用户未登录，无法开始追踪")
+            debugLog("📍 [玩家在线] 用户未登录，无法开始追踪")
             return
         }
 
-        print("📍 [玩家在线] 开始位置追踪")
+        debugLog("📍 [玩家在线] 开始位置追踪")
         isTracking = true
 
         // 立即上报一次位置
@@ -114,7 +114,7 @@ final class PlayerPresenceManager: ObservableObject {
     func stopPresenceTracking() {
         guard isTracking else { return }
 
-        print("📍 [玩家在线] 停止位置追踪")
+        debugLog("📍 [玩家在线] 停止位置追踪")
         isTracking = false
 
         // 停止定时器
@@ -134,12 +134,12 @@ final class PlayerPresenceManager: ObservableObject {
     /// - Note: 用于探索开始时立即上报
     func reportCurrentLocation() async {
         guard AuthManager.shared.isAuthenticated else {
-            print("📍 [玩家在线] 用户未登录，跳过上报")
+            debugLog("📍 [玩家在线] 用户未登录，跳过上报")
             return
         }
 
         guard let coordinate = locationManager.userLocation else {
-            print("📍 [玩家在线] 无法获取用户位置，跳过上报")
+            debugLog("📍 [玩家在线] 无法获取用户位置，跳过上报")
             return
         }
 
@@ -151,12 +151,12 @@ final class PlayerPresenceManager: ObservableObject {
     @discardableResult
     func fetchNearbyPlayerCount() async -> DensityLevel {
         guard AuthManager.shared.isAuthenticated else {
-            print("📍 [玩家在线] 用户未登录，返回默认密度")
+            debugLog("📍 [玩家在线] 用户未登录，返回默认密度")
             return .alone
         }
 
         guard let coordinate = locationManager.userLocation else {
-            print("📍 [玩家在线] 无法获取用户位置，返回默认密度")
+            debugLog("📍 [玩家在线] 无法获取用户位置，返回默认密度")
             return .alone
         }
 
@@ -177,11 +177,11 @@ final class PlayerPresenceManager: ObservableObject {
             nearbyPlayerCount = count
             densityLevel = DensityLevel.from(playerCount: count)
 
-            print("📍 [玩家在线] 附近玩家: \(count) 人，密度等级: \(densityLevel)")
+            debugLog("📍 [玩家在线] 附近玩家: \(count) 人，密度等级: \(densityLevel)")
 
             return densityLevel
         } catch {
-            print("📍 [玩家在线] 查询附近玩家失败: \(error.localizedDescription)")
+            debugLog("📍 [玩家在线] 查询附近玩家失败: \(error.localizedDescription)")
             // 查询失败时返回默认值
             return .alone
         }
@@ -217,7 +217,7 @@ final class PlayerPresenceManager: ObservableObject {
     /// 处理进入后台
     private func handleEnterBackground() {
         guard isTracking else { return }
-        print("📍 [玩家在线] App 进入后台，标记离线")
+        debugLog("📍 [玩家在线] App 进入后台，标记离线")
 
         // 停止定时器
         reportTimer?.invalidate()
@@ -232,7 +232,7 @@ final class PlayerPresenceManager: ObservableObject {
     /// 处理回到前台
     private func handleEnterForeground() {
         guard isTracking else { return }
-        print("📍 [玩家在线] App 回到前台，恢复追踪")
+        debugLog("📍 [玩家在线] App 回到前台，恢复追踪")
 
         // 立即上报位置
         Task {
@@ -254,7 +254,7 @@ final class PlayerPresenceManager: ObservableObject {
             }
         }
 
-        print("📍 [玩家在线] 定时上报已启动（间隔: \(Int(reportInterval))秒）")
+        debugLog("📍 [玩家在线] 定时上报已启动（间隔: \(Int(reportInterval))秒）")
     }
 
     /// 设置位置变化监听
@@ -282,7 +282,7 @@ final class PlayerPresenceManager: ObservableObject {
         let distance = currentLocation.distance(from: lastLocation)
 
         if distance >= minDistanceForReport {
-            print("📍 [玩家在线] 移动超过 \(Int(minDistanceForReport))m，触发上报")
+            debugLog("📍 [玩家在线] 移动超过 \(Int(minDistanceForReport))m，触发上报")
             Task {
                 await reportLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
             }
@@ -292,7 +292,7 @@ final class PlayerPresenceManager: ObservableObject {
     /// 上报位置到服务器
     private func reportLocation(latitude: Double, longitude: Double) async {
         guard !isReporting else {
-            print("📍 [玩家在线] 正在上报中，跳过")
+            debugLog("📍 [玩家在线] 正在上报中，跳过")
             return
         }
 
@@ -316,9 +316,9 @@ final class PlayerPresenceManager: ObservableObject {
             lastReportedLocation = CLLocation(latitude: latitude, longitude: longitude)
             lastReportTime = Date()
 
-            print("📍 [玩家在线] ✅ 位置上报成功 (\(String(format: "%.6f", latitude)), \(String(format: "%.6f", longitude)))")
+            debugLog("📍 [玩家在线] ✅ 位置上报成功 (\(String(format: "%.6f", latitude)), \(String(format: "%.6f", longitude)))")
         } catch {
-            print("📍 [玩家在线] ❌ 位置上报失败: \(error.localizedDescription)")
+            debugLog("📍 [玩家在线] ❌ 位置上报失败: \(error.localizedDescription)")
         }
 
         isReporting = false
@@ -328,9 +328,9 @@ final class PlayerPresenceManager: ObservableObject {
     private func markOffline() async {
         do {
             try await supabase.rpc("mark_player_offline").execute()
-            print("📍 [玩家在线] ✅ 已标记为离线")
+            debugLog("📍 [玩家在线] ✅ 已标记为离线")
         } catch {
-            print("📍 [玩家在线] ❌ 标记离线失败: \(error.localizedDescription)")
+            debugLog("📍 [玩家在线] ❌ 标记离线失败: \(error.localizedDescription)")
         }
     }
 }

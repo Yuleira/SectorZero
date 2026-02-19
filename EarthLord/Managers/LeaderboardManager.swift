@@ -92,7 +92,7 @@ final class LeaderboardManager: ObservableObject {
             }
         } catch {
             errorMessage = error.localizedDescription
-            print("❌ [Leaderboard] Failed to fetch: \(error)")
+            debugLog("❌ [Leaderboard] Failed to fetch: \(error)")
         }
 
         isLoading = false

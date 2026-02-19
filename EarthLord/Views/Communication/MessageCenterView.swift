@@ -239,7 +239,7 @@ struct MessageCenterView: View {
 
             await MainActor.run {
                 if success {
-                    print("✅ [MessageCenter] Channel renamed: \(newChannelName)")
+                    debugLog("✅ [MessageCenter] Channel renamed: \(newChannelName)")
                 }
                 channelToManage = nil
                 newChannelName = ""
@@ -257,7 +257,7 @@ struct MessageCenterView: View {
 
             await MainActor.run {
                 if success {
-                    print("✅ [MessageCenter] Channel deleted: \(channel.name)")
+                    debugLog("✅ [MessageCenter] Channel deleted: \(channel.name)")
                 }
                 channelToManage = nil
             }

@@ -408,11 +408,11 @@ struct BuildingPlacementView: View {
         
         switch result {
         case .success(let building):
-            print("🏗️ [建造] 成功: \(building.buildingName)")
+            debugLog("🏗️ [建造] 成功: \(building.buildingName)")
             showSuccessAlert = true
             
         case .failure(let error):
-            print("🏗️ [建造] 失败: \(error)")
+            debugLog("🏗️ [建造] 失败: \(error)")
             errorMessage = error.localizedDescription
             showErrorAlert = true
         }

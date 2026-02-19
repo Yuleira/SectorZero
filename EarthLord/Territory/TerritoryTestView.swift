@@ -8,6 +8,7 @@
 //  显示圈地模块的实时调试日志，支持日志清空和导出
 //
 
+#if DEBUG
 import SwiftUI
 
 /// 圈地功能测试界面
@@ -229,3 +230,4 @@ struct TerritoryTestView: View {
         TerritoryTestView()
     }
 }
+#endif

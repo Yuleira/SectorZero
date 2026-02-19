@@ -238,7 +238,7 @@ struct CreateTradeOfferView: View {
                 message: message.isEmpty ? nil : message
             )
 
-            print("✅ Trade offer created: \(offerId)")
+            debugLog("✅ Trade offer created: \(offerId)")
             showSuccess = true
         } catch {
             errorMessage = error.localizedDescription

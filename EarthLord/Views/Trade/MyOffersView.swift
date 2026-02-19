@@ -130,8 +130,9 @@ struct MyOffersView: View {
             try await tradeManager.cancelTradeOffer(offerId: offer.id)
             // 成功提示会在 TradeManager 中处理
         } catch {
-            // 错误处理
-            print("❌ Failed to cancel offer: \(error)")
+            debugLog("❌ Failed to cancel offer: \(error)")
+            errorMessage = error.localizedDescription
+            showErrorAlert = true
         }
     }
 }

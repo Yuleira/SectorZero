@@ -539,9 +539,9 @@ struct TerritoryDetailView: View {
             let result = await buildingManager.upgradeBuilding(buildingId: building.id)
             switch result {
             case .success(let upgraded):
-                print("🏗️ 升级成功: \(upgraded.buildingName) -> Lv.\(upgraded.level)")
+                debugLog("🏗️ 升级成功: \(upgraded.buildingName) -> Lv.\(upgraded.level)")
             case .failure(let error):
-                print("🏗️ 升级失败: \(error)")
+                debugLog("🏗️ 升级失败: \(error)")
                 buildingManager.errorMessage = error.localizedDescription
             }
         }
@@ -561,9 +561,9 @@ struct TerritoryDetailView: View {
         let success = await buildingManager.demolishBuilding(buildingId: building.id)
         
         if success {
-            print("🏗️ 拆除成功: \(building.buildingName)")
+            debugLog("🏗️ 拆除成功: \(building.buildingName)")
         } else {
-            print("🏗️ 拆除失败: \(building.buildingName)")
+            debugLog("🏗️ 拆除失败: \(building.buildingName)")
         }
         
         buildingToDelete = nil

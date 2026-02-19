@@ -237,7 +237,7 @@ struct POIListView: View {
             pois = [sample1, sample2, sample3, sample4, sample5, sample6]
             
             // 5. 打印一下，看看控制台有没有输出
-            print("✅ 数据加载成功，共 \(pois.count) 个 POI")
+            debugLog("✅ 数据加载成功，共 \(pois.count) 个 POI")
             
             // 6. 关掉加载动画
             isLoading = false

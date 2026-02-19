@@ -280,7 +280,7 @@ struct AchievementsView: View {
                 .count ?? 0
             discoveredPOICount = count
         } catch {
-            print("⚠️ [Achievements] Failed to fetch POI count: \(error)")
+            debugLog("⚠️ [Achievements] Failed to fetch POI count: \(error)")
         }
     }
 }

@@ -78,7 +78,7 @@ final class TerritoryLogger: ObservableObject {
     // MARK: - 初始化
 
     private init() {
-        print("📋 [日志管理器] 初始化完成")
+        debugLog("📋 [日志管理器] 初始化完成")
     }
 
     // MARK: - 公共方法
@@ -106,7 +106,7 @@ final class TerritoryLogger: ObservableObject {
             self.updateLogText()
 
             // 同时输出到控制台
-            print("📋 [圈地日志] \(entry.displayText)")
+            debugLog("📋 [圈地日志] \(entry.displayText)")
         }
     }
 
@@ -115,7 +115,7 @@ final class TerritoryLogger: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             self?.logs.removeAll()
             self?.logText = ""
-            print("📋 [日志管理器] 日志已清空")
+            debugLog("📋 [日志管理器] 日志已清空")
         }
     }
 

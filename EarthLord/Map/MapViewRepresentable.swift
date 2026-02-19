@@ -93,7 +93,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         // 应用末世滤镜效果
         applyApocalypseFilter(to: mapView)
 
-        print("🗺️ [地图视图] MKMapView 创建完成")
+        debugLog("🗺️ [地图视图] MKMapView 创建完成")
 
         return mapView
     }
@@ -152,7 +152,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         if isPathClosed && convertedCoordinates.count >= 3 {
             let polygon = MKPolygon(coordinates: convertedCoordinates, count: convertedCoordinates.count)
             mapView.addOverlay(polygon)
-            print("🗺️ [地图视图] ✅ 已绘制闭环多边形")
+            debugLog("🗺️ [地图视图] ✅ 已绘制闭环多边形")
         }
 
         // 创建轨迹线
@@ -161,7 +161,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         // 添加到地图
         mapView.addOverlay(polyline)
 
-        print("🗺️ [地图视图] 轨迹已更新，共 \(trackingPath.count) 个点，闭环: \(isPathClosed)")
+        debugLog("🗺️ [地图视图] 轨迹已更新，共 \(trackingPath.count) 个点，闭环: \(isPathClosed)")
     }
 
     /// 绘制所有领地
@@ -198,7 +198,7 @@ struct MapViewRepresentable: UIViewRepresentable {
             mapView.addOverlay(polygon, level: .aboveRoads)
         }
 
-        print("🗺️ [地图视图] 已绘制 \(territories.count) 个领地")
+        debugLog("🗺️ [地图视图] 已绘制 \(territories.count) 个领地")
     }
 
     /// 更新POI标记
@@ -219,7 +219,7 @@ struct MapViewRepresentable: UIViewRepresentable {
             mapView.addAnnotation(annotation)
         }
 
-        print("🗺️ [地图视图] 已添加 \(nearbyPOIs.count) 个POI标记")
+        debugLog("🗺️ [地图视图] 已添加 \(nearbyPOIs.count) 个POI标记")
     }
     
     /// 更新建筑标注 (Phase 4) — Diff-based，避免全量删除导致闪烁
@@ -261,7 +261,7 @@ struct MapViewRepresentable: UIViewRepresentable {
     private func applyApocalypseFilter(to mapView: MKMapView) {
         // 色调控制滤镜
         guard let colorControls = CIFilter(name: "CIColorControls") else {
-            print("🗺️ [地图视图] ⚠️ 无法创建 CIColorControls 滤镜")
+            debugLog("🗺️ [地图视图] ⚠️ 无法创建 CIColorControls 滤镜")
             return
         }
 
@@ -271,7 +271,7 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         // 棕褐色调滤镜（废土泛黄效果）
         guard let sepiaFilter = CIFilter(name: "CISepiaTone") else {
-            print("🗺️ [地图视图] ⚠️ 无法创建 CISepiaTone 滤镜")
+            debugLog("🗺️ [地图视图] ⚠️ 无法创建 CISepiaTone 滤镜")
             return
         }
 
@@ -280,7 +280,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         // 应用滤镜到地图图层
         mapView.layer.filters = [colorControls, sepiaFilter]
 
-        print("🗺️ [地图视图] 末世滤镜已应用")
+        debugLog("🗺️ [地图视图] 末世滤镜已应用")
     }
 
     // MARK: - Coordinator
@@ -309,7 +309,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
             // 获取位置坐标
             guard let location = userLocation.location else {
-                print("🗺️ [地图代理] ⚠️ 用户位置为空")
+                debugLog("🗺️ [地图代理] ⚠️ 用户位置为空")
                 return
             }
 
@@ -320,7 +320,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 self.parent.userLocation = coordinate
             }
 
-            print("🗺️ [地图代理] 用户位置更新: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
+            debugLog("🗺️ [地图代理] 用户位置更新: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
 
             // 首次获得位置时，自动居中地图
             guard !hasInitialCentered else {
@@ -328,7 +328,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 return
             }
 
-            print("🗺️ [地图代理] 首次定位，自动居中地图...")
+            debugLog("🗺️ [地图代理] 首次定位，自动居中地图...")
 
             // 创建居中区域（约 1 公里范围）
             let region = MKCoordinateRegion(
@@ -348,28 +348,28 @@ struct MapViewRepresentable: UIViewRepresentable {
                 self.parent.hasLocatedUser = true
             }
 
-            print("🗺️ [地图代理] ✅ 地图已居中到用户位置")
+            debugLog("🗺️ [地图代理] ✅ 地图已居中到用户位置")
         }
 
         /// 地图区域变化回调
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
             let center = mapView.centerCoordinate
-            print("🗺️ [地图代理] 地图区域变化: (\(String(format: "%.4f", center.latitude)), \(String(format: "%.4f", center.longitude)))")
+            debugLog("🗺️ [地图代理] 地图区域变化: (\(String(format: "%.4f", center.latitude)), \(String(format: "%.4f", center.longitude)))")
         }
 
         /// 地图加载完成回调
         func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
-            print("🗺️ [地图代理] 地图瓦片加载完成")
+            debugLog("🗺️ [地图代理] 地图瓦片加载完成")
         }
 
         /// 地图加载失败回调
         func mapViewDidFailLoadingMap(_ mapView: MKMapView, withError error: Error) {
-            print("🗺️ [地图代理] ❌ 地图加载失败: \(error.localizedDescription)")
+            debugLog("🗺️ [地图代理] ❌ 地图加载失败: \(error.localizedDescription)")
         }
 
         /// 用户位置追踪失败回调
         func mapView(_ mapView: MKMapView, didFailToLocateUserWithError error: Error) {
-            print("🗺️ [地图代理] ❌ 定位失败: \(error.localizedDescription)")
+            debugLog("🗺️ [地图代理] ❌ 定位失败: \(error.localizedDescription)")
         }
 
         /// 覆盖层渲染器 — Tactical Aurora 风格

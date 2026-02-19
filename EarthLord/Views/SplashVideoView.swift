@@ -27,12 +27,12 @@ struct SplashVideoView: View {
                     dismissWithFade()
                 }
                 .ignoresSafeArea()
-                .onAppear { print("🎥 [Splash] Attempting to load video...") }
+                .onAppear { debugLog("🎥 [Splash] Attempting to load video...") }
             } else {
                 // Video file missing — fail gracefully after brief pause
                 Color.black.ignoresSafeArea()
                     .onAppear {
-                        print("❌ [Splash] Video file NOT found in bundle")
+                        debugLog("❌ [Splash] Video file NOT found in bundle")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             dismissWithFade()
                         }
@@ -161,5 +161,5 @@ private class PlayerUIView: UIView {
 // MARK: - Preview
 
 #Preview {
-    SplashVideoView { print("Splash finished") }
+    SplashVideoView { debugLog("Splash finished") }
 }

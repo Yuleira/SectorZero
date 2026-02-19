@@ -8,6 +8,7 @@
 //  显示所有测试模块的入口，包括 Supabase 测试和圈地测试
 //
 
+#if DEBUG
 import SwiftUI
 
 /// 开发测试入口菜单
@@ -69,3 +70,4 @@ struct TestMenuView: View {
         TestMenuView()
     }
 }
+#endif

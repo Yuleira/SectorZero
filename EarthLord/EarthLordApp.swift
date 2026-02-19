@@ -54,11 +54,11 @@ struct EarthLordApp: App {
         switch phase {
         case .background:
             if isClaiming || isExploring {
-                print("🔄 [App生命周期] 进入后台 — 活跃任务进行中，请求后台执行时间")
+                debugLog("🔄 [App生命周期] 进入后台 — 活跃任务进行中，请求后台执行时间")
                 beginBackgroundTask()
             }
         case .active:
-            print("🔄 [App生命周期] 回到前台")
+            debugLog("🔄 [App生命周期] 回到前台")
             endBackgroundTask()
             // Re-enable background tracking if still claiming/exploring
             if isClaiming || isExploring {
@@ -76,17 +76,19 @@ struct EarthLordApp: App {
         guard backgroundTaskID == .invalid else { return }
         backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "ActiveClaiming") {
             // Expiration handler — iOS is about to kill us, clean up
-            print("🔄 [App生命周期] ⚠️ 后台执行时间即将耗尽")
+            debugLog("🔄 [App生命周期] ⚠️ 后台执行时间即将耗尽")
+            ExplorationManager.shared.cancelExploration()
+            LocationManager.shared.stopPathTracking()
             self.endBackgroundTask()
         }
-        print("🔄 [App生命周期] 后台任务已启动 (id: \(backgroundTaskID.rawValue))")
+        debugLog("🔄 [App生命周期] 后台任务已启动 (id: \(backgroundTaskID.rawValue))")
     }
 
     /// End background task when no longer needed
     private func endBackgroundTask() {
         guard backgroundTaskID != .invalid else { return }
         UIApplication.shared.endBackgroundTask(backgroundTaskID)
-        print("🔄 [App生命周期] 后台任务已结束 (id: \(backgroundTaskID.rawValue))")
+        debugLog("🔄 [App生命周期] 后台任务已结束 (id: \(backgroundTaskID.rawValue))")
         backgroundTaskID = .invalid
     }
 }

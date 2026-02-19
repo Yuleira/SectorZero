@@ -125,11 +125,11 @@ struct BuildingLocationPickerView: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectedLocation = coordinate
             }
-            print("🗺️ [位置选择] 有效位置: \(coordinate.latitude), \(coordinate.longitude)")
+            debugLog("🗺️ [位置选择] 有效位置: \(coordinate.latitude), \(coordinate.longitude)")
         } else {
             validationErrorMessage = String(localized: "building_location_outside_territory")
             showValidationError = true
-            print("🗺️ [位置选择] 无效位置：不在领地内")
+            debugLog("🗺️ [位置选择] 无效位置：不在领地内")
         }
     }
     
@@ -338,7 +338,7 @@ struct LocationPickerMapView: UIViewRepresentable {
         existingBuildings: [],
         buildingTemplates: [:],
         onLocationSelected: { coord in
-            print("Selected: \(coord)")
+            debugLog("Selected: \(coord)")
         }
     )
 }

@@ -5,6 +5,7 @@
 //  Created by Yu Lei on 23/12/2025.
 //
 
+#if DEBUG
 import SwiftUI
 
 struct TestView: View {
@@ -23,3 +24,4 @@ struct TestView: View {
 #Preview {
     TestView()
 }
+#endif

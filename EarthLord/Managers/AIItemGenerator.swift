@@ -26,7 +26,7 @@ final class AIItemGenerator {
     // MARK: - 初始化
 
     private init() {
-        print("🤖 [AI物品生成器] 初始化完成")
+        debugLog("🤖 [AI物品生成器] 初始化完成")
     }
 
     // MARK: - 公共方法
@@ -37,7 +37,7 @@ final class AIItemGenerator {
     ///   - count: 生成物品数量（默认 3）
     /// - Returns: AI 生成的物品数组，失败时返回 nil
     func generateItems(for poi: NearbyPOI, count: Int = 3) async -> [AIGeneratedItem]? {
-        print("🤖 [AI物品生成器] 开始生成物品 - POI: \(poi.name), 类型: \(poi.type.rawValue), 危险等级: \(poi.dangerLevel)")
+        debugLog("🤖 [AI物品生成器] 开始生成物品 - POI: \(poi.name), 类型: \(poi.type.rawValue), 危险等级: \(poi.dangerLevel)")
 
         // 构建请求数据
         // 注意：这里 type 传英文或 RawValue 给 AI 比较好，AI 自己会处理
@@ -61,18 +61,18 @@ final class AIItemGenerator {
             }
 
             if response.success, let items = response.items {
-                print("🤖 [AI物品生成器] ✅ 成功生成 \(items.count) 个物品")
+                debugLog("🤖 [AI物品生成器] ✅ 成功生成 \(items.count) 个物品")
                 for item in items {
-                    print("🤖 [AI物品生成器]   - \(item.name) [\(item.rarity)]")
+                    debugLog("🤖 [AI物品生成器]   - \(item.name) [\(item.rarity)]")
                 }
                 return items
             } else {
-                print("🤖 [AI物品生成器] ❌ 生成失败: \(response.error ?? "未知错误")")
+                debugLog("🤖 [AI物品生成器] ❌ 生成失败: \(response.error ?? "未知错误")")
                 return nil
             }
 
         } catch {
-            print("🤖 [AI物品生成器] ❌ 请求失败: \(error.localizedDescription)")
+            debugLog("🤖 [AI物品生成器] ❌ 请求失败: \(error.localizedDescription)")
             return nil
         }
     }
@@ -121,7 +121,7 @@ final class AIItemGenerator {
     ///   - count: 生成物品数量
     /// - Returns: 降级生成的物品数组
     func generateFallbackItems(for poi: NearbyPOI, count: Int = 3) -> [AIGeneratedItem] {
-        print("🤖 [AI物品生成器] 使用降级方案生成物品")
+        debugLog("🤖 [AI物品生成器] 使用降级方案生成物品")
 
         var items: [AIGeneratedItem] = []
         let rarityWeights = getRarityWeights(for: poi.dangerLevel)
@@ -132,7 +132,7 @@ final class AIItemGenerator {
             items.append(item)
         }
 
-        print("🤖 [AI物品生成器] 降级生成了 \(items.count) 个物品")
+        debugLog("🤖 [AI物品生成器] 降级生成了 \(items.count) 个物品")
         return items
     }
 
@@ -192,9 +192,9 @@ final class AIItemGenerator {
         case .supermarket, .convenience, .restaurant, .cafe:
             return "food"
         case .gasStation:
-            return ["tool", "material"].randomElement()!
+            return ["tool", "material"].randomElement() ?? "tool"
         case .store:
-            return ["tool", "material", "other"].randomElement()!
+            return ["tool", "material", "other"].randomElement() ?? "tool"
         }
     }
 
@@ -224,7 +224,7 @@ final class AIItemGenerator {
             (NSLocalizedString("item_medical_gauze", comment: "Item name"), NSLocalizedString("item_medical_gauze_story", comment: "Item story")),
             (NSLocalizedString("item_fever_medicine", comment: "Item name"), NSLocalizedString("item_fever_medicine_story", comment: "Item story"))
         ]
-        return items.randomElement()!
+        return items.randomElement() ?? items[0]
     }
 
     private func getFoodFallback(rarity: String) -> (String, String) {
@@ -235,7 +235,7 @@ final class AIItemGenerator {
             (NSLocalizedString("item_hardtack", comment: "Item name"), NSLocalizedString("item_hardtack_story", comment: "Item story")),
             (NSLocalizedString("item_instant_coffee", comment: "Item name"), NSLocalizedString("item_instant_coffee_story", comment: "Item story"))
         ]
-        return items.randomElement()!
+        return items.randomElement() ?? items[0]
     }
 
     private func getToolFallback(rarity: String) -> (String, String) {
@@ -246,7 +246,7 @@ final class AIItemGenerator {
             (NSLocalizedString("item_rope", comment: "Item name"), NSLocalizedString("item_rope_story", comment: "Item story")),
             (NSLocalizedString("item_binoculars", comment: "Item name"), NSLocalizedString("item_binoculars_story", comment: "Item story"))
         ]
-        return items.randomElement()!
+        return items.randomElement() ?? items[0]
     }
 
     private func getMaterialFallback(rarity: String) -> (String, String) {
@@ -257,7 +257,7 @@ final class AIItemGenerator {
             (NSLocalizedString("item_screws", comment: "Item name"), NSLocalizedString("item_screws_story", comment: "Item story")),
             (NSLocalizedString("item_duct_tape", comment: "Item name"), NSLocalizedString("item_duct_tape_story", comment: "Item story"))
         ]
-        return items.randomElement()!
+        return items.randomElement() ?? items[0]
     }
 
     private func getOtherFallback(rarity: String) -> (String, String) {
@@ -268,6 +268,6 @@ final class AIItemGenerator {
             (NSLocalizedString("item_candle", comment: "Item name"), NSLocalizedString("item_candle_story", comment: "Item story")),
             (NSLocalizedString("item_notebook", comment: "Item name"), NSLocalizedString("item_notebook_story", comment: "Item story"))
         ]
-        return items.randomElement()!
+        return items.randomElement() ?? items[0]
     }
 }

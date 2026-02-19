@@ -5,11 +5,12 @@
 //  Created by Yu Lei on 26/12/2025.
 //
 
+#if DEBUG
 import SwiftUI
 import Supabase
 
-// 初始化 Supabase 客户端（使用 AppConfig 配置）
-let supabase = SupabaseClient(
+// 初始化 Supabase 客户端（使用 AppConfig 配置）— DEBUG only
+private let testSupabase = SupabaseClient(
     supabaseURL: URL(string: AppConfig.Supabase.projectURL)!,
     supabaseKey: AppConfig.Supabase.publishableKey,
     options: .init(
@@ -127,7 +128,7 @@ struct SupabaseTestView: View {
         Task {
             do {
                 // 故意查询一个不存在的表来测试连接
-                let _: [EmptyResponse] = try await supabase
+                let _: [EmptyResponse] = try await testSupabase
                     .from("non_existent_table")
                     .select()
                     .execute()
@@ -197,21 +198,21 @@ struct SupabaseTestView: View {
                 do {
                     switch table {
                     case "profiles":
-                        let _: [Profile] = try await supabase
+                        let _: [Profile] = try await testSupabase
                             .from(table)
                             .select()
                             .limit(1)
                             .execute()
                             .value
                     case "territories":
-                        let _: [TestTerritory] = try await supabase
+                        let _: [TestTerritory] = try await testSupabase
                             .from(table)
                             .select()
                             .limit(1)
                             .execute()
                             .value
                     case "pois":
-                        let _: [TestPOI] = try await supabase
+                        let _: [TestPOI] = try await testSupabase
                             .from(table)
                             .select()
                             .limit(1)
@@ -296,3 +297,4 @@ private struct TestPOI: Decodable {
         SupabaseTestView()
     }
 }
+#endif

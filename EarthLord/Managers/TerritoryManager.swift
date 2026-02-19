@@ -12,6 +12,12 @@ import CoreLocation
 import Combine
 import Supabase
 
+/// RPC params for atomic distance increment
+private nonisolated(unsafe) struct IncrementDistanceParams: Encodable, Sendable {
+    nonisolated let p_user_id: String
+    nonisolated let p_delta: Double
+}
+
 /// 领地管理器
 /// 负责领地数据的上传和拉取
 @MainActor
@@ -132,7 +138,7 @@ final class TerritoryManager: ObservableObject {
 
         // 重叠检测：检查新领地是否与任何已有领地重叠（含自己的）
         if checkOverlapWithAllTerritories(path: coordinates) {
-            print("📤 [领地上传] ❌ 与已有领地重叠，拒绝上传")
+            debugLog("📤 [领地上传] ❌ 与已有领地重叠，拒绝上传")
             TerritoryLogger.shared.log(NSLocalizedString("error_territory_overlap", comment: ""), type: .error)
             throw TerritoryError.territoryOverlap
         }
@@ -156,7 +162,8 @@ final class TerritoryManager: ObservableObject {
             "distance_walked": .double(distanceWalked)
         ]
 
-        print("📤 [领地上传] 开始上传，点数: \(coordinates.count), 面积: \(String(format: "%.0f", area))m²")
+        debugLog("📤 [领地上传] 开始上传，点数: \(coordinates.count), 面积: \(String(format: "%.0f", area))m², 距离: \(String(format: "%.0f", distanceWalked))m")
+        TerritoryLogger.shared.log("开始上传领地: \(coordinates.count)点, \(String(format: "%.0f", area))m²", type: .info)
 
         isLoading = true
         defer { isLoading = false }
@@ -167,7 +174,7 @@ final class TerritoryManager: ObservableObject {
                           .insert(territoryData)
                           .execute()
 
-                      print("📤 [领地上传] ✅ 上传成功")
+                      debugLog("📤 [领地上传] ✅ 上传成功")
                       
                       // 🔥 修改重点 1：使用 String(format: NSLocalizedString(...)) 来支持动态翻译
                       // 这里 %.0f 是占位符，代表面积的数字
@@ -179,7 +186,7 @@ final class TerritoryManager: ObservableObject {
                       TerritoryLogger.shared.log(successMessage, type: .success)
                       
                   } catch {
-                      print("📤 [领地上传] ❌ 上传失败: \(error.localizedDescription)")
+                      debugLog("📤 [领地上传] ❌ 上传失败: \(error.localizedDescription)")
                       
                       // 🔥 修改重点 2：错误信息也要翻译
                       // 这里 %@ 是占位符，代表具体的错误原因
@@ -202,31 +209,17 @@ final class TerritoryManager: ObservableObject {
         guard let userId = AuthManager.shared.currentUser?.id else { return }
 
         do {
-            // 读取当前值
-            struct DistanceRow: Decodable { let totalDistanceWalked: Double?
-                enum CodingKeys: String, CodingKey { case totalDistanceWalked = "total_distance_walked" }
-            }
-            let rows: [DistanceRow] = try await supabase
-                .from("player_profiles")
-                .select("total_distance_walked")
-                .eq("id", value: userId.uuidString)
-                .execute()
-                .value
+            // 使用原子 RPC 避免 read-modify-write 竞态
+            let params = IncrementDistanceParams(p_user_id: userId.uuidString, p_delta: distance)
+            try await supabase.rpc(
+                "increment_distance_walked",
+                params: params
+            ).execute()
 
-            let current = rows.first?.totalDistanceWalked ?? 0
-            let newTotal = current + distance
-
-            // 写回
-            try await supabase
-                .from("player_profiles")
-                .update(["total_distance_walked": AnyJSON.double(newTotal)])
-                .eq("id", value: userId.uuidString)
-                .execute()
-
-            totalDistanceWalked = newTotal
-            print("📏 [距离累计] ✅ +\(String(format: "%.0f", distance))m → 总计 \(String(format: "%.0f", newTotal))m")
+            totalDistanceWalked += distance
+            debugLog("📏 [距离累计] ✅ +\(String(format: "%.0f", distance))m → 总计 \(String(format: "%.0f", totalDistanceWalked))m")
         } catch {
-            print("📏 [距离累计] ❌ 更新失败: \(error.localizedDescription)")
+            debugLog("📏 [距离累计] ❌ 更新失败: \(error.localizedDescription)")
         }
     }
 
@@ -241,14 +234,14 @@ final class TerritoryManager: ObservableObject {
             let rows: [DistanceRow] = try await supabase
                 .from("player_profiles")
                 .select("total_distance_walked")
-                .eq("id", value: userId.uuidString)
+                .eq("user_id", value: userId.uuidString)
                 .execute()
                 .value
 
             totalDistanceWalked = rows.first?.totalDistanceWalked ?? 0
-            print("📏 [距离加载] 总计行走距离: \(String(format: "%.0f", totalDistanceWalked))m")
+            debugLog("📏 [距离加载] 总计行走距离: \(String(format: "%.0f", totalDistanceWalked))m")
         } catch {
-            print("📏 [距离加载] ❌ 加载失败: \(error.localizedDescription)")
+            debugLog("📏 [距离加载] ❌ 加载失败: \(error.localizedDescription)")
         }
     }
 
@@ -257,7 +250,7 @@ final class TerritoryManager: ObservableObject {
     /// 加载所有有效领地
     /// - Returns: 领地数组
     func loadAllTerritories() async throws -> [Territory] {
-        print("📥 [领地加载] 开始加载所有领地...")
+        debugLog("📥 [领地加载] 开始加载所有领地...")
 
         isLoading = true
         defer { isLoading = false }
@@ -271,10 +264,10 @@ final class TerritoryManager: ObservableObject {
                 .value
 
             territories = response
-            print("📥 [领地加载] ✅ 加载完成，共 \(response.count) 个领地")
+            debugLog("📥 [领地加载] ✅ 加载完成，共 \(response.count) 个领地")
             return response
         } catch {
-            print("📥 [领地加载] ❌ 加载失败: \(error.localizedDescription)")
+            debugLog("📥 [领地加载] ❌ 加载失败: \(error.localizedDescription)")
             throw TerritoryError.loadFailed(error.localizedDescription)
         }
     }
@@ -286,7 +279,7 @@ final class TerritoryManager: ObservableObject {
             throw TerritoryError.notAuthenticated
         }
 
-        print("📥 [领地加载] 开始加载我的领地...")
+        debugLog("📥 [领地加载] 开始加载我的领地...")
 
         isLoading = true
         defer { isLoading = false }
@@ -301,14 +294,14 @@ final class TerritoryManager: ObservableObject {
                 .execute()
                 .value
 
-            print("📥 [领地加载] ✅ 加载完成，共 \(response.count) 个我的领地")
+            debugLog("📥 [领地加载] ✅ 加载完成，共 \(response.count) 个我的领地")
 
             // 同时加载累计行走距离
             await loadTotalDistanceWalked()
 
             return response
         } catch {
-            print("📥 [领地加载] ❌ 加载我的领地失败: \(error.localizedDescription)")
+            debugLog("📥 [领地加载] ❌ 加载我的领地失败: \(error.localizedDescription)")
             throw TerritoryError.loadFailed(error.localizedDescription)
         }
     }
@@ -319,7 +312,7 @@ final class TerritoryManager: ObservableObject {
     /// - Parameter territoryId: 领地 ID
     /// - Returns: 是否删除成功
     func deleteTerritory(territoryId: String) async -> Bool {
-        print("🗑️ [领地删除] 开始删除领地: \(territoryId)")
+        debugLog("🗑️ [领地删除] 开始删除领地: \(territoryId)")
 
         do {
             try await supabase
@@ -328,11 +321,11 @@ final class TerritoryManager: ObservableObject {
                 .eq("id", value: territoryId)
                 .execute()
 
-            print("🗑️ [领地删除] ✅ 删除成功")
+            debugLog("🗑️ [领地删除] ✅ 删除成功")
             TerritoryLogger.shared.log(NSLocalizedString("territory_delete_success", comment: ""), type: .success)
             return true
         } catch {
-            print("🗑️ [领地删除] ❌ 删除失败: \(error.localizedDescription)")
+            debugLog("🗑️ [领地删除] ❌ 删除失败: \(error.localizedDescription)")
             TerritoryLogger.shared.log(String(format: NSLocalizedString("error_territory_delete_failed_format", comment: ""), error.localizedDescription), type: .error)
             return false
         }
@@ -346,10 +339,10 @@ final class TerritoryManager: ObservableObject {
     ///   - newName: 新名称
     /// - Returns: 是否成功
     func updateTerritoryName(territoryId: String, newName: String) async -> Bool {
-        print("✏️ [领地更新] 开始重命名领地: \(territoryId) -> \(newName)")
+        debugLog("✏️ [领地更新] 开始重命名领地: \(territoryId) -> \(newName)")
 
         guard !newName.isEmpty else {
-            print("✏️ [领地更新] ❌ 名称不能为空")
+            debugLog("✏️ [领地更新] ❌ 名称不能为空")
             return false
         }
 
@@ -368,7 +361,7 @@ final class TerritoryManager: ObservableObject {
                 territories[index] = updatedTerritory
             }
 
-            print("✏️ [领地更新] ✅ 重命名成功 (name 列)")
+            debugLog("✏️ [领地更新] ✅ 重命名成功 (name 列)")
             TerritoryLogger.shared.log(String(localized: "territory_rename_success"), type: .success)
 
             // 发送通知，让 TerritoryTabView 刷新列表
@@ -377,7 +370,7 @@ final class TerritoryManager: ObservableObject {
             return true
 
         } catch {
-            print("✏️ [领地更新] ⚠️ name 列更新失败: \(error.localizedDescription)，尝试 custom_name 列...")
+            debugLog("✏️ [领地更新] ⚠️ name 列更新失败: \(error.localizedDescription)，尝试 custom_name 列...")
         }
 
         // Fallback: 尝试 custom_name 列
@@ -394,14 +387,14 @@ final class TerritoryManager: ObservableObject {
                 territories[index] = updatedTerritory
             }
 
-            print("✏️ [领地更新] ✅ 重命名成功 (custom_name 列)")
+            debugLog("✏️ [领地更新] ✅ 重命名成功 (custom_name 列)")
             TerritoryLogger.shared.log(String(localized: "territory_rename_success"), type: .success)
             NotificationCenter.default.post(name: .territoryUpdated, object: territoryId)
 
             return true
 
         } catch {
-            print("✏️ [领地更新] ❌ 重命名失败: \(error.localizedDescription)")
+            debugLog("✏️ [领地更新] ❌ 重命名失败: \(error.localizedDescription)")
             return false
         }
     }

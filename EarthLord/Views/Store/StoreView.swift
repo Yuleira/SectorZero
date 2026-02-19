@@ -263,6 +263,37 @@ struct StoreView: View {
                     onPurchase: { product in await purchaseProduct(product) }
                 )
             }
+
+            // App Store subscription compliance (guideline 3.1.2a)
+            VStack(spacing: 8) {
+                Text(LocalizedString.storeAutoRenewalDisclosure)
+                    .font(.caption2)
+                    .foregroundColor(ApocalypseTheme.textMuted)
+                    .multilineTextAlignment(.center)
+
+                HStack(spacing: 16) {
+                    Link(String(localized: LocalizedString.storeTermsOfService),
+                         destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                        .font(.caption2)
+                        .foregroundColor(ApocalypseTheme.primary)
+
+                    Link(String(localized: LocalizedString.profilePrivacyPolicy),
+                         destination: URL(string: "https://gist.github.com/wuyuleiyu/f3e8a94edc4a45bd6e78a3dc3a2b259f")!)
+                        .font(.caption2)
+                        .foregroundColor(ApocalypseTheme.primary)
+                }
+
+                Button {
+                    if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    Text(LocalizedString.manageSubscription)
+                        .font(.caption)
+                        .foregroundColor(ApocalypseTheme.primary)
+                }
+            }
+            .padding(.top, 8)
         }
     }
 

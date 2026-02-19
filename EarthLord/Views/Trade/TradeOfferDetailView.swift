@@ -303,7 +303,7 @@ struct TradeOfferDetailView: View {
             receivedItems = result.receivedItems
             showSuccessAlert = true
         } catch {
-            print("❌ Failed to accept trade: \(error)")
+            debugLog("❌ Failed to accept trade: \(error)")
             errorMessage = error.localizedDescription
             showErrorAlert = true
         }

@@ -80,7 +80,7 @@ final class CommunicationManager: ObservableObject {
                 await initializeDevices(userId: userId)
             }
         } catch {
-            errorMessage = "加载失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_load_failed_format", comment: ""), error.localizedDescription)
         }
 
         isLoading = false
@@ -94,7 +94,7 @@ final class CommunicationManager: ObservableObject {
             try await client.rpc("initialize_user_devices", params: ["p_user_id": userId.uuidString]).execute()
             await loadDevices(userId: userId)
         } catch {
-            errorMessage = "初始化失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_initialization_failed_format", comment: ""), error.localizedDescription)
         }
     }
 
@@ -130,7 +130,7 @@ final class CommunicationManager: ObservableObject {
             }
             currentDevice = devices.first(where: { $0.deviceType == deviceType })
         } catch {
-            errorMessage = "切换失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_switch_failed_format", comment: ""), error.localizedDescription)
         }
 
         isLoading = false
@@ -157,7 +157,7 @@ final class CommunicationManager: ObservableObject {
                 devices[index].isUnlocked = true
             }
         } catch {
-            errorMessage = "解锁失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_unlock_failed_format", comment: ""), error.localizedDescription)
         }
     }
 
@@ -228,14 +228,14 @@ final class CommunicationManager: ObservableObject {
                 quantity: quantity
             )
             if !removed {
-                print("❌ [Upgrade] Failed to deduct \(resourceId) x\(quantity)")
+                debugLog("❌ [Upgrade] Failed to deduct \(resourceId) x\(quantity)")
                 return .insufficientResources(missing: [resourceId: quantity])
             }
         }
 
         // Unlock the device
         await unlockDevice(userId: userId, deviceType: deviceType)
-        print("✅ [Upgrade] Device unlocked via resources: \(deviceType.rawValue)")
+        debugLog("✅ [Upgrade] Device unlocked via resources: \(deviceType.rawValue)")
         return .success
     }
 
@@ -296,7 +296,7 @@ final class CommunicationManager: ObservableObject {
 
             channels = response
         } catch {
-            errorMessage = "加载频道失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_load_channels_failed_format", comment: ""), error.localizedDescription)
         }
 
         isLoading = false
@@ -340,7 +340,7 @@ final class CommunicationManager: ObservableObject {
                 subscribedChannels = []
             }
         } catch {
-            errorMessage = "加载订阅失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_load_subscriptions_failed_format", comment: ""), error.localizedDescription)
         }
 
         isLoading = false
@@ -382,12 +382,12 @@ final class CommunicationManager: ObservableObject {
             }
 
             // 解析失败：服务器返回格式异常
-            errorMessage = "创建频道失败：无法解析服务器返回"
+            errorMessage = NSLocalizedString("error_create_channel_parse_failed", comment: "")
             await loadSubscribedChannels(userId: userId)
             isLoading = false
             return nil
         } catch {
-            errorMessage = "创建频道失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_create_channel_failed_format", comment: ""), error.localizedDescription)
             isLoading = false
             return nil
         }
@@ -409,7 +409,7 @@ final class CommunicationManager: ObservableObject {
                 await loadPublicChannels()
             }
         } catch {
-            errorMessage = "订阅失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_subscribe_failed_format", comment: ""), error.localizedDescription)
         }
 
         isLoading = false
@@ -431,7 +431,7 @@ final class CommunicationManager: ObservableObject {
             // 刷新公共频道列表以更新成员数
             await loadPublicChannels()
         } catch {
-            errorMessage = "取消订阅失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_unsubscribe_failed_format", comment: ""), error.localizedDescription)
         }
 
         isLoading = false
@@ -453,12 +453,12 @@ final class CommunicationManager: ObservableObject {
             channelMessages.removeValue(forKey: channelId)
 
             isLoading = false
-            print("✅ [Channel] Deleted: \(channelId)")
+            debugLog("✅ [Channel] Deleted: \(channelId)")
             return true
         } catch {
-            errorMessage = "删除频道失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_delete_channel_failed_format", comment: ""), error.localizedDescription)
             isLoading = false
-            print("❌ [Channel] Delete failed: \(error)")
+            debugLog("❌ [Channel] Delete failed: \(error)")
             return false
         }
     }
@@ -466,7 +466,7 @@ final class CommunicationManager: ObservableObject {
     /// 更新频道名称和描述
     func updateChannel(channelId: UUID, newName: String, newDescription: String? = nil) async -> Bool {
         guard !newName.trimmingCharacters(in: .whitespaces).isEmpty else {
-            errorMessage = "频道名称不能为空"
+            errorMessage = NSLocalizedString("error_channel_name_empty", comment: "")
             return false
         }
 
@@ -533,12 +533,12 @@ final class CommunicationManager: ObservableObject {
             }
 
             isLoading = false
-            print("✅ [Channel] Updated: \(channelId) -> \(newName)")
+            debugLog("✅ [Channel] Updated: \(channelId) -> \(newName)")
             return true
         } catch {
-            errorMessage = "更新频道失败: \(error.localizedDescription)"
+            errorMessage = String(format: NSLocalizedString("error_update_channel_failed_format", comment: ""), error.localizedDescription)
             isLoading = false
-            print("❌ [Channel] Update failed: \(error)")
+            debugLog("❌ [Channel] Update failed: \(error)")
             return false
         }
     }
@@ -561,7 +561,7 @@ final class CommunicationManager: ObservableObject {
 
         // Check if already subscribed
         if subscribedChannels.contains(where: { $0.channel.id == officialId }) {
-            print("✅ [官方频道] 已订阅")
+            debugLog("✅ [官方频道] 已订阅")
             return
         }
 
@@ -573,9 +573,9 @@ final class CommunicationManager: ObservableObject {
 
             // Refresh subscription list
             await loadSubscribedChannels(userId: userId)
-            print("✅ [官方频道] 已自动订阅")
+            debugLog("✅ [官方频道] 已自动订阅")
         } catch {
-            print("❌ [官方频道] 订阅失败: \(error)")
+            debugLog("❌ [官方频道] 订阅失败: \(error)")
         }
     }
 
@@ -639,10 +639,10 @@ final class CommunicationManager: ObservableObject {
                     }
                 }
             } catch {
-                print("❌ [消息聚合] 加载频道 \(channelId) 最新消息失败: \(error)")
+                debugLog("❌ [消息聚合] 加载频道 \(channelId) 最新消息失败: \(error)")
             }
         }
-        print("✅ [消息聚合] 加载所有频道最新消息完成")
+        debugLog("✅ [消息聚合] 加载所有频道最新消息完成")
     }
 
     // MARK: - Message Methods (Day 34)
@@ -679,7 +679,7 @@ final class CommunicationManager: ObservableObject {
             }
         } catch {
             await MainActor.run {
-                errorMessage = "Failed to load messages: \(error.localizedDescription)"
+                errorMessage = String(format: NSLocalizedString("error_load_messages_failed_format", comment: ""), error.localizedDescription)
             }
         }
     }
@@ -694,7 +694,7 @@ final class CommunicationManager: ObservableObject {
         ) async -> Bool {
             // 1. 基础检查
                     guard !content.trimmingCharacters(in: .whitespaces).isEmpty else {
-                        await MainActor.run { errorMessage = "消息内容不能为空" }
+                        await MainActor.run { errorMessage = NSLocalizedString("error_message_content_empty", comment: "") }
                         return false
                     }
 
@@ -710,20 +710,20 @@ final class CommunicationManager: ObservableObject {
                        p_device_type: deviceType
                    )
 
-                print("📤 [SendMessage] RPC 发送中...")
+                debugLog("📤 [SendMessage] RPC 发送中...")
                 // 🚀 3. 直接发送 params，此时它是 Sendable 的，编译器会愉快放行
                 try await client
                     .rpc("send_channel_message", params: params)
                     .execute()
 
                 await MainActor.run { isSendingMessage = false }
-                print("✅ [SendMessage] 发送成功！")
+                debugLog("✅ [SendMessage] 发送成功！")
                 return true
                 
             } catch {
-                print("❌ [SendMessage] 发送失败: \(error)")
+                debugLog("❌ [SendMessage] 发送失败: \(error)")
                 await MainActor.run {
-                    errorMessage = "发送失败: \(error.localizedDescription)"
+                    errorMessage = String(format: NSLocalizedString("error_send_failed_format", comment: ""), error.localizedDescription)
                     isSendingMessage = false
                 }
                 return false
@@ -751,12 +751,12 @@ final class CommunicationManager: ObservableObject {
                 channelMessages[channelId]?.removeAll { $0.messageId == messageId }
             }
 
-            print("✅ [Message] Deleted: \(messageId)")
+            debugLog("✅ [Message] Deleted: \(messageId)")
             return true
         } catch {
-            print("❌ [Message] Delete failed: \(error)")
+            debugLog("❌ [Message] Delete failed: \(error)")
             await MainActor.run {
-                errorMessage = "删除失败: \(error.localizedDescription)"
+                errorMessage = String(format: NSLocalizedString("error_delete_failed_format", comment: ""), error.localizedDescription)
             }
             return false
         }
@@ -816,9 +816,9 @@ final class CommunicationManager: ObservableObject {
 
         do {
             try await channel.subscribeWithError()
-            print("[Realtime] Message subscription started")
+            debugLog("[Realtime] Message subscription started")
         } catch {
-            print("[Realtime] Subscription error: \(error)")
+            debugLog("[Realtime] Subscription error: \(error)")
         }
     }
 
@@ -832,7 +832,7 @@ final class CommunicationManager: ObservableObject {
             realtimeChannel = nil
         }
 
-        print("[Realtime] Message subscription stopped")
+        debugLog("[Realtime] Message subscription stopped")
     }
 
     /// Handle new message from Realtime
@@ -841,10 +841,10 @@ final class CommunicationManager: ObservableObject {
             let decoder = JSONDecoder()
             let message = try insertion.decodeRecord(as: ChannelMessage.self, decoder: decoder)
 
-            print("🔔 [Realtime] 收到消息 - channelId: \(message.channelId)")
+            debugLog("🔔 [Realtime] 收到消息 - channelId: \(message.channelId)")
 
             guard subscribedMessageChannelIds.contains(message.channelId) else {
-                print("[Realtime] 忽略非订阅频道消息: \(message.channelId)")
+                debugLog("[Realtime] 忽略非订阅频道消息: \(message.channelId)")
                 return
             }
 
@@ -864,7 +864,7 @@ final class CommunicationManager: ObservableObject {
             MessageDistanceFilter.shared.logResult(filterResult)
 
             guard shouldReceive else {
-                print("🚫 [Realtime] 消息被过滤: \(message.content.prefix(20))...")
+                debugLog("🚫 [Realtime] 消息被过滤: \(message.content.prefix(20))...")
                 return
             }
 
@@ -876,9 +876,9 @@ final class CommunicationManager: ObservableObject {
                 }
             }
 
-            print("✅ [Realtime] 消息已接收: \(message.content.prefix(20))...")
+            debugLog("✅ [Realtime] 消息已接收: \(message.content.prefix(20))...")
         } catch {
-            print("❌ [Realtime] 消息解析失败: \(error)")
+            debugLog("❌ [Realtime] 消息解析失败: \(error)")
         }
     }
 

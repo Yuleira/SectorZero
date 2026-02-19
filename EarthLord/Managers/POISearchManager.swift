@@ -153,7 +153,7 @@ final class POISearchManager {
     // MARK: - 初始化
     
     private init() {
-        print("🔍 [POI搜索] 初始化完成")
+        debugLog("🔍 [POI搜索] 初始化完成")
     }
     
     // MARK: - 公共方法
@@ -162,7 +162,7 @@ final class POISearchManager {
     /// - Parameter center: 搜索中心点
     /// - Returns: 附近POI列表
     func searchNearbyPOIs(center: CLLocationCoordinate2D) async -> [NearbyPOI] {
-        print("🔍 [POI搜索] 开始搜索，中心点: (\(String(format: "%.6f", center.latitude)), \(String(format: "%.6f", center.longitude)))")
+        debugLog("🔍 [POI搜索] 开始搜索，中心点: (\(String(format: "%.6f", center.latitude)), \(String(format: "%.6f", center.longitude)))")
         
         var allPOIs: [NearbyPOI] = []
         
@@ -205,7 +205,7 @@ final class POISearchManager {
             allPOIs = Array(allPOIs.prefix(20))
         }
         
-        print("🔍 [POI搜索] 搜索完成，共找到 \(allPOIs.count) 个POI")
+        debugLog("🔍 [POI搜索] 搜索完成，共找到 \(allPOIs.count) 个POI")
         return allPOIs
     }
     
@@ -260,12 +260,12 @@ final class POISearchManager {
             }
             
             if !pois.isEmpty {
-                print("🔍 [POI搜索] \(type.rawValue): 找到 \(pois.count) 个 (关键词: \(type.searchQuery))")
+                debugLog("🔍 [POI搜索] \(type.rawValue): 找到 \(pois.count) 个 (关键词: \(type.searchQuery))")
             }
             // 限制每种类型最多返回 10 个
             return Array(pois.prefix(10))
         } catch {
-            print("🔍 [POI搜索] \(type.rawValue) 搜索失败: \(error.localizedDescription)")
+            debugLog("🔍 [POI搜索] \(type.rawValue) 搜索失败: \(error.localizedDescription)")
             return []
         }
     }

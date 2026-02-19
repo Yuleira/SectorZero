@@ -47,7 +47,7 @@ final class InventoryManager: ObservableObject {
     // MARK: - 初始化
     
     private init() {
-        print("📦 [背包管理器] 初始化")
+        debugLog("📦 [背包管理器] 初始化")
     }
     
     // MARK: - 公共方法
@@ -55,7 +55,7 @@ final class InventoryManager: ObservableObject {
     /// 加载背包物品
     func loadItems() async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("📦 [背包] 未登录")
+            debugLog("📦 [背包] 未登录")
             return
         }
         
@@ -86,7 +86,7 @@ final class InventoryManager: ObservableObject {
             items = dbItems.compactMap { dbItem -> CollectedItem? in
                 let key = dbItem.itemDefinitionId.lowercased()
                 guard let definition = definitionsCache[key] ?? definitionsCache[dbItem.itemDefinitionId] else {
-                    print("📦 [背包] 警告：找不到物品定义 \(dbItem.itemDefinitionId)")
+                    debugLog("📦 [背包] 警告：找不到物品定义 \(dbItem.itemDefinitionId)")
                     return nil
                 }
                 
@@ -99,17 +99,17 @@ final class InventoryManager: ObservableObject {
                 )
             }
             
-            print("📦 [背包] 加载了 \(items.count) 种物品")
+            debugLog("📦 [背包] 加载了 \(items.count) 种物品")
         } catch {
-            errorMessage = String(format: "error_load_backpack", error.localizedDescription)
-            print("📦 [背包] 加载失败: \(error.localizedDescription)")
+            errorMessage = String(format: NSLocalizedString("error_load_backpack", comment: ""), error.localizedDescription)
+            debugLog("📦 [背包] 加载失败: \(error.localizedDescription)")
         }
     }
     
     /// 添加物品（支持堆叠，受存储上限约束）
     func addItems(_ newItems: [CollectedItem], sourceType: String = "exploration", sourceSessionId: UUID? = nil) async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("📦 [背包] 未登录，无法添加物品")
+            debugLog("📦 [背包] 未登录，无法添加物品")
             return
         }
 
@@ -120,7 +120,7 @@ final class InventoryManager: ObservableObject {
         for item in newItems {
             let spaceLeft = storageLimit - currentCount
             if spaceLeft <= 0 {
-                print("📦 [背包] 存储已满 (\(currentCount)/\(storageLimit))，跳过剩余物品")
+                debugLog("📦 [背包] 存储已满 (\(currentCount)/\(storageLimit))，跳过剩余物品")
                 storageFullWarning = true
                 break
             }
@@ -140,7 +140,7 @@ final class InventoryManager: ObservableObject {
                     isAIGenerated: item.isAIGenerated
                 )
                 storageFullWarning = true
-                print("📦 [背包] 存储不足，只添加 \(actualQuantity)/\(item.quantity) 个 \(item.definition.name)")
+                debugLog("📦 [背包] 存储不足，只添加 \(actualQuantity)/\(item.quantity) 个 \(item.definition.name)")
             } else {
                 clampedItem = item
             }
@@ -155,7 +155,7 @@ final class InventoryManager: ObservableObject {
             addedCount += actualQuantity
         }
 
-        print("📦 [背包] 共添加 \(addedCount) 个物品，当前 \(currentCount)/\(storageLimit)")
+        debugLog("📦 [背包] 共添加 \(addedCount) 个物品，当前 \(currentCount)/\(storageLimit)")
 
         // 刷新背包
         await loadItems()
@@ -173,7 +173,7 @@ final class InventoryManager: ObservableObject {
                 .value
             
             guard let item = existing.first else {
-                print("📦 [背包] 物品不存在")
+                debugLog("📦 [背包] 物品不存在")
                 return false
             }
             
@@ -184,7 +184,7 @@ final class InventoryManager: ObservableObject {
                     .delete()
                     .eq("id", value: itemId.uuidString)
                     .execute()
-                print("📦 [背包] 删除物品记录")
+                debugLog("📦 [背包] 删除物品记录")
             } else {
                 // 减少数量
                 try await supabase
@@ -192,14 +192,14 @@ final class InventoryManager: ObservableObject {
                     .update(["quantity": item.quantity - quantity])
                     .eq("id", value: itemId.uuidString)
                     .execute()
-                print("📦 [背包] 减少物品数量: \(item.quantity) -> \(item.quantity - quantity)")
+                debugLog("📦 [背包] 减少物品数量: \(item.quantity) -> \(item.quantity - quantity)")
             }
             
             await loadItems()
             return true
         } catch {
-            errorMessage = String(format: "error_remove_item", error.localizedDescription)
-            print("📦 [背包] 移除物品失败: \(error.localizedDescription)")
+            errorMessage = String(format: NSLocalizedString("error_remove_item", comment: ""), error.localizedDescription)
+            debugLog("📦 [背包] 移除物品失败: \(error.localizedDescription)")
             return false
         }
     }
@@ -243,7 +243,7 @@ final class InventoryManager: ObservableObject {
     /// - Returns: 是否成功移除
     func removeItemsByDefinition(definitionId: String, quantity: Int) async -> Bool {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("📦 [背包] 未登录，无法移除物品")
+            debugLog("📦 [背包] 未登录，无法移除物品")
             return false
         }
         let normalizedId = definitionId.lowercased()
@@ -277,7 +277,7 @@ final class InventoryManager: ObservableObject {
                             .delete()
                             .eq("id", value: item.id.uuidString)
                             .execute()
-                        print("📦 [背包] 删除堆叠: \(normalizedId) (\(quality.rawValue)) x\(item.quantity)")
+                        debugLog("📦 [背包] 删除堆叠: \(normalizedId) (\(quality.rawValue)) x\(item.quantity)")
                     } else {
                         // 减少数量
                         try await supabase
@@ -285,7 +285,7 @@ final class InventoryManager: ObservableObject {
                             .update(["quantity": item.quantity - toRemove])
                             .eq("id", value: item.id.uuidString)
                             .execute()
-                        print("📦 [背包] 减少数量: \(normalizedId) (\(quality.rawValue)) \(item.quantity) -> \(item.quantity - toRemove)")
+                        debugLog("📦 [背包] 减少数量: \(normalizedId) (\(quality.rawValue)) \(item.quantity) -> \(item.quantity - toRemove)")
                     }
                     
                     remaining -= toRemove
@@ -294,17 +294,17 @@ final class InventoryManager: ObservableObject {
             
             // 检查是否完全消耗
             if remaining > 0 {
-                print("📦 [背包] 资源不足: \(normalizedId)，缺少 \(remaining)")
+                debugLog("📦 [背包] 资源不足: \(normalizedId)，缺少 \(remaining)")
                 return false
             }
             
             // 刷新背包
             await loadItems()
-            print("📦 [背包] 成功消耗: \(normalizedId) x\(quantity)")
+            debugLog("📦 [背包] 成功消耗: \(normalizedId) x\(quantity)")
             return true
         } catch {
-            errorMessage = String(format: "error_remove_item", error.localizedDescription)
-            print("📦 [背包] 移除物品失败: \(error.localizedDescription)")
+            errorMessage = String(format: NSLocalizedString("error_remove_item", comment: ""), error.localizedDescription)
+            debugLog("📦 [背包] 移除物品失败: \(error.localizedDescription)")
             return false
         }
     }
@@ -386,9 +386,9 @@ final class InventoryManager: ObservableObject {
                 ($0.id, $0.toItemDefinition())
             })
             
-            print("📦 [背包] 缓存了 \(definitionsCache.count) 个物品定义")
+            debugLog("📦 [背包] 缓存了 \(definitionsCache.count) 个物品定义")
         } catch {
-            print("📦 [背包] 加载物品定义失败: \(error.localizedDescription)")
+            debugLog("📦 [背包] 加载物品定义失败: \(error.localizedDescription)")
             // 使用备用数据
             loadFallbackDefinitions()
         }
@@ -417,7 +417,7 @@ final class InventoryManager: ObservableObject {
             )
         }
         
-        print("📦 [背包] 使用备用物品定义")
+        debugLog("📦 [背包] 使用备用物品定义")
     }
     
     /// 确保建筑资源定义在 definitionsCache 中（ID 与 building_templates.json 的 wood/stone/fabric 等一致）
@@ -479,7 +479,7 @@ final class InventoryManager: ObservableObject {
                     .eq("id", value: existingItem.id.uuidString)
                     .execute()
                 
-                print("📦 [背包] 堆叠物品: \(item.definition.name) x\(item.quantity) (总计: \(existingItem.quantity + item.quantity))")
+                debugLog("📦 [背包] 堆叠物品: \(item.definition.name) x\(item.quantity) (总计: \(existingItem.quantity + item.quantity))")
             } else {
                 // 新增记录
                 let insertData = InsertInventoryItem(
@@ -496,10 +496,11 @@ final class InventoryManager: ObservableObject {
                     .insert(insertData)
                     .execute()
                 
-                print("📦 [背包] 新增物品: \(item.definition.name) x\(item.quantity)")
+                debugLog("📦 [背包] 新增物品: \(item.definition.name) x\(item.quantity)")
             }
         } catch {
-            print("📦 [背包] 添加物品失败: \(error.localizedDescription)")
+            errorMessage = String(format: NSLocalizedString("error_add_item_failed_format", comment: ""), error.localizedDescription)
+            debugLog("📦 [背包] 添加物品失败: \(error.localizedDescription)")
         }
     }
     

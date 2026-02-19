@@ -14,6 +14,19 @@ struct VitalsView: View {
             coreHealthCard
             basicVitalsCard
         }
+        .overlay(alignment: .topTrailing) {
+            Text(LocalizedString.profileComingSoon)
+                .font(.caption2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(ApocalypseTheme.warning)
+                .cornerRadius(8)
+                .padding(8)
+        }
+        .opacity(0.6)
+        .allowsHitTesting(false)
     }
 
     // MARK: - Active Buffs

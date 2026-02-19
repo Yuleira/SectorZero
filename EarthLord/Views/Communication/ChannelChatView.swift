@@ -232,10 +232,10 @@ struct ChannelChatView: View {
         }
         #endif
 
-        print("📡 [SENDER] Sending message - device=\(deviceType), hasLocation=\(latitude != nil)")
+        debugLog("📡 [SENDER] Sending message - device=\(deviceType), hasLocation=\(latitude != nil)")
 
         Task {
-            print("🚀 [ChannelChatView] Sending message to channel: \(channel.id)")
+            debugLog("🚀 [ChannelChatView] Sending message to channel: \(channel.id)")
             
             let success = await communicationManager.sendChannelMessage(
                 channelId: channel.id,
@@ -246,14 +246,14 @@ struct ChannelChatView: View {
             )
 
             if success {
-                print("✅ [ChannelChatView] Message sent successfully!")
+                debugLog("✅ [ChannelChatView] Message sent successfully!")
                 await MainActor.run {
                     messageText = ""
                 }
             } else {
                 // Log RPC failure for debugging
                 let errorMsg = communicationManager.errorMessage ?? "Unknown error"
-                print("❌ [ChannelChatView] SEND FAILED: \(errorMsg)")
+                debugLog("❌ [ChannelChatView] SEND FAILED: \(errorMsg)")
             }
         }
     }
@@ -269,7 +269,7 @@ struct ChannelChatView: View {
 
     private func deleteMessage(_ message: ChannelMessage) {
         guard let senderId = message.senderId else {
-            print("❌ [ChannelChatView] Cannot delete: message has no senderId")
+            debugLog("❌ [ChannelChatView] Cannot delete: message has no senderId")
             return
         }
 
@@ -280,7 +280,7 @@ struct ChannelChatView: View {
                 senderId: senderId
             )
             if success {
-                print("✅ [ChannelChatView] Message deleted: \(message.messageId)")
+                debugLog("✅ [ChannelChatView] Message deleted: \(message.messageId)")
             }
         }
     }

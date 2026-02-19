@@ -123,11 +123,11 @@ struct TerritoryTabView: View {
 
             // 登录按钮
             Button {
-                print("🏴 [TerritoryTabView] Go to Login button tapped")
+                debugLog("🏴 [TerritoryTabView] Go to Login button tapped")
                 // 强制触发认证状态检查和重置
                 // 这会确保 ContentView 正确切换到 AuthView
                 Task { @MainActor in
-                    print("🏴 [TerritoryTabView] Calling forceSignOut()")
+                    debugLog("🏴 [TerritoryTabView] Calling forceSignOut()")
                     // 重置认证状态，强制显示登录界面
                     authManager.forceSignOut()
                 }
@@ -266,7 +266,7 @@ struct TerritoryTabView: View {
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
-            print("🏴 [领地页面] 加载失败: \(error.localizedDescription)")
+            debugLog("🏴 [领地页面] 加载失败: \(error.localizedDescription)")
         }
     }
 }

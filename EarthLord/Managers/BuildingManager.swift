@@ -45,7 +45,7 @@ final class BuildingManager: ObservableObject {
     // MARK: - 初始化
 
     private init() {
-        print("🏗️ [建筑管理器] 初始化")
+        debugLog("🏗️ [建筑管理器] 初始化")
         startProgressTimer()
     }
     
@@ -54,22 +54,22 @@ final class BuildingManager: ObservableObject {
         // Use MainActor.assumeIsolated if you're certain deinit runs on main thread
         // Or simply invalidate directly if your class is @MainActor
         timerToInvalidate?.invalidate()
-        print("🏗️ [建筑] BuildingManager 已销毁")
+        debugLog("🏗️ [建筑] BuildingManager 已销毁")
     }
 
     // MARK: - 模板加载
 
     /// 从 JSON 文件加载建筑模板
     func loadTemplates() async {
-        print("🏗️ [建筑] instance id=\(ObjectIdentifier(self))")
-        print("🏗️ [建筑] 开始加载建筑模板...")
+        debugLog("🏗️ [建筑] instance id=\(ObjectIdentifier(self))")
+        debugLog("🏗️ [建筑] 开始加载建筑模板...")
 
         // 确保在 bundle 中找到文件
         let url = Bundle.main.url(forResource: "building_templates", withExtension: "json")
             ?? Bundle.main.url(forResource: "building_templates", withExtension: "json", subdirectory: "Resources")
         guard let url = url else {
             errorMessage = String(localized: "error_building_templates_not_found")
-            print("🏗️ [建筑] ❌ 文件不存在")
+            debugLog("🏗️ [建筑] ❌ 文件不存在")
             return
         }
 
@@ -84,16 +84,16 @@ final class BuildingManager: ObservableObject {
             decoder.dateDecodingStrategy = .iso8601
 
             let templates = try decoder.decode([BuildingTemplate].self, from: data)
-            print("🏗️ [建筑] 解码模板数: \(templates.count)")
+            debugLog("🏗️ [建筑] 解码模板数: \(templates.count)")
             
             buildingTemplates = templates
             templateCache = Dictionary(uniqueKeysWithValues: templates.map { ($0.templateId, $0) })
-            print("🏗️ [建筑] 赋值后 templates: \(buildingTemplates.count)")
+            debugLog("🏗️ [建筑] 赋值后 templates: \(buildingTemplates.count)")
             
-            print("🏗️ [建筑] ✅ 成功加载 \(templates.count) 个建筑模板")
+            debugLog("🏗️ [建筑] ✅ 成功加载 \(templates.count) 个建筑模板")
         } catch {
             errorMessage = String(localized: "error_load_building_templates_failed") + ": " + error.localizedDescription
-            print("🏗️ [建筑] ❌ 加载失败: \(error)")
+            debugLog("🏗️ [建筑] ❌ 加载失败: \(error)")
         }
     }
 
@@ -131,7 +131,7 @@ final class BuildingManager: ObservableObject {
             if available < required {
                 let shortage = required - available
                 missingResources[resourceId] = shortage
-                print("🏗️ [建筑] ❌ 资源不足: \(resourceId)，需要 \(required)，拥有 \(available)，缺少 \(shortage)")
+                debugLog("🏗️ [建筑] ❌ 资源不足: \(resourceId)，需要 \(required)，拥有 \(available)，缺少 \(shortage)")
             } else {
                 #if DEBUG
                 print("    ✅ Sufficient")
@@ -149,11 +149,11 @@ final class BuildingManager: ObservableObject {
         }.count
         
         if existingCount >= template.maxPerTerritory {
-            print("🏗️ [建筑] 达到上限: \(template.name) 在领地 \(territoryId) 中已有 \(existingCount) 个，上限 \(template.maxPerTerritory)")
+            debugLog("🏗️ [建筑] 达到上限: \(template.name) 在领地 \(territoryId) 中已有 \(existingCount) 个，上限 \(template.maxPerTerritory)")
             return (false, .maxBuildingsReached(maxAllowed: template.maxPerTerritory))
         }
         
-        print("🏗️ [建筑] ✅ 验证通过: 可以建造 \(template.name)")
+        debugLog("🏗️ [建筑] ✅ 验证通过: 可以建造 \(template.name)")
         return (true, nil)
     }
 
@@ -173,11 +173,11 @@ final class BuildingManager: ObservableObject {
         
         // 1. 查找模板
         guard let template = templateCache[templateId] else {
-            print("🏗️ [建筑] ❌ 模板不存在: \(templateId)")
+            debugLog("🏗️ [建筑] ❌ 模板不存在: \(templateId)")
             return .failure(.templateNotFound)
         }
         
-        print("🏗️ [建筑] 开始建造: \(template.name)")
+        debugLog("🏗️ [建筑] 开始建造: \(template.name)")
         
         // 2. 获取当前资源
         let playerResources = InventoryManager.shared.getResourceSummary()
@@ -185,8 +185,8 @@ final class BuildingManager: ObservableObject {
         // 3. 验证是否可以建造
         let validation = canBuild(template: template, territoryId: territoryId, playerResources: playerResources)
         guard validation.canBuild else {
-            print("🏗️ [建筑] ❌ 验证失败")
-            return .failure(validation.error!)
+            debugLog("🏗️ [建筑] ❌ 验证失败")
+            return .failure(validation.error ?? .templateNotFound)
         }
         
         // 4. 消耗资源（带回滚支持）
@@ -202,7 +202,7 @@ final class BuildingManager: ObservableObject {
             if success {
                 consumedResources.append((definitionId: normalizedId, amount: amount))
             } else {
-                print("🏗️ [建筑] ❌ 资源消耗失败: \(resourceId) x\(amount)，开始回滚...")
+                debugLog("🏗️ [建筑] ❌ 资源消耗失败: \(resourceId) x\(amount)，开始回滚...")
                 for consumed in consumedResources {
                     let definition = ItemDefinition(
                         id: consumed.definitionId,
@@ -219,18 +219,18 @@ final class BuildingManager: ObservableObject {
                         quantity: consumed.amount
                     )
                     await InventoryManager.shared.addItems([rollbackItem], sourceType: "rollback")
-                    print("🏗️ [建筑] 🔄 回滚: 返还 \(consumed.definitionId) x\(consumed.amount)")
+                    debugLog("🏗️ [建筑] 🔄 回滚: 返还 \(consumed.definitionId) x\(consumed.amount)")
                 }
                 errorMessage = String(localized: "error_resource_consumption_failed")
                 return .failure(.insufficientResources(missing: [resourceId: amount]))
             }
         }
 
-        print("🏗️ [建筑] ✅ 资源消耗成功")
+        debugLog("🏗️ [建筑] ✅ 资源消耗成功")
 
         // 5. 获取当前用户
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("🏗️ [建筑] ❌ 未登录")
+            debugLog("🏗️ [建筑] ❌ 未登录")
             errorMessage = String(localized: "error_not_logged_in")
             return .failure(.notAuthenticated)
         }
@@ -263,14 +263,14 @@ final class BuildingManager: ObservableObject {
                 .value
             
             guard let newBuilding = response.first else {
-                print("🏗️ [建筑] ❌ 插入成功但未返回数据")
+                debugLog("🏗️ [建筑] ❌ 插入成功但未返回数据")
                 return .failure(.templateNotFound)
             }
             
             // 9. 更新本地缓存
             playerBuildings.append(newBuilding)
             
-            print("🏗️ [建筑] ✅ 建造成功: \(template.name)，预计 \(template.buildTimeSeconds) 秒后完成")
+            debugLog("🏗️ [建筑] ✅ 建造成功: \(template.name)，预计 \(template.buildTimeSeconds) 秒后完成")
             
             // 10. 启动倒计时（未来可以添加定时器自动转换状态）
             scheduleCompletion(buildingId: newBuilding.id, completionTime: completedAt)
@@ -278,7 +278,7 @@ final class BuildingManager: ObservableObject {
             return .success(newBuilding)
             
         } catch {
-            print("🏗️ [建筑] ❌ 数据库插入失败: \(error.localizedDescription)")
+            debugLog("🏗️ [建筑] ❌ 数据库插入失败: \(error.localizedDescription)")
             for consumed in consumedResources {
                 let definition = ItemDefinition(
                     id: consumed.definitionId,
@@ -295,7 +295,7 @@ final class BuildingManager: ObservableObject {
                     quantity: consumed.amount
                 )
                 await InventoryManager.shared.addItems([rollbackItem], sourceType: "rollback")
-                print("🏗️ [建筑] 🔄 DB失败回滚: 返还 \(consumed.definitionId) x\(consumed.amount)")
+                debugLog("🏗️ [建筑] 🔄 DB失败回滚: 返还 \(consumed.definitionId) x\(consumed.amount)")
             }
             errorMessage = String(localized: "error_construction_failed") + ": " + error.localizedDescription
             return .failure(.templateNotFound)
@@ -308,7 +308,7 @@ final class BuildingManager: ObservableObject {
     /// - Parameter buildingId: 建筑 ID
     /// - Returns: 是否成功
     func completeConstruction(buildingId: UUID) async -> Bool {
-        print("🏗️ [建筑] 完成建造: \(buildingId)")
+        debugLog("🏗️ [建筑] 完成建造: \(buildingId)")
         
         do {
             // 更新数据库
@@ -325,11 +325,11 @@ final class BuildingManager: ObservableObject {
                 playerBuildings[index] = building
             }
             
-            print("🏗️ [建筑] ✅ 建筑已激活")
+            debugLog("🏗️ [建筑] ✅ 建筑已激活")
             return true
             
         } catch {
-            print("🏗️ [建筑] ❌ 完成失败: \(error.localizedDescription)")
+            debugLog("🏗️ [建筑] ❌ 完成失败: \(error.localizedDescription)")
             errorMessage = String(localized: "error_complete_construction_failed") + ": " + error.localizedDescription
             return false
         }
@@ -341,28 +341,28 @@ final class BuildingManager: ObservableObject {
     /// - Parameter buildingId: 建筑 ID
     /// - Returns: 升级结果
     func upgradeBuilding(buildingId: UUID) async -> Result<PlayerBuilding, BuildingError> {
-        print("🏗️ [建筑] 开始升级建筑: \(buildingId)")
+        debugLog("🏗️ [建筑] 开始升级建筑: \(buildingId)")
         
         // 1. 查找建筑
         guard let building = playerBuildings.first(where: { $0.id == buildingId }) else {
-            print("🏗️ [建筑] ❌ 建筑不存在")
+            debugLog("🏗️ [建筑] ❌ 建筑不存在")
             return .failure(.templateNotFound)
         }
         
         // 2. 检查状态（只有 active 状态才能升级）
         guard building.status == .active else {
-            print("🏗️ [建筑] ❌ 建筑状态不符合: \(building.status.rawValue)")
+            debugLog("🏗️ [建筑] ❌ 建筑状态不符合: \(building.status.rawValue)")
             return .failure(.invalidStatus)
         }
         
         // 3. 查找模板并检查等级上限
         guard let template = templateCache[building.templateId] else {
-            print("🏗️ [建筑] ❌ 模板不存在")
+            debugLog("🏗️ [建筑] ❌ 模板不存在")
             return .failure(.templateNotFound)
         }
         
         guard building.level < template.maxLevel else {
-            print("🏗️ [建筑] ❌ 已达最大等级: \(building.level)/\(template.maxLevel)")
+            debugLog("🏗️ [建筑] ❌ 已达最大等级: \(building.level)/\(template.maxLevel)")
             return .failure(.invalidStatus) // 应创建 .maxLevelReached 错误
         }
         
@@ -382,14 +382,14 @@ final class BuildingManager: ObservableObject {
                 updatedBuilding.level = newLevel
                 playerBuildings[index] = updatedBuilding
                 
-                print("🏗️ [建筑] ✅ 升级成功: \(building.buildingName) Lv.\(building.level) -> Lv.\(newLevel)")
+                debugLog("🏗️ [建筑] ✅ 升级成功: \(building.buildingName) Lv.\(building.level) -> Lv.\(newLevel)")
                 return .success(updatedBuilding)
             }
             
             return .failure(.templateNotFound)
             
         } catch {
-            print("🏗️ [建筑] ❌ 升级失败: \(error.localizedDescription)")
+            debugLog("🏗️ [建筑] ❌ 升级失败: \(error.localizedDescription)")
             errorMessage = String(localized: "error_upgrade_failed") + ": " + error.localizedDescription
             return .failure(.templateNotFound)
         }
@@ -401,7 +401,7 @@ final class BuildingManager: ObservableObject {
     /// - Parameter buildingId: 建筑 ID
     /// - Returns: 是否成功
     func demolishBuilding(buildingId: UUID) async -> Bool {
-        print("🏗️ [建筑] 开始拆除建筑: \(buildingId)")
+        debugLog("🏗️ [建筑] 开始拆除建筑: \(buildingId)")
         
         do {
             // 从数据库删除
@@ -414,11 +414,11 @@ final class BuildingManager: ObservableObject {
             // 从本地缓存移除
             playerBuildings.removeAll { $0.id == buildingId }
             
-            print("🏗️ [建筑] ✅ 拆除成功")
+            debugLog("🏗️ [建筑] ✅ 拆除成功")
             return true
             
         } catch {
-            print("🏗️ [建筑] ❌ 拆除失败: \(error.localizedDescription)")
+            debugLog("🏗️ [建筑] ❌ 拆除失败: \(error.localizedDescription)")
             errorMessage = String(localized: "error_demolish_failed") + ": " + error.localizedDescription
             return false
         }
@@ -430,11 +430,11 @@ final class BuildingManager: ObservableObject {
     /// - Parameter territoryId: 领地 ID（可选，不传则加载所有）
     func fetchPlayerBuildings(territoryId: String? = nil) async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("🏗️ [建筑] 未登录")
+            debugLog("🏗️ [建筑] 未登录")
             return
         }
         
-        print("🏗️ [建筑] 加载玩家建筑...")
+        debugLog("🏗️ [建筑] 加载玩家建筑...")
         
         isLoading = true
         defer { isLoading = false }
@@ -457,14 +457,14 @@ final class BuildingManager: ObservableObject {
             
             playerBuildings = buildings
             
-            print("🏗️ [建筑] ✅ 加载了 \(buildings.count) 个建筑")
+            debugLog("🏗️ [建筑] ✅ 加载了 \(buildings.count) 个建筑")
             
             // 检查是否有建筑需要自动完成
             await checkPendingCompletions()
             
         } catch {
             errorMessage = String(localized: "error_load_buildings_failed") + ": " + error.localizedDescription
-            print("🏗️ [建筑] ❌ 加载失败: \(error.localizedDescription)")
+            debugLog("🏗️ [建筑] ❌ 加载失败: \(error.localizedDescription)")
         }
     }
 
@@ -506,7 +506,7 @@ final class BuildingManager: ObservableObject {
             return
         }
         
-        print("🏗️ [建筑] 定时器设置: \(Int(timeInterval)) 秒后完成")
+        debugLog("🏗️ [建筑] 定时器设置: \(Int(timeInterval)) 秒后完成")
         
         // 使用 Task.sleep 实现定时器
         Task {
@@ -549,7 +549,7 @@ final class BuildingManager: ObservableObject {
         // 避免重复启动
         guard progressTimer == nil else { return }
         
-        print("🏗️ [建筑] 启动进度定时器")
+        debugLog("🏗️ [建筑] 启动进度定时器")
         
         progressTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
@@ -562,7 +562,7 @@ final class BuildingManager: ObservableObject {
     private func stopProgressTimer() {
         progressTimer?.invalidate()
         progressTimer = nil
-        print("🏗️ [建筑] 停止进度定时器")
+        debugLog("🏗️ [建筑] 停止进度定时器")
     }
     
     /// 更新建筑进度并触发 UI 刷新
@@ -590,7 +590,7 @@ final class BuildingManager: ObservableObject {
         }
         
         if hasChanges {
-            print("🏗️ [建筑] 定时器检测到建筑完成")
+            debugLog("🏗️ [建筑] 定时器检测到建筑完成")
         }
     }
 }

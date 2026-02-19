@@ -579,7 +579,7 @@ struct PTTCallView: View {
                 audioPlayer?.prepareToPlay()
                 audioPlayer?.volume = 0.3
             } catch {
-                print("⚠️ [PTT] Could not load radio static sound: \(error)")
+                debugLog("⚠️ [PTT] Could not load radio static sound: \(error)")
             }
         }
     }

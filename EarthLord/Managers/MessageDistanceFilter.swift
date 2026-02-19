@@ -168,28 +168,28 @@ final class MessageDistanceFilter {
     func logResult(_ result: DistanceFilterResult) {
         switch result {
         case .passed(let sender, let my, let distance, let range):
-            print("✅ [距离过滤] 通过: 发送者=\(sender), 我=\(my), 距离=\(String(format: "%.2f", distance))km, 范围=\(String(format: "%.2f", range))km")
+            debugLog("✅ [距离过滤] 通过: 发送者=\(sender), 我=\(my), 距离=\(String(format: "%.2f", distance))km, 范围=\(String(format: "%.2f", range))km")
 
         case .discarded(let sender, let my, let distance, let range):
-            print("🚫 [距离过滤] 丢弃: 发送者=\(sender), 我=\(my), 距离=\(String(format: "%.2f", distance))km, 超出范围=\(String(format: "%.2f", range))km")
+            debugLog("🚫 [距离过滤] 丢弃: 发送者=\(sender), 我=\(my), 距离=\(String(format: "%.2f", distance))km, 超出范围=\(String(format: "%.2f", range))km")
 
         case .radioUser:
-            print("📻 [距离过滤] 收音机用户，接收所有消息")
+            debugLog("📻 [距离过滤] 收音机用户，接收所有消息")
 
         case .conservativeNoSenderLocation:
-            print("⚠️ [距离过滤] 消息缺少位置信息，保守显示")
+            debugLog("⚠️ [距离过滤] 消息缺少位置信息，保守显示")
 
         case .conservativeNoGPS:
-            print("⚠️ [距离过滤] 无法获取当前位置，保守显示")
+            debugLog("⚠️ [距离过滤] 无法获取当前位置，保守显示")
 
         case .conservativeNoDevice:
-            print("⚠️ [距离过滤] 设备信息缺失，保守显示")
+            debugLog("⚠️ [距离过滤] 设备信息缺失，保守显示")
 
         case .skippedOfficial:
-            print("📢 [距离过滤] 官方频道，跳过过滤")
+            debugLog("📢 [距离过滤] 官方频道，跳过过滤")
 
         case .radioCannotSend:
-            print("🚫 [发送限制] 收音机模式不可发送")
+            debugLog("🚫 [发送限制] 收音机模式不可发送")
         }
     }
 
@@ -255,12 +255,12 @@ final class MessageDistanceFilter {
         let rangeKm = getEffectiveRange(senderDevice: senderDevice, myDevice: myDeviceType)
 
         // Step 4: Logging Protocol (STRICT)
-        print("[DistanceFilter] sender=(\(String(format: "%.4f", senderLoc.latitude)),\(String(format: "%.4f", senderLoc.longitude))), me=(\(String(format: "%.4f", myLoc.latitude)),\(String(format: "%.4f", myLoc.longitude)))")
-        print("[DistanceFilter] distance=\(String(format: "%.2f", distanceKm)) km (Range=\(String(format: "%.2f", rangeKm)) km)")
+        debugLog("[DistanceFilter] sender=(\(String(format: "%.4f", senderLoc.latitude)),\(String(format: "%.4f", senderLoc.longitude))), me=(\(String(format: "%.4f", myLoc.latitude)),\(String(format: "%.4f", myLoc.longitude)))")
+        debugLog("[DistanceFilter] distance=\(String(format: "%.2f", distanceKm)) km (Range=\(String(format: "%.2f", rangeKm)) km)")
 
         // 判断是否在范围内
         if distanceKm <= rangeKm {
-            print("[DistanceFilter] ✅ Passed")
+            debugLog("[DistanceFilter] ✅ Passed")
             return (true, .passed(
                 senderDevice: senderDevice.rawValue,
                 myDevice: myDeviceType.rawValue,
@@ -268,7 +268,7 @@ final class MessageDistanceFilter {
                 rangeKm: rangeKm
             ))
         } else {
-            print("[DistanceFilter] 🚫 Filtered")
+            debugLog("[DistanceFilter] 🚫 Filtered")
             return (false, .discarded(
                 senderDevice: senderDevice.rawValue,
                 myDevice: myDeviceType.rawValue,

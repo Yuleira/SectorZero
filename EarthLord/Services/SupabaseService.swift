@@ -24,33 +24,33 @@ final class SupabaseService {
     // MARK: - Initialization
 
     private init() {
-        // 验证配置
-        if !validateConfiguration() {
-            print("⚠️ [SupabaseService] Invalid configuration detected!")
-            print("   Please update AppConfig.Supabase with your project credentials")
-        }
-
         // 初始化Supabase客户端
         self.client = SupabaseClient(
             supabaseURL: URL(string: AppConfig.Supabase.projectURL)!,
             supabaseKey: AppConfig.Supabase.publishableKey,
             options: .init(
+                db: .init(
+                    schema: "public"
+                ),
                 auth: .init(
-                    flowType: .pkce,
                     redirectToURL: URL(string: "earthlord://auth/callback"),
+                    flowType: .pkce,
                     emitLocalSessionAsInitialSession: true
                 ),
                 global: .init(
                     logger: nil
-                ),
-                db: .init(
-                    schema: "public"
                 )
             )
         )
 
-        print("✅ [SupabaseService] Initialized")
-        print("   URL: \(AppConfig.Supabase.projectURL)")
+        // 验证配置
+        if !Self.isConfigured() {
+            debugLog("⚠️ [SupabaseService] Invalid configuration detected!")
+            debugLog("   Please update AppConfig.Supabase with your project credentials")
+        }
+
+        debugLog("✅ [SupabaseService] Initialized")
+        debugLog("   URL: \(AppConfig.Supabase.projectURL)")
     }
 
     // MARK: - Configuration Validation

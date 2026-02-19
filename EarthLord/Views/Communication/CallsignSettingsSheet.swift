@@ -204,7 +204,7 @@ struct CallsignSettingsSheet: View {
                     }
                 }
             } catch {
-                print("❌ [呼号] 加载失败: \(error)")
+                debugLog("❌ [呼号] 加载失败: \(error)")
             }
         }
     }
@@ -247,13 +247,13 @@ struct CallsignSettingsSheet: View {
                 await MainActor.run {
                     isLoading = false
                     showingSuccess = true
-                    print("✅ [呼号] 保存成功: \(callsign)")
+                    debugLog("✅ [呼号] 保存成功: \(callsign)")
                 }
             } catch {
                 await MainActor.run {
                     isLoading = false
                     errorMessage = error.localizedDescription
-                    print("❌ [呼号] 保存失败: \(error)")
+                    debugLog("❌ [呼号] 保存失败: \(error)")
                 }
             }
         }

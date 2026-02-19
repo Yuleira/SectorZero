@@ -48,9 +48,9 @@ enum TradeError: LocalizedError {
         case .databaseError(let message):
             return String(format: String(localized: "error_database_format"), message)
         case .networkError:
-            return "网络连接失败。请检查网络设置或稍后重试。\nNetwork connection failed. Please check your network settings or try again later."
+            return NSLocalizedString("error_network_connection_failed", comment: "")
         case .supabaseNotConfigured:
-            return "❌ Supabase 配置错误\n\n请在 AppConfig.swift 中设置正确的：\n• 项目 URL (以 https:// 开头)\n• API Key (JWT 格式，以 eyJ 开头)\n\n获取方式：https://supabase.com/dashboard → 你的项目 → Settings → API"
+            return NSLocalizedString("error_service_unavailable", comment: "")
         }
     }
 }
@@ -91,7 +91,7 @@ class TradeManager: ObservableObject {
     // MARK: - Initialization
 
     private init() {
-        print("🔄 [TradeManager] Initialized")
+        debugLog("🔄 [TradeManager] Initialized")
     }
 
     // MARK: - Public Methods
@@ -109,7 +109,7 @@ class TradeManager: ObservableObject {
         validityHours: Int = 24,
         message: String? = nil
     ) async throws -> String {
-        print("📦 [TradeManager] Creating trade offer...")
+        debugLog("📦 [TradeManager] Creating trade offer...")
 
         // 1. 验证用户登录
         guard authManager.isAuthenticated else {
@@ -131,22 +131,22 @@ class TradeManager: ObservableObject {
 
         do {
             // 4. 调用数据库函数创建挂单
-            print("🔧 [TradeManager] Calling RPC: create_trade_offer")
-            print("   Parameters: offering=\(offeringItems.count) items, requesting=\(requestingItems.count) items")
+            debugLog("🔧 [TradeManager] Calling RPC: create_trade_offer")
+            debugLog("   Parameters: offering=\(offeringItems.count) items, requesting=\(requestingItems.count) items")
 
             let response = try await supabase.rpc(
                 "create_trade_offer",
                 params: params
             ).execute()
 
-            print("✅ [TradeManager] RPC call succeeded")
+            debugLog("✅ [TradeManager] RPC call succeeded")
 
             // 5. 解析返回的挂单ID
             guard let offerId = String(data: response.data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: "\""))) else {
                 throw TradeError.databaseError("Failed to parse offer ID")
             }
 
-            print("✅ [TradeManager] Trade offer created: \(offerId)")
+            debugLog("✅ [TradeManager] Trade offer created: \(offerId)")
 
             // 6. 刷新我的挂单列表
             await loadMyOffers()
@@ -158,21 +158,21 @@ class TradeManager: ObservableObject {
 
         } catch let error as PostgrestError {
             // 解析数据库错误
-            print("❌ [TradeManager] PostgrestError caught")
-            print("   Code: \(error.code ?? "unknown")")
-            print("   Message: \(error.message)")
+            debugLog("❌ [TradeManager] PostgrestError caught")
+            debugLog("   Code: \(error.code ?? "unknown")")
+            debugLog("   Message: \(error.message)")
 
             let message = error.message
 
             // 检查是否是 RPC 函数不存在的错误
             if message.contains("function") && message.contains("does not exist") {
-                print("   ⚠️ RPC function 'create_trade_offer' does not exist in database")
+                debugLog("   ⚠️ RPC function 'create_trade_offer' does not exist in database")
                 throw TradeError.databaseError("交易系统未初始化。\n请执行数据库迁移：\n1. 运行 007_trade_system.sql\n2. 运行 008_inventory_helper_functions.sql\n\nTrade system not initialized.\nPlease run database migrations:\n1. Execute 007_trade_system.sql\n2. Execute 008_inventory_helper_functions.sql")
             }
 
             if message.contains("Insufficient items") {
                 // 提取物品不足的信息
-                print("   ℹ️ User has insufficient items")
+                debugLog("   ℹ️ User has insufficient items")
                 throw TradeError.databaseError(message)
             }
 
@@ -180,19 +180,19 @@ class TradeManager: ObservableObject {
 
         } catch let error as URLError {
             // 网络错误
-            print("❌ [TradeManager] URLError caught")
-            print("   Error code: \(error.code.rawValue)")
-            print("   Description: \(error.localizedDescription)")
-            print("   Failing URL: \(error.failingURL?.absoluteString ?? "unknown")")
+            debugLog("❌ [TradeManager] URLError caught")
+            debugLog("   Error code: \(error.code.rawValue)")
+            debugLog("   Description: \(error.localizedDescription)")
+            debugLog("   Failing URL: \(error.failingURL?.absoluteString ?? "unknown")")
 
             throw TradeError.networkError
 
         } catch {
             // 其他未知错误
-            print("❌ [TradeManager] Unknown error caught")
-            print("   Type: \(type(of: error))")
-            print("   Description: \(error.localizedDescription)")
-            print("   Debug: \(error)")
+            debugLog("❌ [TradeManager] Unknown error caught")
+            debugLog("   Type: \(type(of: error))")
+            debugLog("   Description: \(error.localizedDescription)")
+            debugLog("   Debug: \(error)")
 
             // 如果错误描述包含网络相关关键词，归类为网络错误
             let errorDesc = error.localizedDescription.lowercased()
@@ -210,7 +210,7 @@ class TradeManager: ObservableObject {
     /// - Parameter offerId: 挂单ID
     /// - Returns: 交易结果（包含历史记录ID和交换的物品）
     func acceptTradeOffer(offerId: String) async throws -> (historyId: String, offeredItems: [TradeItem], receivedItems: [TradeItem]) {
-        print("🤝 [TradeManager] Accepting trade offer: \(offerId)")
+        debugLog("🤝 [TradeManager] Accepting trade offer: \(offerId)")
 
         // 1. 验证用户登录
         guard authManager.isAuthenticated else {
@@ -242,10 +242,10 @@ class TradeManager: ObservableObject {
 
             let result = try JSONDecoder().decode(AcceptResult.self, from: response.data)
 
-            print("✅ [TradeManager] Trade accepted successfully")
-            print("   📜 History ID: \(result.historyId)")
-            print("   📦 Offered: \(result.offeredItems.count) items")
-            print("   📥 Received: \(result.receivedItems.count) items")
+            debugLog("✅ [TradeManager] Trade accepted successfully")
+            debugLog("   📜 History ID: \(result.historyId)")
+            debugLog("   📦 Offered: \(result.offeredItems.count) items")
+            debugLog("   📥 Received: \(result.receivedItems.count) items")
 
             // 4. 刷新相关数据
             await loadAvailableOffers()
@@ -268,10 +268,10 @@ class TradeManager: ObservableObject {
             } else if message.contains("Insufficient items") {
                 throw TradeError.databaseError(message)
             }
-            print("❌ [TradeManager] Database error: \(error)")
+            debugLog("❌ [TradeManager] Database error: \(error)")
             throw TradeError.databaseError(error.message)
         } catch {
-            print("❌ [TradeManager] Error accepting trade offer: \(error)")
+            debugLog("❌ [TradeManager] Error accepting trade offer: \(error)")
             throw error
         }
     }
@@ -279,7 +279,7 @@ class TradeManager: ObservableObject {
     /// 取消交易挂单
     /// - Parameter offerId: 挂单ID
     func cancelTradeOffer(offerId: String) async throws {
-        print("❌ [TradeManager] Cancelling trade offer: \(offerId)")
+        debugLog("❌ [TradeManager] Cancelling trade offer: \(offerId)")
 
         // 1. 验证用户登录
         guard authManager.isAuthenticated else {
@@ -294,7 +294,7 @@ class TradeManager: ObservableObject {
                 params: params
             ).execute()
 
-            print("✅ [TradeManager] Trade offer cancelled successfully")
+            debugLog("✅ [TradeManager] Trade offer cancelled successfully")
 
             // 3. 刷新相关数据
             await loadMyOffers()
@@ -310,10 +310,10 @@ class TradeManager: ObservableObject {
             } else if message.contains("only cancel active") {
                 throw TradeError.offerNotActive
             }
-            print("❌ [TradeManager] Database error: \(error)")
+            debugLog("❌ [TradeManager] Database error: \(error)")
             throw TradeError.databaseError(error.message)
         } catch {
-            print("❌ [TradeManager] Error cancelling trade offer: \(error)")
+            debugLog("❌ [TradeManager] Error cancelling trade offer: \(error)")
             throw error
         }
     }
@@ -321,10 +321,10 @@ class TradeManager: ObservableObject {
     /// 加载我的挂单
     /// - Parameter status: 可选，过滤指定状态的挂单
     func loadMyOffers(status: TradeOfferStatus? = nil) async {
-        print("📋 [TradeManager] Loading my offers...")
+        debugLog("📋 [TradeManager] Loading my offers...")
 
         guard authManager.isAuthenticated else {
-            print("⚠️ [TradeManager] Not authenticated")
+            debugLog("⚠️ [TradeManager] Not authenticated")
             return
         }
 
@@ -340,10 +340,10 @@ class TradeManager: ObservableObject {
 
             let offers = try JSONDecoder().decode([TradeOffer].self, from: response.data)
             self.myOffers = offers
-            print("✅ [TradeManager] Loaded \(offers.count) my offers")
+            debugLog("✅ [TradeManager] Loaded \(offers.count) my offers")
 
         } catch {
-            print("❌ [TradeManager] Error loading my offers: \(error)")
+            debugLog("❌ [TradeManager] Error loading my offers: \(error)")
             errorMessage = error.localizedDescription
         }
     }
@@ -353,10 +353,10 @@ class TradeManager: ObservableObject {
     ///   - limit: 限制数量（默认50）
     ///   - offset: 偏移量（默认0，用于分页）
     func loadAvailableOffers(limit: Int = 50, offset: Int = 0) async {
-        print("🛒 [TradeManager] Loading available offers...")
+        debugLog("🛒 [TradeManager] Loading available offers...")
 
         guard authManager.isAuthenticated else {
-            print("⚠️ [TradeManager] Not authenticated")
+            debugLog("⚠️ [TradeManager] Not authenticated")
             return
         }
 
@@ -376,20 +376,20 @@ class TradeManager: ObservableObject {
             let offers = try JSONDecoder().decode([TradeOffer].self, from: response.data)
             self.availableOffers = offers
 
-            print("✅ [TradeManager] Loaded \(offers.count) available offers")
+            debugLog("✅ [TradeManager] Loaded \(offers.count) available offers")
 
         } catch {
-            print("❌ [TradeManager] Error loading available offers: \(error)")
+            debugLog("❌ [TradeManager] Error loading available offers: \(error)")
             errorMessage = error.localizedDescription
         }
     }
 
     /// 加载交易历史
     func loadTradeHistory() async {
-        print("📜 [TradeManager] Loading trade history...")
+        debugLog("📜 [TradeManager] Loading trade history...")
 
         guard authManager.isAuthenticated else {
-            print("⚠️ [TradeManager] Not authenticated")
+            debugLog("⚠️ [TradeManager] Not authenticated")
             return
         }
 
@@ -404,10 +404,10 @@ class TradeManager: ObservableObject {
             let history = try JSONDecoder().decode([TradeHistory].self, from: response.data)
             self.tradeHistory = history
 
-            print("✅ [TradeManager] Loaded \(history.count) trade history records")
+            debugLog("✅ [TradeManager] Loaded \(history.count) trade history records")
 
         } catch {
-            print("❌ [TradeManager] Error loading trade history: \(error)")
+            debugLog("❌ [TradeManager] Error loading trade history: \(error)")
             errorMessage = error.localizedDescription
         }
     }
@@ -418,7 +418,7 @@ class TradeManager: ObservableObject {
     ///   - rating: 评分（1-5）
     ///   - comment: 评语（可选）
     func rateTrade(tradeHistoryId: String, rating: Int, comment: String? = nil) async throws {
-        print("⭐ [TradeManager] Rating trade: \(tradeHistoryId), rating: \(rating)")
+        debugLog("⭐ [TradeManager] Rating trade: \(tradeHistoryId), rating: \(rating)")
 
         // 1. 验证用户登录
         guard authManager.isAuthenticated else {
@@ -446,7 +446,7 @@ class TradeManager: ObservableObject {
                 "rate_trade",
                 params: params
             ).execute()
-            print("✅ [TradeManager] Trade rated successfully")
+            debugLog("✅ [TradeManager] Trade rated successfully")
             // 4. 刷新交易历史
             await loadTradeHistory()
 
@@ -460,20 +460,20 @@ class TradeManager: ObservableObject {
             } else if message.contains("not a participant") {
                 throw TradeError.notOfferOwner
             }
-            print("❌ [TradeManager] Database error: \(error)")
+            debugLog("❌ [TradeManager] Database error: \(error)")
             throw TradeError.databaseError(error.message)
         } catch {
-            print("❌ [TradeManager] Error rating trade: \(error)")
+            debugLog("❌ [TradeManager] Error rating trade: \(error)")
             throw error
         }
     }
 
     /// 处理过期挂单（定时任务调用或手动触发）
     func processExpiredOffers() async -> Int {
-        print("🕒 [TradeManager] Processing expired offers...")
+        debugLog("🕒 [TradeManager] Processing expired offers...")
 
         guard authManager.isAuthenticated else {
-            print("⚠️ [TradeManager] Not authenticated")
+            debugLog("⚠️ [TradeManager] Not authenticated")
             return 0
         }
 
@@ -483,7 +483,7 @@ class TradeManager: ObservableObject {
             // 解析处理的挂单数量
             if let countString = String(data: response.data, encoding: .utf8),
                let count = Int(countString.trimmingCharacters(in: .whitespacesAndNewlines)) {
-                print("✅ [TradeManager] Processed \(count) expired offers")
+                debugLog("✅ [TradeManager] Processed \(count) expired offers")
 
                 // 刷新我的挂单列表
                 await loadMyOffers()
@@ -495,7 +495,7 @@ class TradeManager: ObservableObject {
             return 0
 
         } catch {
-            print("❌ [TradeManager] Error processing expired offers: \(error)")
+            debugLog("❌ [TradeManager] Error processing expired offers: \(error)")
             return 0
         }
     }

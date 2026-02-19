@@ -233,7 +233,7 @@ final class StoreKitManager: ObservableObject {
     // MARK: - Initialization
 
     private init() {
-        print("💰 [StoreKit] Initializing StoreKitManager...")
+        debugLog("💰 [StoreKit] Initializing StoreKitManager...")
         startTransactionListener()
         Task { await logEnvironment() }
     }
@@ -247,7 +247,7 @@ final class StoreKitManager: ObservableObject {
                 break
             }
         }
-        print("🛒 [StoreKit] Current environment is: \(env)")
+        debugLog("🛒 [StoreKit] Current environment is: \(env)")
     }
 
     deinit {
@@ -260,7 +260,7 @@ final class StoreKitManager: ObservableObject {
     /// This handles transactions that occur outside the app (family sharing, renewals, etc.)
     private func startTransactionListener() {
         transactionListener = Task.detached { [weak self] in
-            print("💰 [StoreKit] Transaction listener started")
+            debugLog("💰 [StoreKit] Transaction listener started")
             for await result in Transaction.updates {
                 await self?.handleTransactionUpdate(result)
             }
@@ -271,14 +271,14 @@ final class StoreKitManager: ObservableObject {
     private func handleTransactionUpdate(_ result: VerificationResult<Transaction>) async {
         switch result {
         case .verified(let transaction):
-            print("💰 [StoreKit] Transaction update verified: \(transaction.productID)")
+            debugLog("💰 [StoreKit] Transaction update verified: \(transaction.productID)")
             await processTransaction(transaction)
             await updatePurchasedProducts()      // recalculate tier (handles downgrade)
             await syncEntitlementsWithSupabase()  // sync recalculated state
             await transaction.finish()
 
         case .unverified(let transaction, let error):
-            print("💰 [StoreKit] Transaction verification failed: \(transaction.productID), error: \(error)")
+            debugLog("💰 [StoreKit] Transaction verification failed: \(transaction.productID), error: \(error)")
         }
     }
 
@@ -287,7 +287,7 @@ final class StoreKitManager: ObservableObject {
     /// Fetch all products from the App Store
     func fetchProducts() async {
         guard !isLoading else {
-            print("🛒 [StoreKit] fetchProducts skipped — already loading")
+            debugLog("🛒 [StoreKit] fetchProducts skipped — already loading")
             return
         }
 
@@ -296,19 +296,19 @@ final class StoreKitManager: ObservableObject {
         defer { isLoading = false }
 
         let requestedIDs = StoreProductID.allProductIDs
-        print("🛒 [StoreKit] Requesting \(requestedIDs.count) product IDs: \(requestedIDs)")
+        debugLog("🛒 [StoreKit] Requesting \(requestedIDs.count) product IDs: \(requestedIDs)")
 
         do {
             let fetchedProducts = try await Product.products(for: requestedIDs)
 
-            print("🛒 [StoreKit] Fetched \(fetchedProducts.count) products")
+            debugLog("🛒 [StoreKit] Fetched \(fetchedProducts.count) products")
 
             if fetchedProducts.isEmpty {
-                print("🛒 [StoreKit] ⚠️ 0 products returned. Ensure Products.storekit is set in Scheme > Run > Options > StoreKit Configuration")
+                debugLog("🛒 [StoreKit] ⚠️ 0 products returned. Ensure Products.storekit is set in Scheme > Run > Options > StoreKit Configuration")
             }
 
             for p in fetchedProducts {
-                print("🛒 [StoreKit]   → \(p.id) | \(p.displayName) | \(p.displayPrice) | type=\(p.type)")
+                debugLog("🛒 [StoreKit]   → \(p.id) | \(p.displayName) | \(p.displayPrice) | type=\(p.type)")
             }
 
             // Store all products sorted by price
@@ -322,7 +322,7 @@ final class StoreKitManager: ObservableObject {
             consumableProducts = fetchedProducts
                 .filter { $0.type == .consumable }
 
-            print("🛒 [StoreKit] Categorized — Subs: \(subscriptionProducts.count), Consumable: \(consumableProducts.count)")
+            debugLog("🛒 [StoreKit] Categorized — Subs: \(subscriptionProducts.count), Consumable: \(consumableProducts.count)")
 
             // Update current entitlements (handles expiry/downgrade)
             await updatePurchasedProducts()
@@ -331,7 +331,7 @@ final class StoreKitManager: ObservableObject {
 
         } catch {
             errorMessage = error.localizedDescription
-            print("🛒 [StoreKit] ❌ Error fetching products: \(error)")
+            debugLog("🛒 [StoreKit] ❌ Error fetching products: \(error)")
         }
     }
 
@@ -346,14 +346,14 @@ final class StoreKitManager: ObservableObject {
 
         do {
             try await AppStore.sync()
-            print("🛒 [StoreKit] AppStore.sync completed")
+            debugLog("🛒 [StoreKit] AppStore.sync completed")
             await updatePurchasedProducts()
             isLoading = false
             await fetchProducts()
         } catch {
             isLoading = false
             errorMessage = error.localizedDescription
-            print("🛒 [StoreKit] Refresh error: \(error)")
+            debugLog("🛒 [StoreKit] Refresh error: \(error)")
         }
     }
 
@@ -376,26 +376,26 @@ final class StoreKitManager: ObservableObject {
             case .success(let verification):
                 switch verification {
                 case .verified(let transaction):
-                    print("💰 [StoreKit] Purchase successful: \(product.id)")
+                    debugLog("💰 [StoreKit] Purchase successful: \(product.id)")
                     await processTransaction(transaction)
                     await transaction.finish()
                     return transaction
 
                 case .unverified(_, let error):
-                    print("💰 [StoreKit] Transaction verification failed: \(error)")
+                    debugLog("💰 [StoreKit] Transaction verification failed: \(error)")
                     throw StoreError.verificationFailed
                 }
 
             case .userCancelled:
-                print("💰 [StoreKit] User cancelled purchase")
+                debugLog("💰 [StoreKit] User cancelled purchase")
                 return nil
 
             case .pending:
-                print("💰 [StoreKit] Purchase pending (Ask to Buy)")
+                debugLog("💰 [StoreKit] Purchase pending (Ask to Buy)")
                 return nil
 
             @unknown default:
-                print("💰 [StoreKit] Unknown purchase result")
+                debugLog("💰 [StoreKit] Unknown purchase result")
                 return nil
             }
 
@@ -405,7 +405,7 @@ final class StoreKitManager: ObservableObject {
                 throw error
             } else {
                 errorMessage = error.localizedDescription
-                print("💰 [StoreKit] Purchase error: \(error)")
+                debugLog("💰 [StoreKit] Purchase error: \(error)")
                 throw StoreError.purchaseFailed
             }
         }
@@ -416,7 +416,7 @@ final class StoreKitManager: ObservableObject {
     /// Process a verified transaction and update local state
     private func processTransaction(_ transaction: Transaction) async {
         let productID = transaction.productID
-        print("💰 [StoreKit] Processing transaction: \(productID)")
+        debugLog("💰 [StoreKit] Processing transaction: \(productID)")
 
         // Update purchased products set
         purchasedProductIDs.insert(productID)
@@ -426,13 +426,13 @@ final class StoreKitManager: ObservableObject {
             // Subscription: update membership tier
             if tier > currentMembershipTier {
                 currentMembershipTier = tier
-                print("💰 [StoreKit] Membership tier updated to: \(tier)")
+                debugLog("💰 [StoreKit] Membership tier updated to: \(tier)")
             }
         } else if let storeProduct = StoreProductID(rawValue: productID),
                   let energyAmount = storeProduct.energyAmount {
             // Consumable: add Aether Energy
             addAetherEnergy(energyAmount)
-            print("💰 [StoreKit] Aether Energy balance updated to: \(aetherEnergy) (+\(energyAmount))")
+            debugLog("💰 [StoreKit] Aether Energy balance updated to: \(aetherEnergy) (+\(energyAmount))")
         }
 
         // Sync with Supabase
@@ -451,15 +451,15 @@ final class StoreKitManager: ObservableObject {
     /// Returns true if deduction succeeded (Archon bypasses, or balance > 0 and deducted).
     func consumeAetherEnergy() -> Bool {
         if isInfiniteEnergyEnabled {
-            print("⚡ [Energy] Infinite energy (Archon) — no deduction")
+            debugLog("⚡ [Energy] Infinite energy (Archon) — no deduction")
             return true
         }
         guard aetherEnergy > 0 else {
-            print("⚡ [Energy] Insufficient energy: \(aetherEnergy)")
+            debugLog("⚡ [Energy] Insufficient energy: \(aetherEnergy)")
             return false
         }
         aetherEnergy -= 1
-        print("⚡ [Energy] Consumed 1 energy, remaining: \(aetherEnergy)")
+        debugLog("⚡ [Energy] Consumed 1 energy, remaining: \(aetherEnergy)")
         Task { await syncEntitlementsWithSupabase() }
         return true
     }
@@ -467,7 +467,7 @@ final class StoreKitManager: ObservableObject {
     /// Add Aether Energy units
     func addAetherEnergy(_ amount: Int) {
         aetherEnergy += amount
-        print("⚡ [Energy] Added \(amount) energy, total: \(aetherEnergy)")
+        debugLog("⚡ [Energy] Added \(amount) energy, total: \(aetherEnergy)")
     }
 
     // MARK: - Restore Purchases
@@ -490,11 +490,11 @@ final class StoreKitManager: ObservableObject {
             // Sync with Supabase
             await syncEntitlementsWithSupabase()
 
-            print("💰 [StoreKit] Restore completed successfully")
+            debugLog("💰 [StoreKit] Restore completed successfully")
 
         } catch {
             errorMessage = error.localizedDescription
-            print("💰 [StoreKit] Restore error: \(error)")
+            debugLog("💰 [StoreKit] Restore error: \(error)")
         }
     }
 
@@ -529,7 +529,7 @@ final class StoreKitManager: ObservableObject {
         currentMembershipTier = highestTier
         subscriptionExpirationDate = expirationDate
 
-        print("💰 [StoreKit] Updated entitlements: \(purchased.count) items, tier: \(highestTier)")
+        debugLog("💰 [StoreKit] Updated entitlements: \(purchased.count) items, tier: \(highestTier)")
     }
 
     // MARK: - Supabase Sync
@@ -537,29 +537,29 @@ final class StoreKitManager: ObservableObject {
     /// Sync current entitlements with Supabase player_profiles
     func syncEntitlementsWithSupabase() async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("💰 [StoreKit] Cannot sync: not authenticated")
+            debugLog("💰 [StoreKit] Cannot sync: not authenticated")
             return
         }
 
+        // Prepare update payload
+        struct IAPUpdate: Encodable, Sendable {
+            let membership_tier: Int
+            let aether_energy: Int
+            let last_energy_grant_date: String?
+            let updated_at: String
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+
+        let update = IAPUpdate(
+            membership_tier: currentMembershipTier.rawValue,
+            aether_energy: aetherEnergy,
+            last_energy_grant_date: lastEnergyGrantDate.map { dateFormatter.string(from: $0) },
+            updated_at: ISO8601DateFormatter().string(from: Date())
+        )
+
         do {
-            // Prepare update payload
-            struct IAPUpdate: Encodable {
-                let membership_tier: Int
-                let aether_energy: Int
-                let last_energy_grant_date: String?
-                let updated_at: String
-            }
-
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-
-            let update = IAPUpdate(
-                membership_tier: currentMembershipTier.rawValue,
-                aether_energy: aetherEnergy,
-                last_energy_grant_date: lastEnergyGrantDate.map { dateFormatter.string(from: $0) },
-                updated_at: ISO8601DateFormatter().string(from: Date())
-            )
-
             // Update player_profiles
             try await supabase
                 .from("player_profiles")
@@ -567,20 +567,32 @@ final class StoreKitManager: ObservableObject {
                 .eq("user_id", value: userId.uuidString)
                 .execute()
 
-            print("💰 [StoreKit] Synced entitlements to Supabase")
-            print("   - Tier: \(currentMembershipTier.rawValue)")
-            print("   - Energy: \(aetherEnergy)")
+            debugLog("💰 [StoreKit] Synced entitlements to Supabase")
+            debugLog("   - Tier: \(currentMembershipTier.rawValue)")
+            debugLog("   - Energy: \(aetherEnergy)")
 
         } catch {
-            print("💰 [StoreKit] Sync error: \(error)")
-            errorMessage = error.localizedDescription
+            debugLog("💰 [StoreKit] Sync error: \(error), retrying once...")
+            // Retry once on failure
+            do {
+                try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                try await supabase
+                    .from("player_profiles")
+                    .update(update)
+                    .eq("user_id", value: userId.uuidString)
+                    .execute()
+                debugLog("💰 [StoreKit] Retry sync succeeded")
+            } catch {
+                debugLog("💰 [StoreKit] Retry sync also failed: \(error)")
+                errorMessage = String(format: NSLocalizedString("error_sync_entitlements_failed_format", comment: ""), error.localizedDescription)
+            }
         }
     }
 
     /// Load entitlements from Supabase (on app launch or login)
     func loadEntitlementsFromSupabase() async {
         guard let userId = AuthManager.shared.currentUser?.id else {
-            print("💰 [StoreKit] Cannot load: not authenticated")
+            debugLog("💰 [StoreKit] Cannot load: not authenticated")
             return
         }
 
@@ -607,16 +619,16 @@ final class StoreKitManager: ObservableObject {
                 dateFormatter.dateFormat = "yyyy-MM-dd"
                 lastEnergyGrantDate = profile.last_energy_grant_date.flatMap { dateFormatter.date(from: $0) }
 
-                print("💰 [StoreKit] Loaded entitlements from Supabase")
-                print("   - Tier: \(currentMembershipTier)")
-                print("   - Energy: \(aetherEnergy)")
+                debugLog("💰 [StoreKit] Loaded entitlements from Supabase")
+                debugLog("   - Tier: \(currentMembershipTier)")
+                debugLog("   - Energy: \(aetherEnergy)")
             }
 
             // Check and grant daily energy
             await checkAndGrantDailyEnergy()
 
         } catch {
-            print("💰 [StoreKit] Load entitlements error: \(error)")
+            debugLog("💰 [StoreKit] Load entitlements error: \(error)")
         }
     }
 
@@ -633,7 +645,7 @@ final class StoreKitManager: ObservableObject {
         // Check if already granted today
         if let lastGrant = lastEnergyGrantDate,
            Calendar.current.isDate(lastGrant, inSameDayAs: today) {
-            print("⚡ [Daily] Energy already granted today")
+            debugLog("⚡ [Daily] Energy already granted today")
             return
         }
 
@@ -642,7 +654,7 @@ final class StoreKitManager: ObservableObject {
 
         addAetherEnergy(amount)
         lastEnergyGrantDate = today
-        print("⚡ [Daily] Granted \(amount) daily energy (tier: \(currentMembershipTier))")
+        debugLog("⚡ [Daily] Granted \(amount) daily energy (tier: \(currentMembershipTier))")
 
         await syncEntitlementsWithSupabase()
     }

@@ -73,7 +73,7 @@ final class AuthManager: NSObject, ObservableObject {
             for await (event, session) in supabase.auth.authStateChanges {
                 guard let self = self else { return }
 
-                print("🔐 Auth Event: \(event), User: \(session?.user.email ?? "nil")")
+                debugLog("🔐 Auth Event: \(event), User: \(session?.user.email ?? "nil")")
 
                 switch event {
                 case .initialSession:
@@ -108,7 +108,7 @@ final class AuthManager: NSObject, ObservableObject {
                 case .tokenRefreshed:
                     // Token 刷新成功
                     self.currentUser = session?.user
-                    print("🔄 Token refreshed successfully")
+                    debugLog("🔄 Token refreshed successfully")
 
                 default:
                     break
@@ -120,7 +120,7 @@ final class AuthManager: NSObject, ObservableObject {
     /// 处理会话过期
     /// 重置所有认证状态，UI 会自动响应并跳转到登录页
     private func handleSessionExpired() {
-        print("⚠️ Session expired or user signed out")
+        debugLog("⚠️ Session expired or user signed out")
         currentUser = nil
         isAuthenticated = false
         needsPasswordSetup = false
@@ -373,6 +373,12 @@ final class AuthManager: NSObject, ObservableObject {
             let controller = ASAuthorizationController(authorizationRequests: [request])
             controller.delegate = self
 
+            // Guard against double-tap: if a continuation is already pending, bail out
+            guard appleSignInContinuation == nil else {
+                isLoading = false
+                return
+            }
+
             // 使用 continuation 将回调转换为 async/await
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                 self.appleSignInContinuation = continuation
@@ -383,7 +389,7 @@ final class AuthManager: NSObject, ObservableObject {
         } catch {
             isLoading = false
             errorMessage = mapAuthError(error)
-            print("❌ Apple Sign-In error: \(error.localizedDescription)")
+            debugLog("❌ Apple Sign-In error: \(error.localizedDescription)")
         }
     }
 
@@ -399,7 +405,7 @@ final class AuthManager: NSObject, ObservableObject {
         // 检查是否已配置 Google Client ID
         guard AppConfig.GoogleSignIn.isConfigured else {
             errorMessage = NSLocalizedString("error_google_login_not_configured", comment: "")
-            print("⚠️ Google Sign-In: 请在 AppConfig.GoogleSignIn.clientId 中填入你的 Client ID")
+            debugLog("⚠️ Google Sign-In: 请在 AppConfig.GoogleSignIn.clientId 中填入你的 Client ID")
             return
         }
 
@@ -435,7 +441,7 @@ final class AuthManager: NSObject, ObservableObject {
 
             currentUser = session.user
             isAuthenticated = true
-            print("✅ Google 登录成功: \(session.user.email ?? "unknown")")
+            debugLog("✅ Google 登录成功: \(session.user.email ?? "unknown")")
 
             isLoading = false
         } catch {
@@ -445,7 +451,7 @@ final class AuthManager: NSObject, ObservableObject {
             } else {
                 errorMessage = mapAuthError(error)
             }
-            print("❌ Google Sign-In error: \(error.localizedDescription)")
+            debugLog("❌ Google Sign-In error: \(error.localizedDescription)")
         }
     }
 
@@ -455,18 +461,18 @@ final class AuthManager: NSObject, ObservableObject {
     /// 调用 Supabase Edge Function 删除用户账户
     /// - Note: 此操作不可逆，会永久删除用户数据
     func deleteAccount() async throws {
-        print("🗑️ [删除账户] 开始删除账户流程")
+        debugLog("🗑️ [删除账户] 开始删除账户流程")
         isLoading = true
         errorMessage = nil
 
         do {
             // 获取当前会话的 access token
-            print("🗑️ [删除账户] 正在获取当前会话...")
+            debugLog("🗑️ [删除账户] 正在获取当前会话...")
             let session = try await supabase.auth.session
-            print("🗑️ [删除账户] 会话获取成功，用户ID: \(session.user.id)")
+            debugLog("🗑️ [删除账户] 会话获取成功，用户ID: \(session.user.id)")
 
             // 调用 delete-account Edge Function
-            print("🗑️ [删除账户] 正在调用 delete-account 边缘函数...")
+            debugLog("🗑️ [删除账户] 正在调用 delete-account 边缘函数...")
             try await supabase.functions.invoke(
                 "delete-account",
                 options: FunctionInvokeOptions(
@@ -474,17 +480,17 @@ final class AuthManager: NSObject, ObservableObject {
                 )
             )
 
-            print("🗑️ [删除账户] 边缘函数调用成功，正在清除本地状态...")
+            debugLog("🗑️ [删除账户] 边缘函数调用成功，正在清除本地状态...")
             // 删除成功，清除本地状态
             handleSessionExpired()
             isLoading = false
-            print("✅ [删除账户] 账户删除完成，用户已登出")
+            debugLog("✅ [删除账户] 账户删除完成，用户已登出")
         } catch {
             isLoading = false
             let errorMsg = mapAuthError(error)
             errorMessage = errorMsg
-            print("❌ [删除账户] 删除失败: \(error.localizedDescription)")
-            print("❌ [删除账户] 错误详情: \(error)")
+            debugLog("❌ [删除账户] 删除失败: \(error.localizedDescription)")
+            debugLog("❌ [删除账户] 错误详情: \(error)")
             throw error
         }
     }
@@ -506,7 +512,7 @@ final class AuthManager: NSObject, ObservableObject {
             // 这样用户可以重新登录
             handleSessionExpired()
             errorMessage = NSLocalizedString("error_logout_failed_session_cleared", comment: "")
-            print("❌ Sign out error: \(error.localizedDescription)")
+            debugLog("❌ Sign out error: \(error.localizedDescription)")
         }
     }
     
@@ -514,20 +520,20 @@ final class AuthManager: NSObject, ObservableObject {
     /// 立即重置认证状态，不依赖网络请求
     @MainActor
     func forceSignOut() {
-        print("🔐 [AuthManager] Force sign out called")
-        print("🔐 [AuthManager] Current isAuthenticated: \(isAuthenticated)")
+        debugLog("🔐 [AuthManager] Force sign out called")
+        debugLog("🔐 [AuthManager] Current isAuthenticated: \(isAuthenticated)")
         
         handleSessionExpired()
         
-        print("🔐 [AuthManager] After handleSessionExpired, isAuthenticated: \(isAuthenticated)")
+        debugLog("🔐 [AuthManager] After handleSessionExpired, isAuthenticated: \(isAuthenticated)")
         
         // 同时尝试清除 Supabase 会话（异步，不等待结果）
         Task {
             do {
                 try await supabase.auth.signOut()
-                print("🔐 [AuthManager] Background signOut succeeded")
+                debugLog("🔐 [AuthManager] Background signOut succeeded")
             } catch {
-                print("🔐 [AuthManager] Background signOut failed: \(error.localizedDescription)")
+                debugLog("🔐 [AuthManager] Background signOut failed: \(error.localizedDescription)")
             }
         }
     }
@@ -577,7 +583,8 @@ final class AuthManager: NSObject, ObservableObject {
         var randomBytes = [UInt8](repeating: 0, count: length)
         let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
         if errorCode != errSecSuccess {
-            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+            // Return a UUID-based fallback nonce instead of crashing
+            return UUID().uuidString + UUID().uuidString
         }
 
         let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")

@@ -6,6 +6,7 @@
 //  用于测试 AI 生成功能，无需实际探索
 //
 
+#if DEBUG
 import SwiftUI
 import CoreLocation
 
@@ -421,3 +422,4 @@ struct AIDebugView: View {
         AIDebugView()
     }
 }
+#endif

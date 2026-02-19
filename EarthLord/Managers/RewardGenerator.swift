@@ -29,7 +29,7 @@ final class RewardGenerator {
     // MARK: - 初始化
 
     private init() {
-        print("🎁 [奖励生成器] 初始化")
+        debugLog("🎁 [奖励生成器] 初始化")
     }
 
     // MARK: - 公共方法
@@ -67,10 +67,10 @@ final class RewardGenerator {
             )
 
             items.append(item)
-            print("🎁 [奖励] 生成物品: \(definition.name) [\(LanguageManager.shared.translate(rarity.localizedName))] [\(quality.rawValue)]")
+            debugLog("🎁 [奖励] 生成物品: \(definition.name) [\(LanguageManager.shared.translate(rarity.localizedName))] [\(quality.rawValue)]")
         }
 
-        print("🎁 [奖励] 共生成 \(items.count) 个物品")
+        debugLog("🎁 [奖励] 共生成 \(items.count) 个物品")
         return items
     }
 
@@ -100,9 +100,9 @@ final class RewardGenerator {
             }
 
             isLoaded = true
-            print("🎁 [奖励] 加载了 \(definitions.count) 个物品定义")
+            debugLog("🎁 [奖励] 加载了 \(definitions.count) 个物品定义")
         } catch {
-            print("🎁 [奖励] 加载物品定义失败: \(error.localizedDescription)")
+            debugLog("🎁 [奖励] 加载物品定义失败: \(error.localizedDescription)")
             // 使用本地备用数据
             loadFallbackDefinitions()
         }
@@ -133,7 +133,7 @@ final class RewardGenerator {
         }
 
         isLoaded = true
-        print("🎁 [奖励] 使用备用物品数据（\(fallbackItems.count) 个）")
+        debugLog("🎁 [奖励] 使用备用物品数据（\(fallbackItems.count) 个）")
     }
 
     /// 根据概率选择稀有度
@@ -155,7 +155,7 @@ final class RewardGenerator {
     private func selectRandomItem(rarity: ItemRarity) -> DBItemDefinition? {
         guard let items = itemDefinitionsCache[rarity], !items.isEmpty else {
             // 降级到普通物品
-            print("🎁 [奖励] 稀有度 \(LanguageManager.shared.translate(rarity.localizedName)) 无可用物品，降级到普通")
+            debugLog("🎁 [奖励] 稀有度 \(LanguageManager.shared.translate(rarity.localizedName)) 无可用物品，降级到普通")
             return itemDefinitionsCache[.common]?.randomElement()
         }
         return items.randomElement()
