@@ -108,7 +108,7 @@ struct ExplorationResultView: View {
                 .foregroundColor(ApocalypseTheme.textSecondary)
 
             // 行走距离
-            Text(String(format: NSLocalizedString("exploration_walked_format", comment: ""), String(format: "%.0f",  result.distanceWalked)))
+            Text(String(format: String(localized: LocalizedString.explorationWalkedFormat), String(format: "%.0f", result.distanceWalked)))
                 .font(.system(size: 14))
                 .foregroundColor(ApocalypseTheme.textMuted)
         }
@@ -146,16 +146,24 @@ struct ExplorationResultView: View {
             VStack(spacing: 12) {
                 statRow(
                     icon: "figure.walk",
-                    label: NSLocalizedString("exploration_distance", comment: ""),
-                    value: String(format: NSLocalizedString("exploration_distance_value", comment: ""), String(format: "%.1f", result.distanceWalked))
+                    label: LocalizedString.explorationDistance,
+                    value: String(format: String(localized: LocalizedString.explorationDistanceValue), String(format: "%.1f", result.distanceWalked))
                 )
-                statRow(icon: "clock.fill", label: NSLocalizedString("exploration_duration", comment: ""), value: result.stats.durationString)
+                statRow(
+                    icon: "clock.fill",
+                    label: LocalizedString.explorationDuration,
+                    value: result.stats.durationString
+                )
                 statRow(
                     icon: "mappin.circle.fill",
-                    label: NSLocalizedString("exploration_points_verified", comment: ""),
-                    value: String(format: NSLocalizedString("exploration_points_count", comment: ""), result.stats.pointsVerified)
+                    label: LocalizedString.explorationPointsVerified,
+                    value: String(format: String(localized: LocalizedString.explorationPointsCount), result.stats.pointsVerified)
                 )
-                statRow(icon: "chart.bar.fill", label: NSLocalizedString("exploration_distance_rank", comment: ""), value: result.stats.distanceRank)
+                statRow(
+                    icon: "chart.bar.fill",
+                    label: LocalizedString.explorationDistanceRank,
+                    value: result.stats.distanceRank
+                )
             }
             .padding(16)
             .background(ApocalypseTheme.cardBackground)
@@ -163,7 +171,7 @@ struct ExplorationResultView: View {
         }
     }
 
-    private func statRow(icon: String, label: String, value: String) -> some View {
+    private func statRow(icon: String, label: LocalizedStringResource, value: String) -> some View {
         HStack {
             Image(systemName: icon)
                 .font(.system(size: 16))

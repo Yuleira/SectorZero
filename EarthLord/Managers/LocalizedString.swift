@@ -232,6 +232,12 @@ enum LocalizedString {
     /// 设置密码提示 (auth_set_password_hint)
     static let authSetPasswordHint: LocalizedStringResource = "auth_set_password_hint"
 
+    /// 密码强度不足提示 (auth_password_too_weak)
+    static let authPasswordTooWeak: LocalizedStringResource = "auth_password_too_weak"
+
+    /// 密码强度合格提示 (auth_password_valid)
+    static let authPasswordValid: LocalizedStringResource = "auth_password_valid"
+
     /// 使用Apple登录 (auth_sign_in_apple)
     static let authSignInApple: LocalizedStringResource = "auth_sign_in_apple"
 
@@ -293,6 +299,12 @@ enum LocalizedString {
 
     /// 探索失败 (exploration_failed)
     static let explorationFailed: LocalizedStringResource = "exploration_failed"
+
+    /// 验证点计数格式 (exploration_points_count)
+    static let explorationPointsCount: LocalizedStringResource = "exploration_points_count"
+
+    /// 距离排名标签 (exploration_distance_rank)
+    static let explorationDistanceRank: LocalizedStringResource = "exploration_distance_rank"
 
     /// 拾荒成功标题 (scavenge_success_title)
     static let scavengeSuccessTitle: LocalizedStringResource = "scavenge_success_title"

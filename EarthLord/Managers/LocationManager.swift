@@ -157,6 +157,10 @@ final class LocationManager: NSObject, ObservableObject {
     /// 是否正在定位
     @Published var isUpdatingLocation = false
 
+    /// 是否仅有模糊定位（iOS 14+ accuracyAuthorization != .fullAccuracy）
+    /// 圈地需要精确定位，为 true 时展示引导 alert
+    @Published var needsPreciseLocation: Bool = false
+
     // MARK: - 路径追踪属性
 
     /// 是否正在追踪路径
@@ -321,6 +325,13 @@ final class LocationManager: NSObject, ObservableObject {
     func requestLocation() {
         guard isAuthorized else {
             debugLog("📍 [定位管理器] ⚠️ 未授权，无法请求位置")
+            return
+        }
+
+        // 避免 kCLErrorDomain error 1：requestLocation() 与 startUpdatingLocation()
+        // 同时调用会产生冲突，因为连续定位已在提供位置数据
+        guard !isUpdatingLocation else {
+            debugLog("📍 [定位管理器] ⏭️ 连续定位中，跳过 requestLocation()")
             return
         }
 
@@ -847,6 +858,15 @@ extension LocationManager: CLLocationManagerDelegate {
 
         debugLog("📍 [定位管理器] 授权状态变化: \(oldStatus.rawValue) -> \(authorizationStatus.rawValue) (\(authorizationStatusDescription))")
 
+        // 检查精确定位授权（iOS 14+）
+        // 模糊定位会导致圈地 GPS 精度不足
+        if #available(iOS 14.0, *) {
+            needsPreciseLocation = manager.accuracyAuthorization != .fullAccuracy
+            if needsPreciseLocation {
+                debugLog("📍 [定位管理器] ⚠️ 仅有模糊定位权限，圈地功能受限")
+            }
+        }
+
         // 如果刚刚授权，自动开始定位
         if isAuthorized && !isUpdatingLocation {
             startUpdatingLocation()
@@ -947,7 +967,12 @@ extension LocationManager: CLLocationManagerDelegate {
             case .denied:
                 locationError = NSLocalizedString("error_location_permission_denied", comment: "")
             case .locationUnknown:
-                locationError = NSLocalizedString("error_cannot_get_location", comment: "")
+                // 暂时性 GPS 失锁，在连续定位（追踪）期间属于正常噪声，不上报 UI
+                if isTracking {
+                    debugLog("📍 [定位管理器] ℹ️ locationUnknown (暂时性，追踪中忽略)")
+                } else {
+                    locationError = NSLocalizedString("error_cannot_get_location", comment: "")
+                }
             case .network:
                 locationError = NSLocalizedString("error_network_error", comment: "")
             default:

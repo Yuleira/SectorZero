@@ -76,10 +76,13 @@ struct EarthLordApp: App {
         guard backgroundTaskID == .invalid else { return }
         backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "ActiveClaiming") {
             // Expiration handler — iOS is about to kill us, clean up
-            debugLog("🔄 [App生命周期] ⚠️ 后台执行时间即将耗尽")
-            ExplorationManager.shared.cancelExploration()
-            LocationManager.shared.stopPathTracking()
-            self.endBackgroundTask()
+            // Apple 文档：expiration handler 在主线程调用，所以用 assumeIsolated 安全且同步
+            MainActor.assumeIsolated {
+                debugLog("🔄 [App生命周期] ⚠️ 后台执行时间即将耗尽")
+                ExplorationManager.shared.cancelExploration()
+                LocationManager.shared.stopPathTracking()
+                self.endBackgroundTask()
+            }
         }
         debugLog("🔄 [App生命周期] 后台任务已启动 (id: \(backgroundTaskID.rawValue))")
     }

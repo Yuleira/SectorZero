@@ -616,8 +616,10 @@ final class AuthManager: NSObject, ObservableObject {
             return NSLocalizedString("error_please_verify_email_first", comment: "")
         } else if errorString.contains("User already registered") {
             return NSLocalizedString("error_email_already_registered", comment: "")
-        } else if errorString.contains("Password should be at least") {
-            return NSLocalizedString("error_password_min_length", comment: "")
+        } else if errorString.contains("Password should be at least") || errorString.contains("weak_password") || errorString.contains("422") {
+            // 422 Unprocessable Entity: Supabase server-side password policy rejection.
+            // Also catches GoTrue "Password should be at least N chars" and "weak_password" codes.
+            return NSLocalizedString("auth_password_too_weak", comment: "")
         } else if errorString.contains("Invalid email") {
             return NSLocalizedString("error_invalid_email_format", comment: "")
         } else if errorString.contains("Token has expired") || errorString.contains("otp_expired") {

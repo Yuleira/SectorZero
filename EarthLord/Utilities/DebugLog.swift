@@ -10,7 +10,7 @@ import Foundation
 
 /// Print only in DEBUG builds. No-op in Release.
 @inline(__always)
-func debugLog(_ message: @autoclosure () -> String) {
+nonisolated func debugLog(_ message: @autoclosure () -> String) {
     #if DEBUG
     print(message())
     #endif

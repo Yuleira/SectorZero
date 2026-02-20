@@ -289,6 +289,22 @@ struct MapTabView: View {
         } message: {
             Text(validationFailedReason)
         }
+        .alert(
+            NSLocalizedString("location_precise_required_title", comment: "Precise Location Required"),
+            isPresented: Binding(
+                get: { locationManager.needsPreciseLocation },
+                set: { _ in }
+            )
+        ) {
+            Button(NSLocalizedString("location_open_settings", comment: "Open Settings")) {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button(NSLocalizedString("common_cancel", comment: "Cancel"), role: .cancel) {}
+        } message: {
+            Text(NSLocalizedString("location_precise_required_message", comment: "Territory claiming requires precise location. Please go to Settings > Privacy & Security > Location Services and enable Precise Location for this app."))
+        }
     }
 
     /// 速度警告横幅

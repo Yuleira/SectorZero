@@ -13,9 +13,26 @@ import Combine
 import Supabase
 
 /// RPC params for atomic distance increment
-private nonisolated(unsafe) struct IncrementDistanceParams: Encodable, Sendable {
-    nonisolated let p_user_id: String
-    nonisolated let p_delta: Double
+private nonisolated struct IncrementDistanceParams: Encodable, Sendable {
+    let p_user_id: String
+    let p_delta: Double
+}
+
+/// RPC params for upload_territory_safe (migration 024)
+/// Server applies ST_MakeValid to repair self-intersecting polygons.
+private nonisolated struct UploadTerritoryParams: Encodable, Sendable {
+    let p_user_id: String
+    let p_path: [[String: Double]]
+    let p_polygon_wkt: String
+    let p_bbox_min_lat: Double
+    let p_bbox_max_lat: Double
+    let p_bbox_min_lon: Double
+    let p_bbox_max_lon: Double
+    let p_area: Double
+    let p_point_count: Int
+    let p_started_at: String
+    let p_completed_at: String
+    let p_distance_walked: Double
 }
 
 /// 领地管理器
@@ -143,61 +160,97 @@ final class TerritoryManager: ObservableObject {
             throw TerritoryError.territoryOverlap
         }
 
-        // 构建上传数据
-        let territoryData: [String: AnyJSON] = [
-            "user_id": .string(userId.uuidString),
-            "path": .array(pathJSON.map { dict in
-                .object(dict.mapValues { .double($0) })
-            }),
-            "polygon": .string(wktPolygon),
-            "bbox_min_lat": .double(bbox.minLat),
-            "bbox_max_lat": .double(bbox.maxLat),
-            "bbox_min_lon": .double(bbox.minLon),
-            "bbox_max_lon": .double(bbox.maxLon),
-            "area": .double(area),
-            "point_count": .integer(coordinates.count),
-            "started_at": .string(startTime.ISO8601Format()),
-            "completed_at": .string(Date().ISO8601Format()),
-            "is_active": .bool(true),
-            "distance_walked": .double(distanceWalked)
-        ]
+        // 构建 RPC 参数（upload_territory_safe 会在服务端执行 ST_MakeValid 修复多边形）
+        let params = UploadTerritoryParams(
+            p_user_id: userId.uuidString,
+            p_path: pathJSON,
+            p_polygon_wkt: wktPolygon,
+            p_bbox_min_lat: bbox.minLat,
+            p_bbox_max_lat: bbox.maxLat,
+            p_bbox_min_lon: bbox.minLon,
+            p_bbox_max_lon: bbox.maxLon,
+            p_area: area,
+            p_point_count: coordinates.count,
+            p_started_at: startTime.ISO8601Format(),
+            p_completed_at: Date().ISO8601Format(),
+            p_distance_walked: distanceWalked
+        )
 
         debugLog("📤 [领地上传] 开始上传，点数: \(coordinates.count), 面积: \(String(format: "%.0f", area))m², 距离: \(String(format: "%.0f", distanceWalked))m")
+
+        // Phase 4: 打印发送到 Supabase 的原始 JSON，便于调试
+        if let jsonData = try? JSONEncoder().encode(params),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            debugLog("📤 [领地上传] 原始请求JSON: \(jsonString)")
+        }
+
         TerritoryLogger.shared.log("开始上传领地: \(coordinates.count)点, \(String(format: "%.0f", area))m²", type: .info)
 
         isLoading = true
         defer { isLoading = false }
 
         do {
-            try await supabase
-                          .from("territories")
-                          .insert(territoryData)
-                          .execute()
+            // 调用 RPC 而非直接 INSERT，让服务端 ST_MakeValid 修复自相交多边形
+            let _: String = try await supabase
+                .rpc("upload_territory_safe", params: params)
+                .execute()
+                .value
 
-                      debugLog("📤 [领地上传] ✅ 上传成功")
-                      
-                      // 🔥 修改重点 1：使用 String(format: NSLocalizedString(...)) 来支持动态翻译
-                      // 这里 %.0f 是占位符，代表面积的数字
-                      let successMessage = String(
-                          format: NSLocalizedString("territory_upload_success_area_format", comment: ""),
-                          area
-                      )
-                      
-                      TerritoryLogger.shared.log(successMessage, type: .success)
-                      
-                  } catch {
-                      debugLog("📤 [领地上传] ❌ 上传失败: \(error.localizedDescription)")
-                      
-                      // 🔥 修改重点 2：错误信息也要翻译
-                      // 这里 %@ 是占位符，代表具体的错误原因
-                      let errorMessage = String(
-                          format: NSLocalizedString("error_territory_upload_failed_format", comment: ""),
-                          error.localizedDescription
-                      )
-                      
-                      TerritoryLogger.shared.log(errorMessage, type: .error)
-                      throw TerritoryError.uploadFailed(error.localizedDescription)
-              }
+            debugLog("📤 [领地上传] ✅ 上传成功")
+
+            let successMessage = String(
+                format: NSLocalizedString("territory_upload_success_area_format", comment: ""),
+                area
+            )
+            TerritoryLogger.shared.log(successMessage, type: .success)
+
+        } catch {
+            // 打印 Supabase 原始错误响应，便于调试
+            debugLog("📤 [领地上传] ❌ 上传失败 (原始错误): \(String(describing: error))")
+            if let pgError = error as? PostgrestError {
+                debugLog("📤 [领地上传] PostgrestError — code: \(pgError.code ?? "nil"), message: \(pgError.message), hint: \(pgError.hint ?? "nil")")
+            }
+
+            let friendlyMessage = friendlyUploadError(from: error)
+            let logMessage = String(
+                format: NSLocalizedString("error_territory_upload_failed_format", comment: ""),
+                friendlyMessage
+            )
+            TerritoryLogger.shared.log(logMessage, type: .error)
+            throw TerritoryError.uploadFailed(friendlyMessage)
+        }
+    }
+
+    // MARK: - 错误友好化
+
+    /// 将原始上传错误映射为用户可读的本地化字符串
+    /// - Parameter error: uploadTerritory 抛出的错误
+    /// - Returns: 适合展示给用户的错误描述
+    private func friendlyUploadError(from error: Error) -> String {
+        if let pgError = error as? PostgrestError {
+            let msg = pgError.message.lowercased()
+
+            if msg.contains("unrepairable") || msg.contains("too few valid points") {
+                return NSLocalizedString("error_upload_polygon_unrepairable", comment: "The path shape could not be repaired. Try walking a cleaner loop.")
+            }
+            if msg.contains("cannot parse polygon") || msg.contains("wkt") {
+                return NSLocalizedString("error_upload_polygon_invalid", comment: "The recorded path produced an invalid polygon. Please try again.")
+            }
+            if msg.contains("not authenticated") || msg.contains("unauthorized") {
+                return NSLocalizedString("error_not_logged_in", comment: "")
+            }
+            if msg.contains("unique") || msg.contains("duplicate") {
+                return NSLocalizedString("error_upload_duplicate_territory", comment: "A territory with this shape already exists.")
+            }
+            // Fallback: return the server message directly (already English/readable)
+            return pgError.message
+        }
+
+        if let terrError = error as? TerritoryError {
+            return terrError.errorDescription ?? error.localizedDescription
+        }
+
+        return error.localizedDescription
     }
 
     // MARK: - 累计距离

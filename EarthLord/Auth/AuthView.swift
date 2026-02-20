@@ -371,6 +371,11 @@ struct AuthView: View {
                 text: $registerConfirmPassword
             )
 
+            // 密码强度提示（实时反馈）
+            if !registerPassword.isEmpty {
+                passwordStrengthHint(for: registerPassword)
+            }
+
             // 密码不匹配提示
             if !registerConfirmPassword.isEmpty && registerPassword != registerConfirmPassword {
                 HStack {
@@ -397,8 +402,35 @@ struct AuthView: View {
         }
     }
 
+    // MARK: - 密码强度验证
+
+    /// 验证密码是否满足安全策略
+    /// 要求：≥12字符、含大写、小写、数字、特殊符号
+    private func validatePassword(_ password: String) -> Bool {
+        guard password.count >= 12 else { return false }
+        let hasUpper   = password.contains(where: { $0.isUppercase })
+        let hasLower   = password.contains(where: { $0.isLowercase })
+        let hasNumber  = password.contains(where: { $0.isNumber })
+        let hasSpecial = password.contains(where: { "!@#$%^&*()_+-=[]{}|;':\",./<>?`~\\".contains($0) })
+        return hasUpper && hasLower && hasNumber && hasSpecial
+    }
+
+    /// 注册表单密码有效性（强度 + 两次输入一致）
     private var isPasswordValid: Bool {
-        registerPassword.count >= 6 && registerPassword == registerConfirmPassword
+        validatePassword(registerPassword) && registerPassword == registerConfirmPassword
+    }
+
+    /// 密码强度提示行
+    private func passwordStrengthHint(for password: String) -> some View {
+        let isStrong = validatePassword(password)
+        return HStack(spacing: 6) {
+            Image(systemName: isStrong ? "checkmark.circle.fill" : "xmark.circle.fill")
+            Text(isStrong ? LocalizedString.authPasswordValid : LocalizedString.authPasswordTooWeak)
+        }
+        .font(.caption)
+        .foregroundColor(isStrong ? .green : ApocalypseTheme.danger)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .animation(.easeInOut(duration: 0.2), value: isStrong)
     }
 
     // MARK: - ==================== 忘记密码弹窗 ====================
@@ -564,6 +596,11 @@ struct AuthView: View {
                 text: $resetConfirmPassword
             )
 
+            // 密码强度提示（实时反馈）
+            if !resetPassword.isEmpty {
+                passwordStrengthHint(for: resetPassword)
+            }
+
             if !resetConfirmPassword.isEmpty && resetPassword != resetConfirmPassword {
                 HStack {
                     Image(systemName: "exclamationmark.circle.fill")
@@ -586,7 +623,7 @@ struct AuthView: View {
 
             primaryButton(
                 title: authManager.isLoading ? String(localized: "common_loading") : String(localized: "common_confirm"),
-                isEnabled: resetPassword.count >= 6 && resetPassword == resetConfirmPassword && !authManager.isLoading
+                isEnabled: validatePassword(resetPassword) && resetPassword == resetConfirmPassword && !authManager.isLoading
             ) {
                 Task {
                     await authManager.resetPassword(newPassword: resetPassword)
