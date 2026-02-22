@@ -1,3 +1,4 @@
+#if DEBUG
 import Foundation
 
 struct MockExplorationData {
@@ -44,3 +45,4 @@ struct MockExplorationData {
         return sampleItemDef
     }
 }
+#endif

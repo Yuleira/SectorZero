@@ -553,10 +553,19 @@ final class InventoryManager: ObservableObject {
     #if DEBUG
     /// 添加测试资源（ID 与 building_templates.json 一致：wood, stone, fabric, metal, glass）
     /// 供 BuildingBrowserView / TerritoryDetailView 的「添加测试材料」使用
+    /// Caps total added to the current storage limit so inventory never overflows.
     func addTestResources() async {
+        let limit = StoreKitManager.shared.currentStorageLimit
+        let used  = getTotalItemCount()
+        let space = max(0, limit - used)
+        guard space > 0 else {
+            print("📦 [DEBUG] addTestResources: storage full (\(used)/\(limit)), skipped")
+            return
+        }
         let ids = ["wood", "stone", "fabric", "metal", "glass"]
+        let perType = max(1, space / ids.count)
         for id in ids {
-            await addTestResource(resourceId: id, quantity: 500)
+            await addTestResource(resourceId: id, quantity: perType)
         }
         await loadItems()
         print("📦 [DEBUG] ✅ addTestResources: 已添加 wood, stone, fabric, metal, glass")
@@ -601,6 +610,24 @@ final class InventoryManager: ObservableObject {
         }
         await loadItems()
         print("📦 [DEBUG] ✅ 建筑测试资源已注入（wood, stone, metal, fabric, scrap_metal, glass, circuit）")
+    }
+
+    /// Delete all inventory items for the current user from Supabase and clear local state.
+    func clearAllInventory() async {
+        guard let userId = AuthManager.shared.currentUser?.id else { return }
+        do {
+            try await supabase
+                .from("inventory_items")
+                .delete()
+                .eq("user_id", value: userId.uuidString)
+                .execute()
+            await MainActor.run {
+                items.removeAll()
+            }
+            debugLog("📦 [DEBUG] clearAllInventory: 背包已清空")
+        } catch {
+            debugLog("⚠️ [Inventory] clearAllInventory failed: \(error)")
+        }
     }
     #endif
 }

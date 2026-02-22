@@ -86,6 +86,10 @@ struct MapTabView: View {
     /// 碰撞警告级别
     @State private var collisionWarningLevel: WarningLevel = .safe
 
+    /// Path restore dialog state
+    @State private var savedPathToRestore: [CLLocationCoordinate2D]?
+    @State private var showPathRestoreDialog = false
+
     /// 当前用户ID（计算属性）
     private var currentUserId: String? {
         authManager.currentUser?.id.uuidString
@@ -106,6 +110,30 @@ struct MapTabView: View {
         }
         .onAppear {
             handleOnAppear()
+            checkForSavedPath()
+        }
+        .confirmationDialog(
+            "Unfinished Walk",
+            isPresented: $showPathRestoreDialog,
+            titleVisibility: .visible
+        ) {
+            Button("Restore") {
+                if let path = savedPathToRestore, !path.isEmpty {
+                    locationManager.pathCoordinates = path
+                    locationManager.pathUpdateVersion += 1
+                    trackingStartTime = Date()
+                }
+                savedPathToRestore = nil
+            }
+            Button("Discard", role: .destructive) {
+                locationManager.clearSavedPath()
+                savedPathToRestore = nil
+            }
+            Button("Cancel", role: .cancel) {
+                savedPathToRestore = nil
+            }
+        } message: {
+            Text("We found an unfinished walk from earlier. Restore it?")
         }
     }
 
@@ -709,6 +737,14 @@ struct MapTabView: View {
     // MARK: - 方法
 
     /// 页面出现时处理
+    private func checkForSavedPath() {
+        guard !locationManager.isTracking else { return }
+        if let saved = locationManager.loadSavedPath(), !saved.isEmpty {
+            savedPathToRestore = saved
+            showPathRestoreDialog = true
+        }
+    }
+
     private func handleOnAppear() {
         debugLog("🗺️ [地图页面] 页面出现")
 

@@ -59,6 +59,16 @@ struct TestMenuView: View {
                 Text(String(localized: "dev_tools_warning"))
                     .foregroundColor(ApocalypseTheme.textSecondary)
             }
+
+            Section {
+                Button(role: .destructive) {
+                    Task { await InventoryManager.shared.clearAllInventory() }
+                } label: {
+                    Label("Clear All Inventory", systemImage: "trash.fill")
+                }
+            } header: {
+                Text("Inventory")
+            }
         }
         .navigationTitle(String(localized: "test_developer"))
         .navigationBarTitleDisplayMode(.inline)

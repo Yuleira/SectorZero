@@ -452,6 +452,9 @@ final class LocationManager: NSObject, ObservableObject {
 
         // 重置累计距离
         totalDistance = 0
+
+        // Clear persisted path — walk is complete
+        clearSavedPath()
     }
 
     /// 清除路径
@@ -487,6 +490,7 @@ final class LocationManager: NSObject, ObservableObject {
         if pathCoordinates.isEmpty {
             pathCoordinates.append(coordinate)
             pathUpdateVersion += 1
+            savePathToDisk()
             lastLocationForSpeed = location
             lastLocationTimestamp = Date()
             debugLog("📍 [路径追踪] 记录第一个点: (\(String(format: "%.6f", coordinate.latitude)), \(String(format: "%.6f", coordinate.longitude)))")
@@ -513,6 +517,7 @@ final class LocationManager: NSObject, ObservableObject {
         // 3. 速度正常（或只是警告），记录新点
         pathCoordinates.append(coordinate)
         pathUpdateVersion += 1
+        savePathToDisk()
         debugLog("📍 [路径追踪] 记录新点 #\(pathCoordinates.count): 距离上点 \(String(format: "%.1f", distance))m")
         TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_record_point_format", comment: ""), pathCoordinates.count, distance), type: .info)
 
@@ -824,6 +829,39 @@ final class LocationManager: NSObject, ObservableObject {
     func clearSpeedWarning() {
         speedWarning = nil
         isOverSpeed = false
+    }
+
+    // MARK: - Path Persistence
+
+    private let kSavedPath = "lm_saved_path_v1"
+    private let kSavedPathDate = "lm_saved_path_date_v1"
+
+    /// Persist pathCoordinates to UserDefaults after every append.
+    private func savePathToDisk() {
+        let raw = pathCoordinates.map { ["lat": $0.latitude, "lon": $0.longitude] }
+        guard let data = try? JSONSerialization.data(withJSONObject: raw) else { return }
+        UserDefaults.standard.set(data, forKey: kSavedPath)
+        UserDefaults.standard.set(Date(), forKey: kSavedPathDate)
+    }
+
+    /// Returns the saved path if it is less than 24 hours old, nil otherwise.
+    func loadSavedPath() -> [CLLocationCoordinate2D]? {
+        guard
+            let data = UserDefaults.standard.data(forKey: kSavedPath),
+            let savedDate = UserDefaults.standard.object(forKey: kSavedPathDate) as? Date,
+            Date().timeIntervalSince(savedDate) < 86400,
+            let raw = try? JSONSerialization.jsonObject(with: data) as? [[String: Double]]
+        else { return nil }
+        return raw.compactMap {
+            guard let lat = $0["lat"], let lon = $0["lon"] else { return nil }
+            return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        }
+    }
+
+    /// Remove the persisted path from UserDefaults.
+    func clearSavedPath() {
+        UserDefaults.standard.removeObject(forKey: kSavedPath)
+        UserDefaults.standard.removeObject(forKey: kSavedPathDate)
     }
 
     // MARK: - 私有方法

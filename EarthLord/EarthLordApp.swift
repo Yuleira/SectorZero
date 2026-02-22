@@ -63,6 +63,10 @@ struct EarthLordApp: App {
             // Re-enable background tracking if still claiming/exploring
             if isClaiming || isExploring {
                 LocationManager.shared.enableBackgroundTracking()
+                // Re-arm location updates if the OS paused them during background
+                if !LocationManager.shared.isUpdatingLocation {
+                    LocationManager.shared.startUpdatingLocation()
+                }
             }
         case .inactive:
             break

@@ -126,8 +126,14 @@ final class TerritoryManager: ObservableObject {
     ///   - startTime: 开始时间
     ///   - distanceWalked: 行走距离（米）
     func uploadTerritory(coordinates: [CLLocationCoordinate2D], area: Double, startTime: Date, distanceWalked: Double = 0) async throws {
-        // 获取当前用户
-        guard let userId = AuthManager.shared.currentUser?.id else {
+        // Probe the live session; Supabase SDK auto-refreshes stale tokens
+        let verifiedUserId: UUID
+        do {
+            let session = try await supabase.auth.session
+            verifiedUserId = session.user.id
+        } catch {
+            // Session is truly gone — sync auth state and surface error
+            await AuthManager.shared.checkSession()
             throw TerritoryError.notAuthenticated
         }
 
@@ -137,7 +143,7 @@ final class TerritoryManager: ObservableObject {
         let existing: [TerritoryIdRow] = try await supabase
             .from("territories")
             .select("id")
-            .eq("user_id", value: userId.uuidString)
+            .eq("user_id", value: verifiedUserId.uuidString)
             .eq("is_active", value: true)
             .execute()
             .value
@@ -162,7 +168,7 @@ final class TerritoryManager: ObservableObject {
 
         // 构建 RPC 参数（upload_territory_safe 会在服务端执行 ST_MakeValid 修复多边形）
         let params = UploadTerritoryParams(
-            p_user_id: userId.uuidString,
+            p_user_id: verifiedUserId.uuidString,
             p_path: pathJSON,
             p_polygon_wkt: wktPolygon,
             p_bbox_min_lat: bbox.minLat,
