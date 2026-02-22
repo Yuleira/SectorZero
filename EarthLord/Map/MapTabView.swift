@@ -119,8 +119,7 @@ struct MapTabView: View {
         ) {
             Button("Restore") {
                 if let path = savedPathToRestore, !path.isEmpty {
-                    locationManager.pathCoordinates = path
-                    locationManager.pathUpdateVersion += 1
+                    locationManager.resumePathTracking(with: path)
                     trackingStartTime = Date()
                 }
                 savedPathToRestore = nil

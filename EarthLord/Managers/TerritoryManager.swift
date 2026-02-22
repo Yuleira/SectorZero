@@ -215,6 +215,12 @@ final class TerritoryManager: ObservableObject {
             debugLog("📤 [领地上传] ❌ 上传失败 (原始错误): \(String(describing: error))")
             if let pgError = error as? PostgrestError {
                 debugLog("📤 [领地上传] PostgrestError — code: \(pgError.code ?? "nil"), message: \(pgError.message), hint: \(pgError.hint ?? "nil")")
+                // Auth failures from RLS — surface as notAuthenticated to avoid double-wrapping
+                let msg = pgError.message.lowercased()
+                if msg.contains("not authenticated") || msg.contains("unauthorized") {
+                    await AuthManager.shared.checkSession()
+                    throw TerritoryError.notAuthenticated
+                }
             }
 
             let friendlyMessage = friendlyUploadError(from: error)

@@ -221,7 +221,8 @@ final class LocationManager: NSObject, ObservableObject {
     // MARK: - 验证常量
 
     /// 最少路径点数 - 至少需要多少点才检测闭环
-    private let minimumPathPoints: Int = 10
+    /// 5点 × 10m最小间距 = 50m最短周长，足以覆盖小型住宅属地
+    private let minimumPathPoints: Int = 5
 
     /// 最小行走距离（米）
     private let minimumTotalDistance: Double = 50.0
@@ -240,6 +241,13 @@ final class LocationManager: NSObject, ObservableObject {
 
     /// 上次位置（用于计算速度）
     private var lastLocationForSpeed: CLLocation?
+
+    /// 追踪开始时间（用于 GPS 稳定宽限期）
+    private var trackingStartedAt: Date?
+
+    /// 连续超速计数器 — 需要连续 3 次才停止，防止单次 GPS 噪声触发
+    private var overspeedCount: Int = 0
+    private let overspeedStopCount: Int = 3
 
     // MARK: - 计算属性
 
@@ -384,6 +392,8 @@ final class LocationManager: NSObject, ObservableObject {
 
         // 标记开始追踪
         isTracking = true
+        trackingStartedAt = Date()
+        overspeedCount = 0
 
         // 启用后台定位（黑屏/锁屏时继续追踪）
         enableBackgroundTracking()
@@ -449,12 +459,39 @@ final class LocationManager: NSObject, ObservableObject {
         isOverSpeed = false
         lastLocationTimestamp = nil
         lastLocationForSpeed = nil
+        trackingStartedAt = nil
+        overspeedCount = 0
 
         // 重置累计距离
         totalDistance = 0
 
         // Clear persisted path — walk is complete
         clearSavedPath()
+    }
+
+    /// 恢复被中断的行走（含已保存路径）
+    /// 设置 isTracking、重启采点定时器并启用后台定位。
+    func resumePathTracking(with savedPath: [CLLocationCoordinate2D]) {
+        guard !savedPath.isEmpty, isAuthorized else { return }
+
+        pathCoordinates = savedPath
+        pathUpdateVersion += 1
+        isTracking = true
+        trackingStartedAt = Date()   // fresh grace period for resumed walk
+        overspeedCount = 0
+
+        enableBackgroundTracking()
+        if !isUpdatingLocation { startUpdatingLocation() }
+
+        pathUpdateTimer?.invalidate()
+        let timer = Timer(timeInterval: pathUpdateInterval, repeats: true) { [weak self] _ in
+            self?.recordPathPoint()
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        pathUpdateTimer = timer
+
+        debugLog("📍 [路径追踪] ✅ 已恢复路径，共 \(savedPath.count) 个点")
+        TerritoryLogger.shared.log("已恢复路径，共 \(savedPath.count) 个点", type: .info)
     }
 
     /// 清除路径
@@ -799,11 +836,14 @@ final class LocationManager: NSObject, ObservableObject {
 
         // 超过暂停阈值（30 km/h）
         if speedKMH > speedStopThreshold {
-            speedWarning = String(format: NSLocalizedString("map_speed_too_fast_tracking_paused_format", comment: ""), speedKMH)
-            isOverSpeed = true
-            debugLog("📍 [速度检测] ❌ 严重超速！自动停止追踪")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
-            stopPathTracking()
+            // Give GPS 10 s to stabilize — skip auto-stop during grace period
+            if let startedAt = trackingStartedAt, Date().timeIntervalSince(startedAt) < 10 {
+                debugLog("📍 [速度检测] ⏳ 宽限期内忽略超速 (\(String(format: "%.1f", speedKMH)) km/h)")
+                return true
+            }
+            // checkRealtimeSpeed already handles the consecutive stop logic;
+            // here we just block recording the new point without stopping tracking.
+            debugLog("📍 [速度检测] ⚠️ 采点速度过快 \(String(format: "%.1f", speedKMH)) km/h，跳过记录")
             return false
         }
 
@@ -892,7 +932,16 @@ extension LocationManager: CLLocationManagerDelegate {
     /// 授权状态变化回调
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let oldStatus = authorizationStatus
-        authorizationStatus = manager.authorizationStatus
+        let newStatus = manager.authorizationStatus
+
+        // Ignore spurious 4→0 flips during permission upgrade (known iOS behavior)
+        if newStatus == .notDetermined &&
+           (oldStatus == .authorizedAlways || oldStatus == .authorizedWhenInUse) {
+            debugLog("📍 [定位管理器] ⚠️ 忽略虚假授权翻转: \(oldStatus.rawValue) → 0")
+            return
+        }
+
+        authorizationStatus = newStatus
 
         debugLog("📍 [定位管理器] 授权状态变化: \(oldStatus.rawValue) -> \(authorizationStatus.rawValue) (\(authorizationStatusDescription))")
 
@@ -976,13 +1025,26 @@ extension LocationManager: CLLocationManagerDelegate {
 
         // 超过暂停阈值（30 km/h）
         if speedKMH > speedStopThreshold {
+            // Give GPS 10 s to stabilize — skip auto-stop during grace period
+            if let startedAt = trackingStartedAt, Date().timeIntervalSince(startedAt) < 10 {
+                debugLog("📍 [速度检测] ⏳ 宽限期内忽略超速 (\(String(format: "%.1f", speedKMH)) km/h)")
+                return
+            }
+            // Require 3 consecutive readings before stopping — prevents single GPS spike
+            overspeedCount += 1
+            debugLog("📍 [速度检测] ⚠️ 超速 \(String(format: "%.1f", speedKMH)) km/h (\(overspeedCount)/\(overspeedStopCount)次)")
             speedWarning = String(format: NSLocalizedString("map_speed_too_fast_tracking_paused_format", comment: ""), speedKMH)
             isOverSpeed = true
-            debugLog("📍 [速度检测] ❌ 严重超速！自动停止追踪")
-            TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
-            stopPathTracking()
+            if overspeedCount >= overspeedStopCount {
+                debugLog("📍 [速度检测] ❌ 持续超速，自动停止追踪")
+                TerritoryLogger.shared.log(String(format: NSLocalizedString("territory_overspeed_stopped_format", comment: ""), speedKMH), type: .error)
+                stopPathTracking()
+            }
             return
         }
+
+        // 速度正常 — 重置超速计数
+        overspeedCount = 0
 
         // 达到警告阈值（15-30 km/h）
         if speedKMH >= speedWarningThreshold {
