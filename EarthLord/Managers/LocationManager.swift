@@ -221,8 +221,8 @@ final class LocationManager: NSObject, ObservableObject {
     // MARK: - 验证常量
 
     /// 最少路径点数 - 至少需要多少点才检测闭环
-    /// 10点 × 10m最小间距 = 100m最短周长，防止GPS抖动触发假闭环
-    private let minimumPathPoints: Int = 10
+    /// 6点 × 10m最小间距 = 60m最短周长
+    private let minimumPathPoints: Int = 6
 
     /// 最小行走距离（米）
     private let minimumTotalDistance: Double = 10.0 // TEMP: testing indoors, revert to 30.0
