@@ -982,7 +982,7 @@ struct MapTabView: View {
         // 再次检查验证状态
         guard locationManager.territoryValidationPassed else {
             withAnimation {
-                uploadError = "map_validation_failed_upload"
+                uploadError = NSLocalizedString("map_validation_failed_upload", comment: "")
             }
             // 8 秒后清除错误（给用户足够时间阅读）
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {

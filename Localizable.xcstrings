@@ -9039,6 +9039,23 @@
         }
       }
     },
+    "map_validation_failed_upload" : {
+      "comment" : "Territory validation failed, cannot upload",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Territory validation failed — cannot upload"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "领地验证失败，无法上传"
+          }
+        }
+      }
+    },
     "map_waiting_for_gps" : {
       "comment" : "GPS not ready when starting territory claim",
       "localizations" : {

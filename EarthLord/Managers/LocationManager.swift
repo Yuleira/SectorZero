@@ -216,13 +216,13 @@ final class LocationManager: NSObject, ObservableObject {
     private let pathUpdateInterval: TimeInterval = 2.0
 
     /// 闭环距离阈值（米）- 距离起点多近算闭环
-    private let closureDistanceThreshold: Double = 30.0
+    private let closureDistanceThreshold: Double = 50.0
 
     // MARK: - 验证常量
 
     /// 最少路径点数 - 至少需要多少点才检测闭环
-    /// 5点 × 10m最小间距 = 50m最短周长，足以覆盖小型住宅属地
-    private let minimumPathPoints: Int = 5
+    /// 10点 × 10m最小间距 = 100m最短周长，防止GPS抖动触发假闭环
+    private let minimumPathPoints: Int = 10
 
     /// 最小行走距离（米）
     private let minimumTotalDistance: Double = 10.0 // TEMP: testing indoors, revert to 30.0

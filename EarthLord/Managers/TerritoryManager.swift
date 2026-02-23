@@ -126,8 +126,15 @@ final class TerritoryManager: ObservableObject {
     ///   - startTime: 开始时间
     ///   - distanceWalked: 行走距离（米）
     func uploadTerritory(coordinates: [CLLocationCoordinate2D], area: Double, startTime: Date, distanceWalked: Double = 0) async throws {
-        // Use cached auth identity — consistent with loadMyTerritories().
-        // RLS on the DB enforces real authentication; no live session probe needed.
+        // Session warm-up: ensures the Supabase SDK has a valid JWT loaded before
+        // the RPC call. Without this, auth.uid() can return NULL on the first
+        // request after a long walk (session dormant but not expired).
+        do {
+            _ = try await supabase.auth.session
+        } catch {
+            debugLog("📤 [领地上传] ⚠️ Session warm-up failed: \(error). Falling back to cached user.")
+        }
+
         guard let verifiedUserId = AuthManager.shared.currentUser?.id else {
             throw TerritoryError.notAuthenticated
         }
