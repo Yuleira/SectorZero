@@ -121,6 +121,7 @@
 		STORE008A2F03000000000008 /* ProductRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE004A2F03000000000004 /* ProductRow.swift */; };
 		STORE010A2F03000000000010 /* VaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE011A2F03000000000011 /* VaultView.swift */; };
 		STORE013A2F03000000000013 /* ProductDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = STORE012A2F03000000000012 /* ProductDetailSheet.swift */; };
+		TEST000000000000001 /* EarthLordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TEST000000000000002 /* EarthLordTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -239,6 +240,8 @@
 		STORE004A2F03000000000004 /* ProductRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRow.swift; sourceTree = "<group>"; };
 		STORE011A2F03000000000011 /* VaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultView.swift; sourceTree = "<group>"; };
 		STORE012A2F03000000000012 /* ProductDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailSheet.swift; sourceTree = "<group>"; };
+		TEST000000000000002 /* EarthLordTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarthLordTests.swift; sourceTree = "<group>"; };
+		TEST000000000000003 /* EarthLordTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EarthLordTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -258,6 +261,13 @@
 				E60C1BC52EFEABE3005E0B24 /* Supabase in Frameworks */,
 				E605D1002F030AA3003D9861 /* GoogleSignIn in Frameworks */,
 				E6AA77852F329C610083DE5C /* StoreKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		TEST000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,8 +304,10 @@
 				STORE000A2F03000000000000 /* Products.storekit */,
 				E66247742F250BC70094BEBF /* Localizable.xcstrings */,
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
+				TEST000000000000003 /* EarthLordTests.xctest */,
 				E6422F2E2F22422F00610E97 /* Docs */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
+				TEST000000000000004 /* EarthLordTests */,
 				E6AA77832F329C610083DE5C /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -562,7 +574,33 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		TEST000000000000004 /* EarthLordTests */ = {
+			isa = PBXGroup;
+			children = (
+				TEST000000000000002 /* EarthLordTests.swift */,
+			);
+			path = EarthLordTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXContainerItemProxy section */
+		TEST000000000000013 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E62B8A5E2EFABFFF00FFC7A0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E62B8A652EFABFFF00FFC7A0;
+			remoteInfo = EarthLord;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		TEST000000000000012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E62B8A652EFABFFF00FFC7A0 /* EarthLord */;
+			targetProxy = TEST000000000000013 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXNativeTarget section */
 		E62B8A652EFABFFF00FFC7A0 /* EarthLord */ = {
@@ -590,6 +628,24 @@
 			productReference = E632AFC02F12BECD0098D5EC /* EarthLord.app */;
 			productType = "com.apple.product-type.application";
 		};
+		TEST000000000000005 /* EarthLordTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = TEST000000000000011 /* Build configuration list for PBXNativeTarget "EarthLordTests" */;
+			buildPhases = (
+				TEST000000000000006 /* Sources */,
+				TEST000000000000007 /* Frameworks */,
+				TEST000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				TEST000000000000012 /* PBXTargetDependency */,
+			);
+			name = EarthLordTests;
+			productName = EarthLordTests;
+			productReference = TEST000000000000003 /* EarthLordTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -602,6 +658,10 @@
 				TargetAttributes = {
 					E62B8A652EFABFFF00FFC7A0 = {
 						CreatedOnToolsVersion = 26.1.1;
+					};
+					TEST000000000000005 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = E62B8A652EFABFFF00FFC7A0;
 					};
 				};
 			};
@@ -625,6 +685,7 @@
 			projectRoot = "";
 			targets = (
 				E62B8A652EFABFFF00FFC7A0 /* EarthLord */,
+				TEST000000000000005 /* EarthLordTests */,
 			);
 		};
 /* End PBXProject section */
@@ -638,6 +699,13 @@
 				INFOP001A2F04000000000001 /* InfoPlist.xcstrings in Resources */,
 				E61D7CB42F23A0730088DCB4 /* building_templates.json in Resources */,
 				E6E50DD32F12898D0096D2BB /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		TEST000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,6 +822,14 @@
 				STORE013A2F03000000000013 /* ProductDetailSheet.swift in Sources */,
 				STORE010A2F03000000000010 /* VaultView.swift in Sources */,
 				DBGL0G001A2F06000000001A /* DebugLog.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		TEST000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				TEST000000000000001 /* EarthLordTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -957,6 +1033,40 @@
 			};
 			name = Release;
 		};
+		TEST000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3BVN5YA2U5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.EarthLordTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EarthLord.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EarthLord";
+			};
+			name = Debug;
+		};
+		TEST000000000000010 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3BVN5YA2U5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.EarthLordTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EarthLord.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EarthLord";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -974,6 +1084,15 @@
 			buildConfigurations = (
 				E62B8A722EFAC00100FFC7A0 /* Debug */,
 				E62B8A732EFAC00100FFC7A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		TEST000000000000011 /* Build configuration list for PBXNativeTarget "EarthLordTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TEST000000000000009 /* Debug */,
+				TEST000000000000010 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
