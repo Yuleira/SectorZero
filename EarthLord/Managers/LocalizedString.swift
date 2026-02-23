@@ -306,23 +306,23 @@ enum LocalizedString {
     /// 距离排名标签 (exploration_distance_rank)
     static let explorationDistanceRank: LocalizedStringResource = "exploration_distance_rank"
 
-    /// 拾荒成功标题 (scavenge_success_title)
-    static let scavengeSuccessTitle: LocalizedStringResource = "scavenge_success_title"
+    /// 打捞成功标题 (salvage_success_title)
+    static let salvageSuccessTitle: LocalizedStringResource = "salvage_success_title"
 
-    /// 获得物品 (scavenge_items_obtained)
-    static let scavengeItemsObtained: LocalizedStringResource = "scavenge_items_obtained"
+    /// 获得物品 (salvage_items_obtained)
+    static let salvageItemsObtained: LocalizedStringResource = "salvage_items_obtained"
 
-    /// AI生成 (scavenge_ai_generated)
-    static let scavengeAiGenerated: LocalizedStringResource = "scavenge_ai_generated"
+    /// AI生成 (salvage_ai_generated)
+    static let salvageAiGenerated: LocalizedStringResource = "salvage_ai_generated"
 
     /// POI发现标题 (poi_discovery_title)
     static let poiDiscoveryTitle: LocalizedStringResource = "poi_discovery_title"
 
-    /// 拾荒可用 (poi_scavenge_available)
-    static let poiScavengeAvailable: LocalizedStringResource = "poi_scavenge_available"
+    /// 打捞可用 (poi_salvage_available)
+    static let poiSalvageAvailable: LocalizedStringResource = "poi_salvage_available"
 
-    /// 立即拾荒 (poi_scavenge_now)
-    static let poiScavengeNow: LocalizedStringResource = "poi_scavenge_now"
+    /// 立即打捞 (poi_salvage_now)
+    static let poiSalvageNow: LocalizedStringResource = "poi_salvage_now"
 
     // MARK: - Profile (30 keys)
 
@@ -1524,11 +1524,11 @@ enum LocalizedString {
     /// Onboarding slide 2 description (onboarding_desc_claiming)
     static let onboardingDescClaiming: LocalizedStringResource = "onboarding_desc_claiming"
 
-    /// Onboarding slide 3 title: Scavenging (onboarding_title_scavenging)
-    static let onboardingTitleScavenging: LocalizedStringResource = "onboarding_title_scavenging"
+    /// Onboarding slide 3 title: Salvaging (onboarding_title_salvaging)
+    static let onboardingTitleSalvaging: LocalizedStringResource = "onboarding_title_salvaging"
 
-    /// Onboarding slide 3 description (onboarding_desc_scavenging)
-    static let onboardingDescScavenging: LocalizedStringResource = "onboarding_desc_scavenging"
+    /// Onboarding slide 3 description (onboarding_desc_salvaging)
+    static let onboardingDescSalvaging: LocalizedStringResource = "onboarding_desc_salvaging"
 
     /// Onboarding slide 4 title: Comms (onboarding_title_comms)
     static let onboardingTitleComms: LocalizedStringResource = "onboarding_title_comms"

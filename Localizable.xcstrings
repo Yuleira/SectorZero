@@ -9667,7 +9667,7 @@
         }
       }
     },
-    "onboarding_desc_scavenging" : {
+    "onboarding_desc_salvaging" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -9820,19 +9820,19 @@
         }
       }
     },
-    "onboarding_title_scavenging" : {
+    "onboarding_title_salvaging" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resource Scavenging"
+            "value" : "Resource Salvaging"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "资源拾荒"
+            "value" : "资源打捞"
           }
         }
       }
@@ -9958,36 +9958,36 @@
         }
       }
     },
-    "poi_scavenge_available" : {
-      "comment" : "POI can be scavenged",
+    "poi_salvage_available" : {
+      "comment" : "POI can be salvaged",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Can be scavenged"
+            "value" : "Can be salvaged"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "可以搜刮"
+            "value" : "可以打捞"
           }
         }
       }
     },
-    "poi_scavenge_now" : {
-      "comment" : "Scavenge now button",
+    "poi_salvage_now" : {
+      "comment" : "Salvage now button",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scavenge Now"
+            "value" : "Salvage Now"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即搜刮"
+            "value" : "立即打捞"
           }
         }
       }
@@ -13253,7 +13253,7 @@
         }
       }
     },
-    "scavenge_ai_generated" : {
+    "salvage_ai_generated" : {
       "comment" : "AI Generated badge",
       "localizations" : {
         "en" : {
@@ -13270,8 +13270,8 @@
         }
       }
     },
-    "scavenge_coins_earned" : {
-      "comment" : "Coins earned from scavenge",
+    "salvage_coins_earned" : {
+      "comment" : "Coins earned from salvage",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -13288,7 +13288,7 @@
         }
       }
     },
-    "scavenge_danger_level_format" : {
+    "salvage_danger_level_format" : {
       "comment" : "Danger level",
       "localizations" : {
         "en" : {
@@ -13305,7 +13305,7 @@
         }
       }
     },
-    "scavenge_item_count_format" : {
+    "salvage_item_count_format" : {
       "comment" : "Item count",
       "localizations" : {
         "en" : {
@@ -13322,7 +13322,7 @@
         }
       }
     },
-    "scavenge_items_obtained" : {
+    "salvage_items_obtained" : {
       "comment" : "Items obtained",
       "localizations" : {
         "en" : {
@@ -13339,7 +13339,7 @@
         }
       }
     },
-    "scavenge_story" : {
+    "salvage_story" : {
       "comment" : "Story",
       "localizations" : {
         "en" : {
@@ -13356,19 +13356,19 @@
         }
       }
     },
-    "scavenge_success_title" : {
-      "comment" : "Scavenge success title",
+    "salvage_success_title" : {
+      "comment" : "Salvage success title",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scavenge Successful!"
+            "value" : "Salvage Successful!"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "搜刮成功！"
+            "value" : "打捞成功！"
           }
         }
       }

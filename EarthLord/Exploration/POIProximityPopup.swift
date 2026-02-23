@@ -95,7 +95,7 @@ struct POIProximityPopup: View {
                     Spacer()
 
                     // 提示文字
-                    Text(LocalizedString.poiScavengeAvailable)
+                    Text(LocalizedString.poiSalvageAvailable)
                         .font(.system(size: 12))
                         .foregroundColor(ApocalypseTheme.textSecondary)
                 }
@@ -121,7 +121,7 @@ struct POIProximityPopup: View {
                         HStack(spacing: 8) {
                             Image(systemName: "hand.point.up.left.fill")
                                 .font(.system(size: 14))
-                            Text(LocalizedString.poiScavengeNow)
+                            Text(LocalizedString.poiSalvageNow)
                                 .font(.system(size: 15, weight: .semibold))
                         }
                         .foregroundColor(.white)

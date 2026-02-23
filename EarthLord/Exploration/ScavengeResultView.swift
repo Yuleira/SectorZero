@@ -85,7 +85,7 @@ struct ScavengeResultView: View {
             }
 
             // 标题
-            Text(LocalizedString.scavengeSuccessTitle)
+            Text(LocalizedString.salvageSuccessTitle)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(ApocalypseTheme.textPrimary)
 
@@ -103,7 +103,7 @@ struct ScavengeResultView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 10))
-                    Text(String(format: NSLocalizedString("scavenge_danger_level_format", comment: ""), result.poi.dangerLevel))
+                    Text(String(format: NSLocalizedString("salvage_danger_level_format", comment: ""), result.poi.dangerLevel))
                         .font(.system(size: 11, weight: .medium))
                 }
                 .foregroundColor(dangerLevelColor)
@@ -148,7 +148,7 @@ struct ScavengeResultView: View {
         VStack(alignment: .leading, spacing: 12) {
             // 标题
             HStack {
-                Text(LocalizedString.scavengeItemsObtained)
+                Text(LocalizedString.salvageItemsObtained)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(ApocalypseTheme.textSecondary)
 
@@ -159,13 +159,13 @@ struct ScavengeResultView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 10))
-                        Text(LocalizedString.scavengeAiGenerated)
+                        Text(LocalizedString.salvageAiGenerated)
                             .font(.system(size: 11, weight: .medium))
                     }
                     .foregroundColor(.purple)
                 }
 
-                Text(String(format: NSLocalizedString("scavenge_item_count_format", comment: ""), result.items.count))
+                Text(String(format: NSLocalizedString("salvage_item_count_format", comment: ""), result.items.count))
                     .font(.system(size: 13))
                     .foregroundColor(ApocalypseTheme.textMuted)
             }
@@ -252,7 +252,7 @@ struct ScavengeResultView: View {
                             HStack(spacing: 2) {
                                 Image(systemName: isExpanded ? "chevron.up" : "text.quote")
                                     .font(.system(size: 10))
-                                Text(isExpanded ? "common_collapse" : "scavenge_story")
+                                Text(isExpanded ? "common_collapse" : "salvage_story")
                                     .font(.system(size: 11))
                             }
                             .foregroundColor(.purple.opacity(0.8))
