@@ -225,7 +225,7 @@ final class LocationManager: NSObject, ObservableObject {
     private let minimumPathPoints: Int = 5
 
     /// 最小行走距离（米）
-    private let minimumTotalDistance: Double = 50.0
+    private let minimumTotalDistance: Double = 30.0
 
     /// 最小领地面积（平方米）
     private let minimumEnclosedArea: Double = 100.0
