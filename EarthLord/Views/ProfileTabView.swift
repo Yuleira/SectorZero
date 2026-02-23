@@ -680,7 +680,7 @@ struct ProfileTabView: View {
     private func tierColor(for tier: MembershipTier) -> Color {
         switch tier {
         case .free: return ApocalypseTheme.textSecondary
-        case .scavenger: return Color.brown
+        case .salvager: return Color.brown
         case .pioneer: return Color.gray
         case .archon: return Color.yellow
         }

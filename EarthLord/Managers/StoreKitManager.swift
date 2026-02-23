@@ -57,7 +57,7 @@ enum StoreProductID: String, CaseIterable {
     /// Get the membership tier for this subscription product
     var tier: MembershipTier? {
         switch self {
-        case .scavengerMonthly, .scavengerYearly: return .scavenger
+        case .scavengerMonthly, .scavengerYearly: return .salvager
         case .pioneerMonthly, .pioneerYearly: return .pioneer
         case .archonMonthly, .archonYearly: return .archon
         default: return nil
@@ -108,7 +108,7 @@ enum StoreProductID: String, CaseIterable {
 /// Membership tier levels (synced with Supabase player_profiles.membership_tier)
 enum MembershipTier: Int, Comparable {
     case free = 0
-    case scavenger = 1
+    case salvager = 1
     case pioneer = 2
     case archon = 3
 
@@ -119,7 +119,7 @@ enum MembershipTier: Int, Comparable {
     var displayName: LocalizedStringResource {
         switch self {
         case .free: return LocalizedString.tierFree
-        case .scavenger: return LocalizedString.tierScavenger
+        case .salvager: return LocalizedString.tierSalvager
         case .pioneer: return LocalizedString.tierPioneer
         case .archon: return LocalizedString.tierArchon
         }
@@ -128,7 +128,7 @@ enum MembershipTier: Int, Comparable {
     var maxTerritories: Int {
         switch self {
         case .free: return 3
-        case .scavenger: return 5
+        case .salvager: return 5
         case .pioneer: return 10
         case .archon: return 25
         }
@@ -203,11 +203,11 @@ final class StoreKitManager: ObservableObject {
         currentMembershipTier >= .archon
     }
 
-    /// Daily energy grant amount by tier (Free=3, Scavenger=5, Pioneer=10, Archon=infinite)
+    /// Daily energy grant amount by tier (Free=3, Salvager=5, Pioneer=10, Archon=infinite)
     var dailyEnergyAmount: Int {
         switch currentMembershipTier {
         case .free: return 3
-        case .scavenger: return 5
+        case .salvager: return 5
         case .pioneer: return 10
         case .archon: return 0 // Archon has infinite energy, no grant needed
         }
@@ -217,7 +217,7 @@ final class StoreKitManager: ObservableObject {
     var currentStorageLimit: Int {
         switch currentMembershipTier {
         case .free: return 100
-        case .scavenger: return 150
+        case .salvager: return 150
         case .pioneer: return 300
         case .archon: return 600
         }

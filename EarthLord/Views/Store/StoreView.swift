@@ -443,7 +443,7 @@ struct StoreView: View {
     private func tierIcon(for tier: MembershipTier) -> String {
         switch tier {
         case .free: return "person"
-        case .scavenger: return "person.fill"
+        case .salvager: return "person.fill"
         case .pioneer: return "star.fill"
         case .archon: return "crown.fill"
         }
@@ -452,7 +452,7 @@ struct StoreView: View {
     private func tierColor(for tier: MembershipTier) -> Color {
         switch tier {
         case .free: return ApocalypseTheme.textSecondary
-        case .scavenger: return Color.brown
+        case .salvager: return Color.brown
         case .pioneer: return Color.gray
         case .archon: return Color.yellow
         }

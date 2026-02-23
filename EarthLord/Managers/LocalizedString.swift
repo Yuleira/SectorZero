@@ -1419,8 +1419,8 @@ enum LocalizedString {
     /// Free tier name (tier_free)
     static let tierFree: LocalizedStringResource = "tier_free"
 
-    /// Scavenger tier name (tier_scavenger)
-    static let tierScavenger: LocalizedStringResource = "tier_scavenger"
+    /// Salvager tier name (tier_salvager)
+    static let tierSalvager: LocalizedStringResource = "tier_salvager"
 
     /// Pioneer tier name (tier_pioneer)
     static let tierPioneer: LocalizedStringResource = "tier_pioneer"
@@ -1556,8 +1556,8 @@ enum LocalizedString {
 
     // MARK: - Product Detail Sheet (22 keys)
 
-    /// Scavenger tier headline (detail_scavenger_headline)
-    static let detailScavengerHeadline: LocalizedStringResource = "detail_scavenger_headline"
+    /// Salvager tier headline (detail_salvager_headline)
+    static let detailSalvagerHeadline: LocalizedStringResource = "detail_salvager_headline"
     /// Pioneer tier headline (detail_pioneer_headline)
     static let detailPioneerHeadline: LocalizedStringResource = "detail_pioneer_headline"
     /// Archon tier headline (detail_archon_headline)
@@ -1565,8 +1565,8 @@ enum LocalizedString {
     /// Energy pack headline (detail_energy_headline)
     static let detailEnergyHeadline: LocalizedStringResource = "detail_energy_headline"
 
-    /// Scavenger tier description (detail_scavenger_desc)
-    static let detailScavengerDesc: LocalizedStringResource = "detail_scavenger_desc"
+    /// Salvager tier description (detail_salvager_desc)
+    static let detailSalvagerDesc: LocalizedStringResource = "detail_salvager_desc"
     /// Pioneer tier description (detail_pioneer_desc)
     static let detailPioneerDesc: LocalizedStringResource = "detail_pioneer_desc"
     /// Archon tier description (detail_archon_desc)

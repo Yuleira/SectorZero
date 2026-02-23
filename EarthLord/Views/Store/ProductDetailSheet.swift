@@ -49,8 +49,8 @@ struct ProductDetailInfo {
                 icon: "person.fill",
                 accentColor: .brown,
                 buttonTextColor: .white,
-                headline: LocalizedString.detailScavengerHeadline,
-                description: LocalizedString.detailScavengerDesc,
+                headline: LocalizedString.detailSalvagerHeadline,
+                description: LocalizedString.detailSalvagerDesc,
                 benefits: [
                     BenefitItem(icon: "map.fill", text: LocalizedString.storeBenefitTerritories5),
                     BenefitItem(icon: "bolt.fill", text: LocalizedString.storeBenefitDailyScans5),

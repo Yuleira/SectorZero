@@ -29,7 +29,7 @@ struct SubscriptionCard: View {
             return ApocalypseTheme.primary
         }
         switch storeID.tier {
-        case .scavenger: return Color.brown
+        case .salvager: return Color.brown
         case .pioneer: return ApocalypseTheme.info
         case .archon: return Color.yellow
         default: return ApocalypseTheme.primary
@@ -47,7 +47,7 @@ struct SubscriptionCard: View {
             return "questionmark"
         }
         switch storeID.tier {
-        case .scavenger: return "person.fill"
+        case .salvager: return "person.fill"
         case .pioneer: return "star.fill"
         case .archon: return "crown.fill"
         default: return "questionmark"
@@ -231,7 +231,7 @@ struct SubscriptionCard: View {
             }
 
             switch tier {
-            case .scavenger:
+            case .salvager:
                 return AnyView(VStack(alignment: .leading, spacing: 6) {
                     benefitRow(LocalizedString.storeBenefitTerritories5)
                     benefitRow(LocalizedString.storeBenefitDailyScans5)
