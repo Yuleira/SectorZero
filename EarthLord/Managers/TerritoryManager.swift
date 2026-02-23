@@ -126,15 +126,20 @@ final class TerritoryManager: ObservableObject {
     ///   - startTime: 开始时间
     ///   - distanceWalked: 行走距离（米）
     func uploadTerritory(coordinates: [CLLocationCoordinate2D], area: Double, startTime: Date, distanceWalked: Double = 0) async throws {
-        // Probe the live session; Supabase SDK auto-refreshes stale tokens
+        // Probe the live session; Supabase SDK auto-refreshes stale tokens.
+        // Fall back to cached AuthManager user if session probe fails (e.g. transient
+        // network issue while walking outdoors). The DB insert enforces RLS anyway.
         let verifiedUserId: UUID
         do {
             let session = try await supabase.auth.session
             verifiedUserId = session.user.id
         } catch {
-            // Session is truly gone — sync auth state and surface error
-            await AuthManager.shared.checkSession()
-            throw TerritoryError.notAuthenticated
+            if let cachedId = AuthManager.shared.currentUser?.id {
+                verifiedUserId = cachedId
+            } else {
+                await AuthManager.shared.checkSession()
+                throw TerritoryError.notAuthenticated
+            }
         }
 
         // Entitlement: territory limit by membership tier (Pioneer/Archon get higher limits)
