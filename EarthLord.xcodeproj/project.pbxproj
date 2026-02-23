@@ -19,7 +19,6 @@
 		8DB5513183F1830AC31DF510 /* ChannelCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167B01229078B7FF37507795 /* ChannelCenterView.swift */; };
 		9CC3F860DB8F8CF9825F10DD /* PlayerPresenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */; };
 		A1B2C3D40000000000000001 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000002 /* OnboardingView.swift */; };
-		A1B2C3D40000000000000003 /* SplashVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000004 /* SplashVideoView.swift */; };
 		AD0AE0AE9B96B4DD9D657815 /* MessageDistanceFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09CE99C72797BC0211D7466 /* MessageDistanceFilter.swift */; };
 		B3AF75D4EBA04AC381C94C25 /* DensityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA4B57D86AA4709948D4FF9 /* DensityLevel.swift */; };
 		B3D0001A2F3E000000000001 /* Building3DAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0001A2F3E000000000002 /* Building3DAnnotationView.swift */; };
@@ -40,7 +39,6 @@
 		E62484FD2F152D66001B6ABC /* RewardGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62484FC2F152D66001B6ABC /* RewardGenerator.swift */; };
 		E652F40D2F41155B00C8DEC7 /* Settings/PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E652F40C2F41155B00C8DEC7 /* Settings/PrivacyPolicyView.swift */; };
 		E66247752F250BC70094BEBF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E66247742F250BC70094BEBF /* Localizable.xcstrings */; };
-		E68ABF212F48CAB2009EAEF6 /* splash_intro 2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = E68ABF202F48CAB2009EAEF6 /* splash_intro 2.mp4 */; };
 		E68C12DB2F1A5983008967AA /* AIDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68C12DA2F1A5983008967AA /* AIDebugView.swift */; };
 		E69FA4362F1CEBB900E53528 /* BackpackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4312F1CEBB900E53528 /* BackpackView.swift */; };
 		E69FA4372F1CEBB900E53528 /* ExplorationResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69FA4322F1CEBB900E53528 /* ExplorationResultView.swift */; };
@@ -141,7 +139,6 @@
 		90D675FCD7251DE2CB147DEA /* CommunicationModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CommunicationModels.swift; sourceTree = "<group>"; };
 		9837E678A4B84A48F946933C /* ChannelChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChannelChatView.swift; sourceTree = "<group>"; };
 		A1B2C3D40000000000000002 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		A1B2C3D40000000000000004 /* SplashVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashVideoView.swift; sourceTree = "<group>"; };
 		A4DD4FD11BCB70FADC5ED58B /* AIItemGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIItemGenerator.swift; sourceTree = "<group>"; };
 		B09CE99C72797BC0211D7466 /* MessageDistanceFilter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageDistanceFilter.swift; sourceTree = "<group>"; };
 		B3D0001A2F3E000000000002 /* Building3DAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Building3DAnnotationView.swift; sourceTree = "<group>"; };
@@ -159,7 +156,6 @@
 		E632AFC02F12BECD0098D5EC /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E652F40C2F41155B00C8DEC7 /* Settings/PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings/PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		E66247742F250BC70094BEBF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		E68ABF202F48CAB2009EAEF6 /* splash_intro 2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "splash_intro 2.mp4"; sourceTree = "<group>"; };
 		E68C12DA2F1A5983008967AA /* AIDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDebugView.swift; sourceTree = "<group>"; };
 		E69FA4312F1CEBB900E53528 /* BackpackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackpackView.swift; sourceTree = "<group>"; };
 		E69FA4322F1CEBB900E53528 /* ExplorationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationResultView.swift; sourceTree = "<group>"; };
@@ -295,7 +291,6 @@
 		E62B8A5D2EFABFFF00FFC7A0 = {
 			isa = PBXGroup;
 			children = (
-				E68ABF202F48CAB2009EAEF6 /* splash_intro 2.mp4 */,
 				STORE000A2F03000000000000 /* Products.storekit */,
 				E66247742F250BC70094BEBF /* Localizable.xcstrings */,
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
@@ -464,7 +459,6 @@
 				0D94A24A2F2B9DE1A622FB68 /* ProfileSettingsView.swift */,
 				ED1TPR0F1L2E00000000001B /* EditProfileView.swift */,
 				A1B2C3D40000000000000002 /* OnboardingView.swift */,
-				A1B2C3D40000000000000004 /* SplashVideoView.swift */,
 				E6E50DAC2F12898D0096D2BB /* ResourcesTabView.swift */,
 				F77499581BB6EE9C59A383B4 /* Communication */,
 				0018900ACD06501D2B3FB6E4 /* Tabs */,
@@ -643,7 +637,6 @@
 				E66247752F250BC70094BEBF /* Localizable.xcstrings in Resources */,
 				INFOP001A2F04000000000001 /* InfoPlist.xcstrings in Resources */,
 				E61D7CB42F23A0730088DCB4 /* building_templates.json in Resources */,
-				E68ABF212F48CAB2009EAEF6 /* splash_intro 2.mp4 in Resources */,
 				E6E50DD32F12898D0096D2BB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -666,7 +659,6 @@
 				F8FA3C425BD3B92FF9810F4E /* ProfileSettingsView.swift in Sources */,
 				ED1TPR0F1L2E00000000001A /* EditProfileView.swift in Sources */,
 				A1B2C3D40000000000000001 /* OnboardingView.swift in Sources */,
-				A1B2C3D40000000000000003 /* SplashVideoView.swift in Sources */,
 				E6E50DB62F12898D0096D2BB /* TerritoryLogger.swift in Sources */,
 				E6C00BD42F28CE7F00C6AB01 /* TradeMarketView.swift in Sources */,
 				E652F40D2F41155B00C8DEC7 /* Settings/PrivacyPolicyView.swift in Sources */,
