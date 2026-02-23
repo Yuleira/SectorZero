@@ -225,10 +225,10 @@ final class LocationManager: NSObject, ObservableObject {
     private let minimumPathPoints: Int = 6
 
     /// 最小行走距离（米）
-    private let minimumTotalDistance: Double = 10.0 // TEMP: testing indoors, revert to 30.0
+    private let minimumTotalDistance: Double = 30.0
 
     /// 最小领地面积（平方米）
-    private let minimumEnclosedArea: Double = 10.0 // TEMP: testing, revert to 100.0
+    private let minimumEnclosedArea: Double = 100.0
 
     /// 速度警告阈值（km/h）
     private let speedWarningThreshold: Double = 15.0
