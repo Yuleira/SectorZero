@@ -38,6 +38,11 @@ final class SupabaseService {
                     emitLocalSessionAsInitialSession: true
                 ),
                 global: .init(
+                    session: {
+                        let config = URLSessionConfiguration.default
+                        config.timeoutIntervalForRequest = 15
+                        return URLSession(configuration: config)
+                    }(),
                     logger: nil
                 )
             )
