@@ -57,6 +57,9 @@ struct MapTabView: View {
     /// 上传错误信息
     @State private var uploadError: String?
 
+    /// 上传失败后是否可以重试（路径数据已保留）
+    @State private var canRetryUpload = false
+
     /// 领地验证失败弹窗
     @State private var showValidationFailedAlert = false
 
@@ -219,8 +222,12 @@ struct MapTabView: View {
 
             // 上传错误提示
             if let error = uploadError {
-                uploadErrorBanner(error)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                uploadErrorBanner(error, retryAction: canRetryUpload ? {
+                    uploadError = nil
+                    canRetryUpload = false
+                    Task { await uploadCurrentTerritory() }
+                } : nil)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
             // 加载指示器（首次定位时显示）
@@ -507,7 +514,7 @@ struct MapTabView: View {
     }
 
     /// 上传错误横幅
-    private func uploadErrorBanner(_ error: String) -> some View {
+    private func uploadErrorBanner(_ error: String, retryAction: (() -> Void)? = nil) -> some View {
         VStack {
             Spacer()
 
@@ -518,6 +525,18 @@ struct MapTabView: View {
                 Text(error)
                     .font(.subheadline)
                     .fontWeight(.medium)
+
+                if let retry = retryAction {
+                    Button(action: retry) {
+                        Text(String(localized: LocalizedString.commonRetry))
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color.white.opacity(0.25))
+                            .clipShape(Capsule())
+                    }
+                }
             }
             .foregroundColor(.white)
             .padding(.horizontal, 20)
@@ -786,6 +805,9 @@ struct MapTabView: View {
             locationManager.stopPathTracking()
             trackingStartTime = nil
         } else {
+            // 开始新一轮圈地，清除上次失败状态
+            uploadError = nil
+            canRetryUpload = false
             // Day 19: 开始圈地前检测起始点
             startClaimingWithCollisionCheck()
         }
@@ -999,6 +1021,7 @@ struct MapTabView: View {
             // 停止追踪（会重置所有状态）
             locationManager.stopPathTracking()
             trackingStartTime = nil
+            canRetryUpload = false
 
             // 显示成功提示
             withAnimation {
@@ -1018,18 +1041,13 @@ struct MapTabView: View {
         } catch {
             debugLog("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
 
-            // 显示错误提示
+            // 保留路径数据（pathCoordinates 未清除），允许重试
             withAnimation {
                 let format = NSLocalizedString("map_upload_failed_format", comment: "Upload failed")
                 uploadError = String(format: format, error.localizedDescription)
+                canRetryUpload = true
             }
-
-            // 8 秒后清除错误（给用户足够时间阅读）
-            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                withAnimation {
-                    uploadError = nil
-                }
-            }
+            // 不自动清除错误，等用户手动重试或放弃
         }
 
         isUploading = false

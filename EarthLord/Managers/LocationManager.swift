@@ -225,10 +225,10 @@ final class LocationManager: NSObject, ObservableObject {
     private let minimumPathPoints: Int = 5
 
     /// 最小行走距离（米）
-    private let minimumTotalDistance: Double = 30.0
+    private let minimumTotalDistance: Double = 10.0 // TEMP: testing indoors, revert to 30.0
 
     /// 最小领地面积（平方米）
-    private let minimumEnclosedArea: Double = 100.0
+    private let minimumEnclosedArea: Double = 10.0 // TEMP: testing, revert to 100.0
 
     /// 速度警告阈值（km/h）
     private let speedWarningThreshold: Double = 15.0
@@ -329,22 +329,17 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.stopUpdatingLocation()
     }
 
-    /// 请求单次位置更新
+    /// 请求位置更新（确保连续定位已启动）
+    /// 不调用 CLLocationManager.requestLocation()，避免 kCLErrorDomain error 1（与
+    /// startUpdatingLocation() 并发时的冲突）。改为依赖 didUpdateLocations 回调。
     func requestLocation() {
         guard isAuthorized else {
             debugLog("📍 [定位管理器] ⚠️ 未授权，无法请求位置")
             return
         }
-
-        // 避免 kCLErrorDomain error 1：requestLocation() 与 startUpdatingLocation()
-        // 同时调用会产生冲突，因为连续定位已在提供位置数据
-        guard !isUpdatingLocation else {
-            debugLog("📍 [定位管理器] ⏭️ 连续定位中，跳过 requestLocation()")
-            return
+        if !isUpdatingLocation {
+            startUpdatingLocation()
         }
-
-        debugLog("📍 [定位管理器] 请求单次位置...")
-        locationManager.requestLocation()
     }
 
     // MARK: - 后台定位控制
