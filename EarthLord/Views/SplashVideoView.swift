@@ -29,13 +29,11 @@ struct SplashVideoView: View {
                 .ignoresSafeArea()
                 .onAppear { debugLog("🎥 [Splash] Attempting to load video...") }
             } else {
-                // Video file missing — fail gracefully after brief pause
+                // Video file missing — skip immediately, no black-screen hang
                 Color.black.ignoresSafeArea()
                     .onAppear {
-                        debugLog("❌ [Splash] Video file NOT found in bundle")
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            dismissWithFade()
-                        }
+                        debugLog("❌ [Splash] Video file NOT found in bundle — skipping")
+                        onFinished()
                     }
             }
 

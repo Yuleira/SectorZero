@@ -152,18 +152,18 @@
           "localizations" : [
             {
               "description" : "Basic survivor benefits: 5 territories, 5 daily scans, 150 storage",
-              "displayName" : "Scavenger Monthly",
+              "displayName" : "Salvager Monthly",
               "locale" : "en_US"
             },
             {
               "description" : "基础幸存者福利：5领地、5次每日扫描、150背包",
-              "displayName" : "拾荒者 月度",
+              "displayName" : "资源回收者 月度",
               "locale" : "zh_CN"
             }
           ],
           "productID" : "com.sectorzero.sub.scavenger.monthly",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Scavenger Monthly",
+          "referenceName" : "Salvager Monthly",
           "subscriptionGroupID" : "com.sectorzero.subscription.group",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
@@ -185,18 +185,18 @@
           "localizations" : [
             {
               "description" : "Basic survivor benefits: 5 territories, 5 daily scans, 150 storage — Save 33%",
-              "displayName" : "Scavenger Yearly",
+              "displayName" : "Salvager Yearly",
               "locale" : "en_US"
             },
             {
               "description" : "基础幸存者福利：5领地、5次每日扫描、150背包 — 节省33%",
-              "displayName" : "拾荒者 年度",
+              "displayName" : "资源回收者 年度",
               "locale" : "zh_CN"
             }
           ],
           "productID" : "com.sectorzero.sub.scavenger.yearly",
           "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Scavenger Yearly",
+          "referenceName" : "Salvager Yearly",
           "subscriptionGroupID" : "com.sectorzero.subscription.group",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
