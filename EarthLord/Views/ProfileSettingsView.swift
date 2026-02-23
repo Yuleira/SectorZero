@@ -116,6 +116,27 @@ struct ProfileSettingsView: View {
                 .background(ApocalypseTheme.cardBackground)
                 .cornerRadius(16)
 
+                #if DEBUG
+                // MARK: - Developer Tools
+                NavigationLink {
+                    TestMenuView()
+                } label: {
+                    HStack {
+                        Image(systemName: "wrench.and.screwdriver.fill")
+                            .foregroundColor(.orange)
+                        Text("Developer Tools")
+                            .foregroundColor(ApocalypseTheme.textPrimary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(ApocalypseTheme.textMuted)
+                    }
+                    .padding(16)
+                    .background(ApocalypseTheme.cardBackground)
+                    .cornerRadius(16)
+                }
+                #endif
+
                 // MARK: - 账号操作
                 VStack(spacing: 12) {
                     // 退出登录

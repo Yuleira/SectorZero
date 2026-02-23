@@ -9056,6 +9056,23 @@
         }
       }
     },
+    "map_warning_starting_inside_territory" : {
+      "comment" : "Warning shown when user starts claiming inside an existing territory",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning: You are starting inside a claimed zone"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "警告：起点位于他人领地内"
+          }
+        }
+      }
+    },
     "map_waiting_for_gps" : {
       "comment" : "GPS not ready when starting territory claim",
       "localizations" : {

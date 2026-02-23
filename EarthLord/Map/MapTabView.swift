@@ -129,6 +129,10 @@ struct MapTabView: View {
             }
             Button("Discard", role: .destructive) {
                 locationManager.clearSavedPath()
+                locationManager.stopPathTracking()
+                stopCollisionMonitoring()
+                uploadError = nil
+                canRetryUpload = false
                 savedPathToRestore = nil
             }
             Button("Cancel", role: .cancel) {
@@ -515,9 +519,10 @@ struct MapTabView: View {
 
     /// 上传错误横幅
     private func uploadErrorBanner(_ error: String, retryAction: (() -> Void)? = nil) -> some View {
-        VStack {
+        VStack(spacing: 8) {
             Spacer()
 
+            // Main error row
             HStack(spacing: 8) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.body)
@@ -525,6 +530,9 @@ struct MapTabView: View {
                 Text(error)
                     .font(.subheadline)
                     .fontWeight(.medium)
+                    .lineLimit(2)
+
+                Spacer()
 
                 if let retry = retryAction {
                     Button(action: retry) {
@@ -537,17 +545,53 @@ struct MapTabView: View {
                             .clipShape(Capsule())
                     }
                 }
+
+                // X dismiss button — always shown
+                Button {
+                    withAnimation {
+                        uploadError = nil
+                        canRetryUpload = false
+                        showCollisionWarning = false
+                        collisionWarning = nil
+                    }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .padding(6)
+                        .background(Color.white.opacity(0.2))
+                        .clipShape(Circle())
+                }
             }
             .foregroundColor(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             .background(
-                Capsule()
+                RoundedRectangle(cornerRadius: 16)
                     .fill(Color.red)
                     .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
             )
-            .padding(.bottom, 120)
+
+            // Discard Walk button — only when path is still alive
+            if retryAction != nil {
+                Button(role: .destructive) {
+                    withAnimation {
+                        uploadError = nil
+                        canRetryUpload = false
+                    }
+                    stopCollisionMonitoring()
+                    locationManager.stopPathTracking()
+                    trackingStartTime = nil
+                } label: {
+                    Text("Discard Walk")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.7))
+                        .underline()
+                }
+            }
         }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 120)
     }
 
     /// 定位按钮
@@ -838,7 +882,30 @@ struct MapTabView: View {
             return
         }
 
-        // 直接开始圈地（进入他人领地只警告，不阻止）
+        // 检查起点是否已在他人领地内
+        if let userCoord = locationManager.userLocation,
+           let userId = currentUserId {
+            let insideTerritory = territories.first(where: { t in
+                t.userId != userId &&
+                territoryManager.isPointInPolygon(
+                    point: userCoord,
+                    polygon: t.toCoordinates()
+                )
+            })
+            if insideTerritory != nil {
+                withAnimation {
+                    collisionWarning = NSLocalizedString("map_warning_starting_inside_territory", comment: "")
+                    collisionWarningLevel = .warning
+                    showCollisionWarning = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    withAnimation {
+                        if showCollisionWarning { showCollisionWarning = false }
+                    }
+                }
+            }
+        }
+
         TerritoryLogger.shared.log("开始圈地", type: .info)
         trackingStartTime = Date()
         locationManager.startPathTracking()
@@ -1042,10 +1109,13 @@ struct MapTabView: View {
             debugLog("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
 
             // 保留路径数据（pathCoordinates 未清除），允许重试
+            // 清除碰撞警告（追踪已停止，不再需要）
             withAnimation {
                 let format = NSLocalizedString("map_upload_failed_format", comment: "Upload failed")
                 uploadError = String(format: format, error.localizedDescription)
                 canRetryUpload = true
+                showCollisionWarning = false
+                collisionWarning = nil
             }
             // 不自动清除错误，等用户手动重试或放弃
         }

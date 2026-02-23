@@ -363,6 +363,9 @@ final class TerritoryManager: ObservableObject {
 
             debugLog("📥 [领地加载] ✅ 加载完成，共 \(response.count) 个我的领地")
 
+            // 更新 published 属性，供 ProfileTabView 的 totalArea / territoryCount 使用
+            territories = response
+
             // 同时加载累计行走距离
             await loadTotalDistanceWalked()
 
