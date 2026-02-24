@@ -108,24 +108,30 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if authManager.isAuthenticated {
+            if authManager.isInitializing {
+                // 等待 Supabase 初始会话检查，显示主题启动画面而非黑屏
+                LaunchPlaceholderView()
+            } else if authManager.isAuthenticated {
                 MainTabView()
             } else {
                 AuthView()
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: authManager.isInitializing)
         .animation(.easeInOut(duration: 0.3), value: authManager.isAuthenticated)
         .onAppear {
-            // Already logged in at launch + first run → show onboarding
-            if authManager.isAuthenticated && !hasCompletedOnboarding {
-                showOnboarding = true
-            }
             #if DEBUG
             print("🏠 [ContentView] Locale: \(LanguageManager.shared.currentLocale.identifier)")
             #endif
         }
+        .onChange(of: authManager.isInitializing) { _, initializing in
+            // 初始化完成后，已登录且是新用户 → 显示 onboarding
+            if !initializing && authManager.isAuthenticated && !hasCompletedOnboarding {
+                showOnboarding = true
+            }
+        }
         .onChange(of: authManager.isAuthenticated) { _, isAuth in
-            // Post-login first run → show onboarding
+            // 登录后，新用户 → 显示 onboarding
             if isAuth && !hasCompletedOnboarding {
                 showOnboarding = true
             }
@@ -133,5 +139,33 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView(isPresented: $showOnboarding)
         }
+    }
+}
+
+/// 启动占位画面 — 等待 Supabase 会话恢复期间显示，替代黑屏
+private struct LaunchPlaceholderView: View {
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            Color(red: 0.04, green: 0.04, blue: 0.06).ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                Image(systemName: "antenna.radiowaves.left.and.right")
+                    .font(.system(size: 52, weight: .thin))
+                    .foregroundStyle(ApocalypseTheme.primary)
+                    .scaleEffect(pulse ? 1.1 : 0.95)
+                    .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
+
+                Text("SectorZero")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(ApocalypseTheme.textPrimary)
+
+                ProgressView()
+                    .tint(ApocalypseTheme.primary)
+            }
+        }
+        .onAppear { pulse = true }
     }
 }

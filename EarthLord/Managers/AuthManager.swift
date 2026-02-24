@@ -43,6 +43,9 @@ final class AuthManager: NSObject, ObservableObject {
     /// 是否正在加载
     @Published private(set) var isLoading: Bool = false
 
+    /// 是否仍在等待初始会话检查（启动时为 true，.initialSession 到达后变 false）
+    @Published private(set) var isInitializing: Bool = true
+
     /// 错误信息
     @Published var errorMessage: String?
 
@@ -87,6 +90,7 @@ final class AuthManager: NSObject, ObservableObject {
                         self.isAuthenticated = false
                     }
                     self.isLoading = false
+                    self.isInitializing = false
 
                 case .signedIn:
                     // 登录成功
@@ -372,6 +376,7 @@ final class AuthManager: NSObject, ObservableObject {
             // 4. 执行授权请求
             let controller = ASAuthorizationController(authorizationRequests: [request])
             controller.delegate = self
+            controller.presentationContextProvider = self
 
             // Guard against double-tap: if a continuation is already pending, bail out
             guard appleSignInContinuation == nil else {
@@ -637,6 +642,31 @@ final class AuthManager: NSObject, ObservableObject {
         }
 
         return String(format: NSLocalizedString("error_operation_failed_format", comment: ""), error.localizedDescription)
+    }
+}
+
+// MARK: - ASAuthorizationControllerPresentationContextProviding
+extension AuthManager: ASAuthorizationControllerPresentationContextProviding {
+    nonisolated func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        // Use MainActor.assumeIsolated to safely access main actor state synchronously
+        MainActor.assumeIsolated {
+            if let windowScene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first(where: { $0.activationState == .foregroundActive }),
+               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                return window
+            }
+            
+            // Fallback: get any key window or create one with a window scene
+            if let windowScene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first {
+                return UIWindow(windowScene: windowScene)
+            }
+            
+            // Last resort fallback (shouldn't happen in normal circumstances)
+            fatalError("Unable to find a window scene for presentation")
+        }
     }
 }
 
