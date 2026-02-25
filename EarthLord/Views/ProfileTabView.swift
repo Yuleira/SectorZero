@@ -42,6 +42,8 @@ struct ProfileTabView: View {
 
     // MARK: - State & Observers
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject private var languageManager = LanguageManager.shared
     @ObservedObject private var territoryManager = TerritoryManager.shared
@@ -505,10 +507,9 @@ struct ProfileTabView: View {
     // MARK: - Stat Cards Grid
 
     private var statCardsGrid: some View {
-        LazyVGrid(columns: [
-            GridItem(.flexible(), spacing: 12),
-            GridItem(.flexible(), spacing: 12)
-        ], spacing: 12) {
+        let columnCount = horizontalSizeClass == .regular ? 3 : 2
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: columnCount)
+        return LazyVGrid(columns: columns, spacing: 12) {
             Button { showTerritorySheet = true } label: {
                 statCard(
                     icon: "figure.walk",
