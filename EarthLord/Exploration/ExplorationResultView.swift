@@ -247,6 +247,7 @@ struct ExplorationResultView: View {
 
 // MARK: - 预览
 
+#if DEBUG
 #Preview("成功") {
     ExplorationResultView(
         result: MockExplorationData.sampleExplorationResult,
@@ -254,6 +255,7 @@ struct ExplorationResultView: View {
         onRetry: nil
     )
 }
+#endif
 
 #Preview("失败") {
     ExplorationResultView(
