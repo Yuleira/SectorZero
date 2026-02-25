@@ -40,9 +40,7 @@ struct EarthLordApp: App {
                 // 2. Google Sign-In — handles the reverse-client-ID redirect
                 .onOpenURL { url in
                     print("🔗 [onOpenURL] Received URL: \(url.absoluteString)")
-                    Task {
-                        await supabase.auth.handle(url)
-                    }
+                    supabase.auth.handle(url)
                     GIDSignIn.sharedInstance.handle(url)
                 }
         }
