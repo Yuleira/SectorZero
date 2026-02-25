@@ -6,5 +6,7 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>get-task-allow</key>
+	<true/>
 </dict>
 </plist>
