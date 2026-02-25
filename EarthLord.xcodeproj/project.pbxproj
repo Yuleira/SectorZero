@@ -124,6 +124,16 @@
 		TEST000000000000001 /* EarthLordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TEST000000000000002 /* EarthLordTests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		TEST000000000000013 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E62B8A5E2EFABFFF00FFC7A0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E62B8A652EFABFFF00FFC7A0;
+			remoteInfo = EarthLord;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		00D07D29FC143CD40F1E2317 /* POISearchManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = POISearchManager.swift; sourceTree = "<group>"; };
 		0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlayerPresenceManager.swift; sourceTree = "<group>"; };
@@ -584,24 +594,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXContainerItemProxy section */
-		TEST000000000000013 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E62B8A5E2EFABFFF00FFC7A0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E62B8A652EFABFFF00FFC7A0;
-			remoteInfo = EarthLord;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXTargetDependency section */
-		TEST000000000000012 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E62B8A652EFABFFF00FFC7A0 /* EarthLord */;
-			targetProxy = TEST000000000000013 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXNativeTarget section */
 		E62B8A652EFABFFF00FFC7A0 /* EarthLord */ = {
 			isa = PBXNativeTarget;
@@ -834,6 +826,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		TEST000000000000012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E62B8A652EFABFFF00FFC7A0 /* EarthLord */;
+			targetProxy = TEST000000000000013 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E62B8A6F2EFAC00100FFC7A0 /* Debug */ = {

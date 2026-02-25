@@ -533,13 +533,14 @@ final class AuthManager: NSObject, ObservableObject {
         debugLog("🔐 [AuthManager] After handleSessionExpired, isAuthenticated: \(isAuthenticated)")
         
         // 同时尝试清除 Supabase 会话（异步，不等待结果）
-        Task {
+        Task { [weak self] in
             do {
                 try await supabase.auth.signOut()
                 debugLog("🔐 [AuthManager] Background signOut succeeded")
             } catch {
                 debugLog("🔐 [AuthManager] Background signOut failed: \(error.localizedDescription)")
             }
+            _ = self // suppress unused capture warning; self is singleton
         }
     }
 
@@ -674,15 +675,15 @@ extension AuthManager: ASAuthorizationControllerPresentationContextProviding {
 extension AuthManager: ASAuthorizationControllerDelegate {
 
     nonisolated func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        Task { @MainActor in
-            await handleAppleAuthorization(authorization)
+        Task { @MainActor [weak self] in
+            await self?.handleAppleAuthorization(authorization)
         }
     }
 
     nonisolated func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        Task { @MainActor in
-            appleSignInContinuation?.resume(throwing: error)
-            appleSignInContinuation = nil
+        Task { @MainActor [weak self] in
+            self?.appleSignInContinuation?.resume(throwing: error)
+            self?.appleSignInContinuation = nil
         }
     }
 

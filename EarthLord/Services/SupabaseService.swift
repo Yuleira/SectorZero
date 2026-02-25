@@ -33,7 +33,7 @@ final class SupabaseService {
                     schema: "public"
                 ),
                 auth: .init(
-                    redirectToURL: URL(string: "earthlord://auth/callback"),
+                    redirectToURL: URL(string: "sectorzero://auth/callback"),
                     flowType: .pkce,
                     emitLocalSessionAsInitialSession: true
                 ),

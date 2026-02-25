@@ -83,6 +83,9 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 能量不足提示（触发 Store 导航）
     @Published var showEnergyDepletedAlert = false
 
+    /// 探索记录云端保存失败（网络错误）——物品仍已存入背包
+    @Published var showSessionSaveError = false
+
     // MARK: - 私有属性
 
     private let locationManager = LocationManager.shared
@@ -255,6 +258,7 @@ final class ExplorationManager: NSObject, ObservableObject {
         if sessionId == nil {
             debugLog("🔍 [探索] ⚠️ 探索记录保存失败，但物品已保存到背包")
             TerritoryLogger.shared.log("探索记录保存失败，物品已保存", type: .warning)
+            showSessionSaveError = true
         }
 
         // 保存累计行走距离到 Profile
