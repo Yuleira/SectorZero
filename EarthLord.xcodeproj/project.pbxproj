@@ -164,7 +164,7 @@
 		E62484F82F152D4D001B6ABC /* ExplorationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationManager.swift; sourceTree = "<group>"; };
 		E62484FA2F152D59001B6ABC /* InventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryManager.swift; sourceTree = "<group>"; };
 		E62484FC2F152D66001B6ABC /* RewardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardGenerator.swift; sourceTree = "<group>"; };
-		E632AFC02F12BECD0098D5EC /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E632AFC02F12BECD0098D5EC /* SectorZero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SectorZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E652F40C2F41155B00C8DEC7 /* Settings/PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings/PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		E66247742F250BC70094BEBF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		E68C12DA2F1A5983008967AA /* AIDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDebugView.swift; sourceTree = "<group>"; };
@@ -313,7 +313,7 @@
 			children = (
 				STORE000A2F03000000000000 /* Products.storekit */,
 				E66247742F250BC70094BEBF /* Localizable.xcstrings */,
-				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
+				E632AFC02F12BECD0098D5EC /* SectorZero.app */,
 				TEST000000000000003 /* EarthLordTests.xctest */,
 				E6422F2E2F22422F00610E97 /* Docs */,
 				E6E50DB42F12898D0096D2BB /* EarthLord */,
@@ -617,7 +617,7 @@
 				E605D1012F030AA3003D9861 /* GoogleSignInSwift */,
 			);
 			productName = EarthLord;
-			productReference = E632AFC02F12BECD0098D5EC /* EarthLord.app */;
+			productReference = E632AFC02F12BECD0098D5EC /* SectorZero.app */;
 			productType = "com.apple.product-type.application";
 		};
 		TEST000000000000005 /* EarthLordTests */ = {
@@ -966,7 +966,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EarthLord/EarthLord.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 3BVN5YA2U5;
 				ENABLE_PREVIEWS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -984,7 +984,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.EarthLord;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.SectorZero;
 				PRODUCT_NAME = SectorZero;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1003,7 +1003,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EarthLord/EarthLord.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 3BVN5YA2U5;
 				ENABLE_PREVIEWS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1021,7 +1021,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.EarthLord;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.SectorZero;
 				PRODUCT_NAME = SectorZero;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -1046,7 +1046,7 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EarthLord.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EarthLord";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SectorZero.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SectorZero";
 			};
 			name = Debug;
 		};
@@ -1063,7 +1063,7 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EarthLord.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EarthLord";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SectorZero.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SectorZero";
 			};
 			name = Release;
 		};
