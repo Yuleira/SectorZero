@@ -121,12 +121,8 @@ struct ItemPickerSheet: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.secondary)
 
-            if #available(iOS 26.0, *) {
-                TextField(LocalizedString.tradeSearchItems, text: $searchText)
-                    .textFieldStyle(.plain)
-            } else {
-                // Fallback on earlier versions
-            }
+            TextField(LocalizedString.tradeSearchItems, text: $searchText)
+                .textFieldStyle(.plain)
 
             if !searchText.isEmpty {
                 Button {
