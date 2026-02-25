@@ -7,14 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		WCM002A2F08000000000002 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = WCM001A2F08000000000001 /* WatchConnectivityManager.swift */; };
-		WCM004A2F08000000000004 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = WCM003A2F08000000000003 /* WatchConnectivity.framework (iOS) */; };
-		WCM011A2F09000000000011 /* SectorZeroWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = WCM010A2F09000000000010 /* SectorZeroWatchApp.swift */; };
-		WCM013A2F09000000000013 /* WatchStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WCM012A2F09000000000012 /* WatchStatusView.swift */; };
-		WCM015A2F09000000000015 /* WatchConnectivityReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = WCM014A2F09000000000014 /* WatchConnectivityReceiver.swift */; };
-		WCM018A2F09000000000018 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = WCM017A2F09000000000017 /* Assets.xcassets */; };
-		WCM020A2F09000000000020 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = WCM019A2F09000000000019 /* WatchConnectivity.framework (watchOS) */; };
-		WCM030A2F09000000000030 /* SectorZero Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = WCM021A2F09000000000021 /* SectorZero Watch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		09168A96CE22B7A6E7B041B2 /* OfficialChannelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D321796A6FFFE6C2C4246 /* OfficialChannelDetailView.swift */; };
 		26B7C68CBC4136248BA15DD4 /* MessageCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CB5E49A54A9630A0E62E50 /* MessageCenterView.swift */; };
 		327387EF6837AB94B26C68DB /* DeviceManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0A50F7171387A7E2643C5F /* DeviceManagementView.swift */; };
@@ -143,15 +135,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		WCM001A2F08000000000001 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
-		WCM003A2F08000000000003 /* WatchConnectivity.framework (iOS) */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
-		WCM010A2F09000000000010 /* SectorZeroWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectorZeroWatchApp.swift; sourceTree = "<group>"; };
-		WCM012A2F09000000000012 /* WatchStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStatusView.swift; sourceTree = "<group>"; };
-		WCM014A2F09000000000014 /* WatchConnectivityReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityReceiver.swift; sourceTree = "<group>"; };
-		WCM016A2F09000000000016 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		WCM017A2F09000000000017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		WCM019A2F09000000000019 /* WatchConnectivity.framework (watchOS) */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
-		WCM021A2F09000000000021 /* SectorZero Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SectorZero Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		00D07D29FC143CD40F1E2317 /* POISearchManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = POISearchManager.swift; sourceTree = "<group>"; };
 		0A45F63841D2AB4E5A2838C5 /* PlayerPresenceManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlayerPresenceManager.swift; sourceTree = "<group>"; };
 		0D94A24A2F2B9DE1A622FB68 /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
@@ -284,7 +267,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				WCM004A2F08000000000004 /* WatchConnectivity.framework in Frameworks */,
 				E605D1022F030AA3003D9861 /* GoogleSignInSwift in Frameworks */,
 				E60C1BC52EFEABE3005E0B24 /* Supabase in Frameworks */,
 				E605D1002F030AA3003D9861 /* GoogleSignIn in Frameworks */,
@@ -299,38 +281,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		WCM023A2F09000000000023 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				WCM020A2F09000000000020 /* WatchConnectivity.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		WCM034A2F09000000000034 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				WCM019A2F09000000000019 /* WatchConnectivity.framework (watchOS) */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		WCM033A2F09000000000033 /* SectorZeroWatch */ = {
-			isa = PBXGroup;
-			children = (
-				WCM010A2F09000000000010 /* SectorZeroWatchApp.swift */,
-				WCM012A2F09000000000012 /* WatchStatusView.swift */,
-				WCM014A2F09000000000014 /* WatchConnectivityReceiver.swift */,
-				WCM016A2F09000000000016 /* Info.plist */,
-				WCM017A2F09000000000017 /* Assets.xcassets */,
-				WCM034A2F09000000000034 /* Frameworks */,
-			);
-			path = SectorZeroWatch;
-			sourceTree = "<group>";
-		};
 		0018900ACD06501D2B3FB6E4 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
@@ -358,8 +311,6 @@
 		E62B8A5D2EFABFFF00FFC7A0 = {
 			isa = PBXGroup;
 			children = (
-				WCM021A2F09000000000021 /* SectorZero Watch.app */,
-				WCM033A2F09000000000033 /* SectorZeroWatch */,
 				STORE000A2F03000000000000 /* Products.storekit */,
 				E66247742F250BC70094BEBF /* Localizable.xcstrings */,
 				E632AFC02F12BECD0098D5EC /* EarthLord.app */,
@@ -374,7 +325,6 @@
 		E6AA77832F329C610083DE5C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				WCM003A2F08000000000003 /* WatchConnectivity.framework (iOS) */,
 				E6AA77842F329C610083DE5C /* StoreKit.framework */,
 			);
 			name = Frameworks;
@@ -444,7 +394,6 @@
 		E6E50D912F12898D0096D2BB /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				WCM001A2F08000000000001 /* WatchConnectivityManager.swift */,
 				PROF004A2F05000000000004 /* LeaderboardManager.swift */,
 				E6C00BC52F28CE3D00C6AB01 /* TradeManager.swift */,
 				E6AFAD6F2F22ACF50058275D /* BuildingManager.swift */,
@@ -653,12 +602,10 @@
 				E62B8A622EFABFFF00FFC7A0 /* Sources */,
 				E62B8A632EFABFFF00FFC7A0 /* Frameworks */,
 				E62B8A642EFABFFF00FFC7A0 /* Resources */,
-				WCM029A2F09000000000029 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				WCM031A2F09000000000031 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E6422F2E2F22422F00610E97 /* Docs */,
@@ -690,23 +637,6 @@
 			productName = EarthLordTests;
 			productReference = TEST000000000000003 /* EarthLordTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		WCM025A2F09000000000025 /* SectorZero Watch */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = WCM028A2F09000000000028 /* Build configuration list for PBXNativeTarget "SectorZero Watch" */;
-			buildPhases = (
-				WCM022A2F09000000000022 /* Sources */,
-				WCM023A2F09000000000023 /* Frameworks */,
-				WCM024A2F09000000000024 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "SectorZero Watch";
-			productName = "SectorZero Watch";
-			productReference = WCM021A2F09000000000021 /* SectorZero Watch.app */;
-			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -747,26 +677,12 @@
 			projectRoot = "";
 			targets = (
 				E62B8A652EFABFFF00FFC7A0 /* EarthLord */,
-				WCM025A2F09000000000025 /* SectorZero Watch */,
 				TEST000000000000005 /* EarthLordTests */,
 			);
 		};
 /* End PBXProject section */
 
 
-/* Begin PBXCopyFilesBuildPhase section */
-		WCM029A2F09000000000029 /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-				WCM030A2F09000000000030 /* SectorZero Watch.app in Embed Watch Content */,
-			);
-			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 /* Begin PBXResourcesBuildPhase section */
 		E62B8A642EFABFFF00FFC7A0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
@@ -786,14 +702,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		WCM024A2F09000000000024 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				WCM018A2F09000000000018 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -801,7 +709,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				WCM002A2F08000000000002 /* WatchConnectivityManager.swift in Sources */,
 				PROF001A2F05000000000001 /* AchievementDefinitions.swift in Sources */,
 				PROF003A2F05000000000003 /* LeaderboardManager.swift in Sources */,
 				PROF005A2F05000000000005 /* LeaderboardView.swift in Sources */,
@@ -919,38 +826,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		WCM022A2F09000000000022 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				WCM011A2F09000000000011 /* SectorZeroWatchApp.swift in Sources */,
-				WCM013A2F09000000000013 /* WatchStatusView.swift in Sources */,
-				WCM015A2F09000000000015 /* WatchConnectivityReceiver.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 
-/* Begin PBXContainerItemProxy section */
-		WCM032A2F09000000000032 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E62B8A5E2EFABFFF00FFC7A0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = WCM025A2F09000000000025;
-			remoteInfo = "SectorZero Watch";
-		};
-/* End PBXContainerItemProxy section */
 /* Begin PBXTargetDependency section */
 		TEST000000000000012 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E62B8A652EFABFFF00FFC7A0 /* EarthLord */;
 			targetProxy = TEST000000000000013 /* PBXContainerItemProxy */;
-		};
-		WCM031A2F09000000000031 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = WCM025A2F09000000000025 /* SectorZero Watch */;
-			targetProxy = WCM032A2F09000000000032 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1008,7 +891,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1067,7 +950,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1085,7 +968,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EarthLord/EarthLord.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3BVN5YA2U5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1111,7 +994,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1";
 			};
 			name = Debug;
 		};
@@ -1122,7 +1005,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EarthLord/EarthLord.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3BVN5YA2U5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1148,7 +1031,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1";
 			};
 			name = Release;
 		};
@@ -1159,12 +1042,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3BVN5YA2U5;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.EarthLordTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EarthLord.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EarthLord";
 			};
 			name = Debug;
@@ -1176,51 +1059,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3BVN5YA2U5;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yuleira.EarthLordTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EarthLord.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EarthLord";
-			};
-			name = Release;
-		};
-		WCM026A2F09000000000026 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3BVN5YA2U5;
-				INFOPLIST_FILE = SectorZeroWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yuleira.EarthLord.watchkitapp";
-				PRODUCT_NAME = "SectorZero Watch";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
-			};
-			name = Debug;
-		};
-		WCM027A2F09000000000027 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3BVN5YA2U5;
-				INFOPLIST_FILE = SectorZeroWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yuleira.EarthLord.watchkitapp";
-				PRODUCT_NAME = "SectorZero Watch";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
@@ -1250,15 +1095,6 @@
 			buildConfigurations = (
 				TEST000000000000009 /* Debug */,
 				TEST000000000000010 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		WCM028A2F09000000000028 /* Build configuration list for PBXNativeTarget "SectorZero Watch" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				WCM026A2F09000000000026 /* Debug */,
-				WCM027A2F09000000000027 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

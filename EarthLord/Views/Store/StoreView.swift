@@ -21,6 +21,8 @@ enum StoreSection: String, CaseIterable, Identifiable {
 
 // MARK: - Store View
 
+@available(iOS 16.4, *)
+@available(iOS 16.4, *)
 struct StoreView: View {
     /// Optional section to auto-scroll to on appear.
     var initialSection: StoreSection? = nil
@@ -160,36 +162,105 @@ struct StoreView: View {
 
     // MARK: - Products List (ScrollViewReader + auto-scroll)
 
+    @available(iOS 16.4, *)
     private var productsList: some View {
         ScrollViewReader { proxy in
-            ScrollView(.vertical, showsIndicators: true) {
-                LazyVStack(spacing: 24) {
-                    // Current Tier Badge
-                    currentTierBadge
-
-                    // Subscriptions
-                    if !storeManager.subscriptionProducts.isEmpty {
-                        subscriptionsSection
-                            .id(StoreSection.subscriptions)
+            if #available(iOS 16.4, *) {
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVStack(spacing: 24) {
+                        // Current Tier Badge
+                        currentTierBadge
+                        
+                        // Subscriptions
+                        if !storeManager.subscriptionProducts.isEmpty {
+                            subscriptionsSection
+                                .id(StoreSection.subscriptions)
+                        }
+                        
+                        // Energy Packs
+                        energyPacksSection
+                            .id(StoreSection.energy)
                     }
-
-                    // Energy Packs
-                    energyPacksSection
-                        .id(StoreSection.energy)
+                    .padding()
+                    .padding(.bottom, 120)
                 }
-                .padding()
-                .padding(.bottom, 120)
-            }
-            .scrollBounceBehavior(.basedOnSize)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .onAppear {
-                if let section = initialSection {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            proxy.scrollTo(section, anchor: .top)
+                .scrollBounceBehavior(.basedOnSize)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear {
+                    if let section = initialSection {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                proxy.scrollTo(section, anchor: .top)
+                            }
                         }
                     }
                 }
+            } else {
+                // Fallback on earlier versions
+            };if #available(iOS 16.4, *) {
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVStack(spacing: 24) {
+                        // Current Tier Badge
+                        currentTierBadge
+                        
+                        // Subscriptions
+                        if !storeManager.subscriptionProducts.isEmpty {
+                            subscriptionsSection
+                                .id(StoreSection.subscriptions)
+                        }
+                        
+                        // Energy Packs
+                        energyPacksSection
+                            .id(StoreSection.energy)
+                    }
+                    .padding()
+                    .padding(.bottom, 120)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear {
+                    if let section = initialSection {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                proxy.scrollTo(section, anchor: .top)
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Fallback on earlier versions
+            };if #available(iOS 16.4, *) {
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVStack(spacing: 24) {
+                        // Current Tier Badge
+                        currentTierBadge
+                        
+                        // Subscriptions
+                        if !storeManager.subscriptionProducts.isEmpty {
+                            subscriptionsSection
+                                .id(StoreSection.subscriptions)
+                        }
+                        
+                        // Energy Packs
+                        energyPacksSection
+                            .id(StoreSection.energy)
+                    }
+                    .padding()
+                    .padding(.bottom, 120)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear {
+                    if let section = initialSection {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                proxy.scrollTo(section, anchor: .top)
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Fallback on earlier versions
             }
         }
     }
@@ -463,6 +534,10 @@ struct StoreView: View {
 
 #Preview {
     NavigationStack {
-        StoreView()
+        if #available(iOS 16.4, *) {
+            StoreView()
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }
