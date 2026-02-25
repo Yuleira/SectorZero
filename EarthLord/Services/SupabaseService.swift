@@ -33,7 +33,7 @@ final class SupabaseService {
                     schema: "public"
                 ),
                 auth: .init(
-                    redirectToURL: URL(string: "sectorzero://auth/callback"),
+                    redirectToURL: URL(string: "sectorzero://login-callback"),
                     flowType: .pkce,
                     emitLocalSessionAsInitialSession: true
                 ),

@@ -34,8 +34,14 @@ struct EarthLordApp: App {
                 // Late-Binding Localization: inject locale at the very root
                 .environment(\.locale, languageManager.currentLocale)
                 .id(languageManager.refreshID)
-                // Google Sign-In URL callback
+                // Deep-link callback handler:
+                // 1. Supabase — processes PKCE code exchange and magic-link tokens
+                // 2. Google Sign-In — handles the reverse-client-ID redirect
                 .onOpenURL { url in
+                    print("🔗 [onOpenURL] Received URL: \(url.absoluteString)")
+                    Task {
+                        await supabase.auth.handle(url)
+                    }
                     GIDSignIn.sharedInstance.handle(url)
                 }
         }
