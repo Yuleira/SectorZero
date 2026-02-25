@@ -8,6 +8,7 @@
 import SwiftUI
 import GoogleSignIn
 import UIKit
+import Supabase
 
 @main
 struct EarthLordApp: App {
