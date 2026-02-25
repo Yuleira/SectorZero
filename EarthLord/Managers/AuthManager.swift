@@ -738,7 +738,7 @@ extension AuthManager: ASAuthorizationControllerDelegate {
                     nonce: nonce
                 )
             )
-            print("✅ [AppleSignIn] Supabase sign-in SUCCESS — user: \(session.user.email ?? session.user.id.uuidString)")
+            debugLog("✅ [AppleSignIn] Supabase sign-in SUCCESS — user: \(session.user.email ?? session.user.id.uuidString)")
             currentUser = session.user
             isAuthenticated = true
 
