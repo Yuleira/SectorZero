@@ -1,28 +1,77 @@
 {
   "images" : [
     {
-      "filename" : "watch_icon_48.png",
+      "filename" : "icon_24@2x.png",
       "idiom" : "watch",
       "role" : "notificationCenter",
       "scale" : "2x",
       "size" : "24x24"
     },
     {
-      "filename" : "watch_icon_58.png",
+      "filename" : "icon_27.5@2x.png",
+      "idiom" : "watch",
+      "role" : "notificationCenter",
+      "scale" : "2x",
+      "size" : "27.5x27.5"
+    },
+    {
+      "filename" : "icon_29@2x.png",
       "idiom" : "watch",
       "role" : "companionSettings",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "watch_icon_80.png",
+      "filename" : "icon_29@3x.png",
+      "idiom" : "watch",
+      "role" : "companionSettings",
+      "scale" : "3x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "icon_40@2x.png",
       "idiom" : "watch",
       "role" : "appLauncher",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "watch_icon_1024.png",
+      "filename" : "icon_44@2x.png",
+      "idiom" : "watch",
+      "role" : "appLauncher",
+      "scale" : "2x",
+      "size" : "44x44"
+    },
+    {
+      "filename" : "icon_50@2x.png",
+      "idiom" : "watch",
+      "role" : "appLauncher",
+      "scale" : "2x",
+      "size" : "50x50"
+    },
+    {
+      "filename" : "icon_86@2x.png",
+      "idiom" : "watch",
+      "role" : "quickLook",
+      "scale" : "2x",
+      "size" : "86x86"
+    },
+    {
+      "filename" : "icon_98@2x.png",
+      "idiom" : "watch",
+      "role" : "quickLook",
+      "scale" : "2x",
+      "size" : "98x98"
+    },
+    {
+      "filename" : "icon_108@2x.png",
+      "idiom" : "watch",
+      "role" : "quickLook",
+      "scale" : "2x",
+      "size" : "108x108"
+    },
+    {
+      "filename" : "icon_1024@1x.png",
       "idiom" : "watch-marketing",
       "scale" : "1x",
       "size" : "1024x1024"
