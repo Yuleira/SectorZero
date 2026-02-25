@@ -58,6 +58,10 @@ final class AuthManager: NSObject, ObservableObject {
     // MARK: - Apple 登录相关
     private var currentNonce: String?
     private var appleSignInContinuation: CheckedContinuation<Void, Error>?
+    /// Strong reference keeps the controller alive until the delegate fires.
+    /// Without this the controller is deallocated immediately after performRequests()
+    /// and the Apple sheet never appears (silent "unresponsive" bug).
+    private var appleSignInController: ASAuthorizationController?
 
     // MARK: - 认证状态监听任务
     private var authStateTask: Task<Void, Never>?
@@ -384,12 +388,18 @@ final class AuthManager: NSObject, ObservableObject {
                 return
             }
 
+            // Retain controller strongly so it survives until delegate callbacks fire.
+            // A local variable would be deallocated after performRequests() returns,
+            // silently cancelling the sheet before it appears.
+            appleSignInController = controller
+
             // 使用 continuation 将回调转换为 async/await
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                 self.appleSignInContinuation = continuation
                 controller.performRequests()
             }
 
+            appleSignInController = nil
             isLoading = false
         } catch {
             isLoading = false
@@ -675,30 +685,50 @@ extension AuthManager: ASAuthorizationControllerPresentationContextProviding {
 extension AuthManager: ASAuthorizationControllerDelegate {
 
     nonisolated func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        print("✅ [AppleSignIn] didCompleteWithAuthorization — credential type: \(type(of: authorization.credential))")
         Task { @MainActor [weak self] in
             await self?.handleAppleAuthorization(authorization)
         }
     }
 
     nonisolated func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        let nsError = error as NSError
+        print("❌ [AppleSignIn] didCompleteWithError — domain: \(nsError.domain)  code: \(nsError.code)  description: \(nsError.localizedDescription)")
         Task { @MainActor [weak self] in
-            self?.appleSignInContinuation?.resume(throwing: error)
-            self?.appleSignInContinuation = nil
+            guard let self else { return }
+            appleSignInController = nil
+            // User cancelled (code 1001) — don't show an error banner
+            if nsError.domain == ASAuthorizationError.errorDomain,
+               nsError.code == ASAuthorizationError.canceled.rawValue {
+                print("ℹ️ [AppleSignIn] User cancelled — no error shown")
+                isLoading = false
+                appleSignInContinuation?.resume(throwing: error)
+                appleSignInContinuation = nil
+                return
+            }
+            // All other errors — surface to UI
+            errorMessage = nsError.localizedDescription
+            isLoading = false
+            appleSignInContinuation?.resume(throwing: error)
+            appleSignInContinuation = nil
         }
     }
 
     /// 处理 Apple 授权结果
     private func handleAppleAuthorization(_ authorization: ASAuthorization) async {
+        print("🔐 [AppleSignIn] handleAppleAuthorization — extracting credentials...")
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
               let identityTokenData = appleIDCredential.identityToken,
               let identityToken = String(data: identityTokenData, encoding: .utf8),
               let nonce = currentNonce else {
+            print("❌ [AppleSignIn] Failed to extract identity token or nonce")
             let error = NSError(domain: "AuthManager", code: -1, userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("error_cannot_get_apple_credentials", comment: "")])
             appleSignInContinuation?.resume(throwing: error)
             appleSignInContinuation = nil
             return
         }
 
+        print("🔐 [AppleSignIn] Token extracted — calling Supabase signInWithIdToken...")
         do {
             // 使用 Supabase 进行 Apple 登录
             let session = try await supabase.auth.signInWithIdToken(
@@ -708,6 +738,7 @@ extension AuthManager: ASAuthorizationControllerDelegate {
                     nonce: nonce
                 )
             )
+            print("✅ [AppleSignIn] Supabase sign-in SUCCESS — user: \(session.user.email ?? session.user.id.uuidString)")
             currentUser = session.user
             isAuthenticated = true
 
@@ -724,10 +755,12 @@ extension AuthManager: ASAuthorizationControllerDelegate {
 
             appleSignInContinuation?.resume()
         } catch {
+            print("❌ [AppleSignIn] Supabase signInWithIdToken FAILED — \(error.localizedDescription)")
             errorMessage = mapAuthError(error)
             appleSignInContinuation?.resume(throwing: error)
         }
 
+        appleSignInController = nil
         appleSignInContinuation = nil
     }
 }
