@@ -62,6 +62,10 @@ final class AuthManager: NSObject, ObservableObject {
     /// Without this the controller is deallocated immediately after performRequests()
     /// and the Apple sheet never appears (silent "unresponsive" bug).
     private var appleSignInController: ASAuthorizationController?
+    /// Guards against a race condition where Supabase fires .signedOut (token_revoked)
+    /// while revoking the old session during a new Apple Sign In handshake, causing
+    /// handleSessionExpired() to reset isAuthenticated mid-login.
+    private var isPerformingAppleSignIn = false
 
     // MARK: - 认证状态监听任务
     private var authStateTask: Task<Void, Never>?
@@ -107,6 +111,12 @@ final class AuthManager: NSObject, ObservableObject {
                 case .signedOut:
                     // 退出登录或会话过期：重置所有状态
                     // 这会触发 RootView 自动切换到登录页面
+                    // Guard: Supabase fires .signedOut when revoking the old token
+                    // during Apple Sign In — ignore it so the new session is not wiped.
+                    guard !self.isPerformingAppleSignIn else {
+                        debugLog("⚠️ .signedOut ignored — Apple Sign In handshake in progress")
+                        break
+                    }
                     self.handleSessionExpired()
 
                 case .userUpdated:
@@ -361,6 +371,9 @@ final class AuthManager: NSObject, ObservableObject {
     func signInWithApple() async {
         isLoading = true
         errorMessage = nil
+        isPerformingAppleSignIn = true
+
+        defer { isPerformingAppleSignIn = false }
 
         do {
             // 1. 生成随机 nonce（raw nonce）
