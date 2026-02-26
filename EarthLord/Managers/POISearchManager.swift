@@ -238,7 +238,7 @@ final class POISearchManager {
             let pois = response.mapItems.compactMap { item -> NearbyPOI? in
                 guard let name = item.name else { return nil }
                 
-                guard let location = item.location else { return nil }
+                let location = item.location
                 let coordinate = location.coordinate
                 
                 // 过滤距离
