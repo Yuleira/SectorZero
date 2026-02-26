@@ -16,11 +16,15 @@ struct MyOffersView: View {
     @State private var showErrorAlert = false
     @State private var errorMessage: String?
 
+    private var activeOffers: [TradeOffer] {
+        tradeManager.myOffers.filter { $0.status == .active }
+    }
+
     var body: some View {
         ZStack {
             if tradeManager.isLoading && tradeManager.myOffers.isEmpty {
                 ProgressView()
-            } else if tradeManager.myOffers.isEmpty {
+            } else if activeOffers.isEmpty {
                 emptyStateView
             } else {
                 offersList
@@ -107,7 +111,7 @@ struct MyOffersView: View {
 
                 // 挂单列表
                 LazyVStack(spacing: 12) {
-                    ForEach(tradeManager.myOffers) { offer in
+                    ForEach(activeOffers) { offer in
                         MyOfferCard(
                             offer: offer,
                             onCancel: {
