@@ -11,6 +11,7 @@ import SwiftUI
 struct TerritoryBuildingRow: View {
     let building: PlayerBuilding
     let template: BuildingTemplate?
+    let isOutsideBoundary: Bool
     let onUpgrade: () -> Void
     let onDemolish: () -> Void
     
@@ -24,15 +25,23 @@ struct TerritoryBuildingRow: View {
             // 中间：建筑信息
             VStack(alignment: .leading, spacing: 4) {
                 // 建筑名称 (LocalizedStringResource 或 fallback)
-                Group {
-                    if let t = template {
-                        Text(t.localizedName)
-                    } else {
-                        Text(building.buildingName)
+                HStack(spacing: 6) {
+                    Group {
+                        if let t = template {
+                            Text(t.localizedName)
+                        } else {
+                            Text(building.buildingName)
+                        }
+                    }
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(ApocalypseTheme.textPrimary)
+
+                    if isOutsideBoundary {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(ApocalypseTheme.warning)
+                            .font(.system(size: 13))
                     }
                 }
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(ApocalypseTheme.textPrimary)
                 
                 // 状态或倒计时
                 if building.status == .constructing {
@@ -175,11 +184,12 @@ struct TerritoryBuildingRow: View {
                 maxPerTerritory: 3,
                 maxLevel: 3
             ),
+            isOutsideBoundary: false,
             onUpgrade: {},
             onDemolish: {}
         )
-        
-        // 已激活
+
+        // 已激活（越界警告）
         TerritoryBuildingRow(
             building: PlayerBuilding(
                 id: UUID(),
@@ -207,6 +217,7 @@ struct TerritoryBuildingRow: View {
                 maxPerTerritory: 2,
                 maxLevel: 5
             ),
+            isOutsideBoundary: true,
             onUpgrade: {},
             onDemolish: {}
         )

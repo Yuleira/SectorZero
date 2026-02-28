@@ -240,7 +240,13 @@ struct TerritoryDetailView: View {
         } message: {
             demolishMessage
         }
-        .alert(LocalizedString.territoryDeleteConfirmTitle, isPresented: $showDeleteTerritoryAlert) {
+        .alert(
+            Text(verbatim: String(
+                format: String(localized: "territory_delete_confirm_title %@"),
+                currentDisplayName
+            )),
+            isPresented: $showDeleteTerritoryAlert
+        ) {
             Button(LocalizedString.commonCancel, role: .cancel) {}
             Button(LocalizedString.commonDelete, role: .destructive) {
                 Task {
@@ -445,6 +451,7 @@ struct TerritoryDetailView: View {
                                 TerritoryBuildingRow(
                                     building: building,
                                     template: templateDict[building.templateId],
+                                    isOutsideBoundary: isBuildingOutside(building),
                                     onUpgrade: {
                                         handleUpgrade(building)
                                     },
@@ -573,8 +580,13 @@ struct TerritoryDetailView: View {
     private func handlePlacementTap(_ coordinate: CLLocationCoordinate2D) {
         let isInside = isPointInPolygon(point: coordinate, polygon: coordinates)
         if isInside {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                placementSelectedLocation = coordinate
+            if isPointNearBoundary(point: coordinate, polygon: coordinates) {
+                placementErrorMessage = String(localized: "building_location_near_boundary")
+                showPlacementError = true
+            } else {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    placementSelectedLocation = coordinate
+                }
             }
         } else {
             placementErrorMessage = String(localized: "building_location_outside_territory")
@@ -591,6 +603,12 @@ struct TerritoryDetailView: View {
             placementSelectedLocation = nil
         }
         showBuildingBrowser = true
+    }
+
+    /// 判断建筑是否超出领地边界（坐标在多边形外）
+    private func isBuildingOutside(_ building: PlayerBuilding) -> Bool {
+        guard let coord = building.coordinate else { return false }
+        return !isPointInPolygon(point: coord, polygon: coordinates)
     }
 
     /// 射线法判断点是否在多边形内
@@ -611,6 +629,42 @@ struct TerritoryDetailView: View {
             j = i
         }
         return inside
+    }
+
+    /// 检查点是否距多边形任意边 minDistanceMeters 米内
+    private func isPointNearBoundary(
+        point: CLLocationCoordinate2D,
+        polygon: [CLLocationCoordinate2D],
+        minDistanceMeters: Double = 8.0
+    ) -> Bool {
+        let pt = CLLocation(latitude: point.latitude, longitude: point.longitude)
+        for i in 0..<polygon.count {
+            let j = (i + 1) % polygon.count
+            let a = CLLocation(latitude: polygon[i].latitude, longitude: polygon[i].longitude)
+            let b = CLLocation(latitude: polygon[j].latitude, longitude: polygon[j].longitude)
+            if distanceFromPointToSegment(pt, a, b) < minDistanceMeters { return true }
+        }
+        return false
+    }
+
+    /// 点到线段（a-b）的最短距离（米）
+    private func distanceFromPointToSegment(
+        _ pt: CLLocation, _ a: CLLocation, _ b: CLLocation
+    ) -> Double {
+        let ab = b.distance(from: a)
+        guard ab > 0 else { return pt.distance(from: a) }
+        let dLat = b.coordinate.latitude  - a.coordinate.latitude
+        let dLon = b.coordinate.longitude - a.coordinate.longitude
+        let t = max(0, min(1,
+            ((pt.coordinate.latitude  - a.coordinate.latitude)  * dLat +
+             (pt.coordinate.longitude - a.coordinate.longitude) * dLon)
+            / (dLat * dLat + dLon * dLon)
+        ))
+        let proj = CLLocation(
+            latitude:  a.coordinate.latitude  + t * dLat,
+            longitude: a.coordinate.longitude + t * dLon
+        )
+        return pt.distance(from: proj)
     }
 
     /// 执行重命名操作

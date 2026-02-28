@@ -119,13 +119,19 @@ struct BuildingLocationPickerView: View {
     private func handleMapTap(_ coordinate: CLLocationCoordinate2D) {
         // 使用射线法验证点是否在领地多边形内
         let isInsideTerritory = isPointInPolygon(point: coordinate, polygon: territoryCoordinates)
-        
+
         if isInsideTerritory {
-            // ⚠️ coordinate 已经是 GCJ-02，直接使用
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                selectedLocation = coordinate
+            if isPointNearBoundary(point: coordinate, polygon: territoryCoordinates) {
+                validationErrorMessage = String(localized: "building_location_near_boundary")
+                showValidationError = true
+                debugLog("🗺️ [位置选择] 无效位置：距边界太近")
+            } else {
+                // ⚠️ coordinate 已经是 GCJ-02，直接使用
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    selectedLocation = coordinate
+                }
+                debugLog("🗺️ [位置选择] 有效位置: \(coordinate.latitude), \(coordinate.longitude)")
             }
-            debugLog("🗺️ [位置选择] 有效位置: \(coordinate.latitude), \(coordinate.longitude)")
         } else {
             validationErrorMessage = String(localized: "building_location_outside_territory")
             showValidationError = true
@@ -133,8 +139,46 @@ struct BuildingLocationPickerView: View {
         }
     }
     
+    // MARK: - Geometry Helpers
+
+    /// 检查点是否距多边形任意边 minDistanceMeters 米内（防止 GPS 抖动漂出）
+    private func isPointNearBoundary(
+        point: CLLocationCoordinate2D,
+        polygon: [CLLocationCoordinate2D],
+        minDistanceMeters: Double = 8.0
+    ) -> Bool {
+        let pt = CLLocation(latitude: point.latitude, longitude: point.longitude)
+        for i in 0..<polygon.count {
+            let j = (i + 1) % polygon.count
+            let a = CLLocation(latitude: polygon[i].latitude, longitude: polygon[i].longitude)
+            let b = CLLocation(latitude: polygon[j].latitude, longitude: polygon[j].longitude)
+            if distanceFromPointToSegment(pt, a, b) < minDistanceMeters { return true }
+        }
+        return false
+    }
+
+    /// 点到线段（a-b）的最短距离（米）
+    private func distanceFromPointToSegment(
+        _ pt: CLLocation, _ a: CLLocation, _ b: CLLocation
+    ) -> Double {
+        let ab = b.distance(from: a)
+        guard ab > 0 else { return pt.distance(from: a) }
+        let dLat = b.coordinate.latitude  - a.coordinate.latitude
+        let dLon = b.coordinate.longitude - a.coordinate.longitude
+        let t = max(0, min(1,
+            ((pt.coordinate.latitude  - a.coordinate.latitude)  * dLat +
+             (pt.coordinate.longitude - a.coordinate.longitude) * dLon)
+            / (dLat * dLat + dLon * dLon)
+        ))
+        let proj = CLLocation(
+            latitude:  a.coordinate.latitude  + t * dLat,
+            longitude: a.coordinate.longitude + t * dLon
+        )
+        return pt.distance(from: proj)
+    }
+
     // MARK: - Ray Casting Algorithm (Section 5.1)
-    
+
     /// 射线法判断点是否在多边形内
     /// - Parameters:
     ///   - point: 待检测的点
