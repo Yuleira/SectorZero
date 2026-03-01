@@ -15,6 +15,9 @@ struct ProfileSettingsView: View {
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject private var languageManager = LanguageManager.shared
 
+    @AppStorage("settings.hapticEnabled") private var hapticEnabled = true
+    @AppStorage("settings.soundEnabled") private var soundEnabled = true
+
     @State private var showLogoutAlert = false
     @State private var isLoggingOut = false
     @State private var showDeleteAccountSheet = false
@@ -70,6 +73,26 @@ struct ProfileSettingsView: View {
                             trailingText: languageManager.selectedLanguage.displayName
                         )
                     }
+
+                    Divider()
+                        .background(ApocalypseTheme.textMuted.opacity(0.3))
+
+                    // 触觉反馈
+                    settingsToggleRow(
+                        icon: "iphone.radiowaves.left.and.right",
+                        title: LocalizedString.profileHapticFeedback,
+                        isOn: $hapticEnabled
+                    )
+
+                    Divider()
+                        .background(ApocalypseTheme.textMuted.opacity(0.3))
+
+                    // 声音反馈
+                    settingsToggleRow(
+                        icon: "speaker.wave.2.fill",
+                        title: LocalizedString.profileSoundFeedback,
+                        isOn: $soundEnabled
+                    )
 
                     Divider()
                         .background(ApocalypseTheme.textMuted.opacity(0.3))
@@ -228,6 +251,26 @@ struct ProfileSettingsView: View {
     }
 
     // MARK: - 设置行辅助
+    private func settingsToggleRow(icon: String, title: LocalizedStringResource, isOn: Binding<Bool>) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(ApocalypseTheme.primary)
+                .frame(width: 28)
+
+            Text(title)
+                .font(.body)
+                .foregroundColor(ApocalypseTheme.textPrimary)
+
+            Spacer()
+
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+                .tint(ApocalypseTheme.primary)
+        }
+        .padding(16)
+    }
+
     private func settingsRow(icon: String, title: LocalizedStringResource, trailingText: LocalizedStringResource?) -> some View {
         HStack {
             Image(systemName: icon)

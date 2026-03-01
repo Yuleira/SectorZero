@@ -1055,9 +1055,12 @@ struct MapTabView: View {
 
     private enum EventFeedbackType { case success, warning, danger, info }
 
+    @AppStorage("settings.hapticEnabled") private var hapticEnabled = true
+    @AppStorage("settings.soundEnabled") private var soundEnabled = true
+
     private func triggerEventFeedback(_ type: EventFeedbackType) {
-        triggerEventHaptic(type)
-        triggerEventSound(type)
+        if hapticEnabled { triggerEventHaptic(type) }
+        if soundEnabled { triggerEventSound(type) }
     }
 
     private func triggerEventHaptic(_ type: EventFeedbackType) {

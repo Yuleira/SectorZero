@@ -9050,6 +9050,23 @@
         }
       }
     },
+    "map_uploading" : {
+      "comment" : "Territory uploading in progress button state",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uploading..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上传中..."
+          }
+        }
+      }
+    },
     "map_start_claiming" : {
       "comment" : "Start territory claiming button",
       "localizations" : {
@@ -12296,6 +12313,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑档案"
+          }
+        }
+      }
+    },
+    "profile_haptic_feedback" : {
+      "comment" : "Settings toggle for haptic feedback",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptic Feedback"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触觉反馈"
+          }
+        }
+      }
+    },
+    "profile_sound_feedback" : {
+      "comment" : "Settings toggle for sound feedback",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sound Feedback"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "声音反馈"
           }
         }
       }

@@ -459,6 +459,12 @@ enum LocalizedString {
     /// 编辑档案 (profile_edit_profile)
     static let profileEditProfile: LocalizedStringResource = "profile_edit_profile"
 
+    /// 触觉反馈 (profile_haptic_feedback)
+    static let profileHapticFeedback: LocalizedStringResource = "profile_haptic_feedback"
+
+    /// 声音反馈 (profile_sound_feedback)
+    static let profileSoundFeedback: LocalizedStringResource = "profile_sound_feedback"
+
     /// 查看订阅 (profile_view_subscription)
     static let profileViewSubscription: LocalizedStringResource = "profile_view_subscription"
 
