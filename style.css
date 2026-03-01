@@ -1,0 +1,358 @@
+/* ============================================
+   SectorZero – Global Stylesheet
+   ============================================ */
+
+/* --- Reset & Variables --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:       #0c0c0f;
+  --surface:  #13131a;
+  --border:   #1e1e28;
+  --text:     #f0f0f0;
+  --muted:    #888899;
+  --accent:   #00e57a;
+  --accent-dim: #00b85f;
+  --danger:   #ff4d4d;
+  --font:     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --radius:   10px;
+  --max-w:    800px;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- Layout --- */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* --- Navigation --- */
+.nav {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+.nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.875rem;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* --- Hero --- */
+.hero {
+  padding: 80px 0 64px;
+  text-align: center;
+}
+
+.hero-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.hero-tagline {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.hero-desc {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto 40px;
+}
+
+/* App Store Badge (disabled placeholder) */
+.badge-disabled {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #1c1c24;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 22px;
+  color: #555566;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: default;
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+
+.badge-disabled svg {
+  opacity: 0.4;
+}
+
+/* --- Divider --- */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* --- Features --- */
+.features {
+  padding: 64px 0;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+
+.feature-icon {
+  font-size: 1.6rem;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.feature-card p {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* --- Footer --- */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+}
+
+.footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.footer-links a {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* --- Inner pages (Privacy, Support) --- */
+.page-header {
+  padding: 60px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.page-header .updated {
+  font-size: 0.825rem;
+  color: var(--muted);
+}
+
+.prose {
+  padding-bottom: 80px;
+}
+
+.prose h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 40px 0 10px;
+  padding-top: 4px;
+}
+
+.prose p,
+.prose li {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.prose ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.prose li {
+  margin-bottom: 4px;
+}
+
+/* Contact card */
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-top: 40px;
+}
+
+.contact-card h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.contact-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.contact-card a {
+  color: var(--accent);
+}
+
+/* Support topics */
+.topic-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.topic-list li {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topic-list li:last-child {
+  border-bottom: none;
+}
+
+.topic-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.topic-desc {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2.2rem; }
+  .hero { padding: 56px 0 48px; }
+
+  .nav-links { gap: 16px; }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
