@@ -12,6 +12,7 @@ import SwiftUI
 import CoreLocation
 import Combine
 import Supabase
+import AudioToolbox
 
 /// 地图页面主视图
 struct MapTabView: View {
@@ -273,9 +274,10 @@ struct MapTabView: View {
             }
         }
         .onChange(of: locationManager.speedWarning) { oldValue, newValue in
-            // 速度警告 3 秒后自动消失
+            // 速度警告出现时触发反馈，6 秒后自动消失
             if newValue != nil {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                triggerEventFeedback(.warning)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
                     if locationManager.speedWarning == newValue {
                         locationManager.clearSpeedWarning()
                     }
@@ -284,28 +286,31 @@ struct MapTabView: View {
         }
         .onReceive(locationManager.$isPathClosed) { isClosed in
             // 监听闭环状态，闭环后自动上传（不需要手动确认）
-            if isClosed {
-                // 闭环后延迟一点点，等待验证结果
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if locationManager.territoryValidationPassed {
-                        // 验证通过 → 自动上传
-                        Task {
-                            await uploadCurrentTerritory()
-                        }
-                    } else {
-                        // 验证失败 → 仍然累计行走距离
-                        let distance = locationManager.totalDistance
-                        Task {
-                            await territoryManager.addCumulativeDistance(distance)
-                        }
-                        // 保存失败原因，显示持久 alert
-                        validationFailedReason = locationManager.territoryValidationError ?? NSLocalizedString("map_validation_failed", comment: "")
-                        showValidationFailedAlert = true
-                        // 停止追踪（清除路径数据）
-                        locationManager.stopPathTracking()
-                        stopCollisionMonitoring()
-                        trackingStartTime = nil
+            guard isClosed else { return }
+            // 增大延迟至 0.5s，确保 validateTerritory() 异步发布完成
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                // 再次确认闭环状态未被重置（防止用户在等待期间手动停止）
+                guard locationManager.isPathClosed else { return }
+                triggerEventFeedback(.info)   // 闭环确认，轻震提示用户
+                if locationManager.territoryValidationPassed {
+                    // 验证通过 → 自动上传
+                    Task {
+                        await uploadCurrentTerritory()
                     }
+                } else {
+                    // 验证失败 → 仍然累计行走距离
+                    let distance = locationManager.totalDistance
+                    Task {
+                        await territoryManager.addCumulativeDistance(distance)
+                    }
+                    // 保存失败原因，显示持久 alert
+                    validationFailedReason = locationManager.territoryValidationError ?? NSLocalizedString("map_validation_failed", comment: "")
+                    triggerEventFeedback(.danger)
+                    showValidationFailedAlert = true
+                    // 停止追踪（清除路径数据）
+                    locationManager.stopPathTracking()
+                    stopCollisionMonitoring()
+                    trackingStartTime = nil
                 }
             }
         }
@@ -438,9 +443,16 @@ struct MapTabView: View {
             toggleTracking()
         } label: {
             VStack(spacing: 6) {
-                // 图标
-                Image(systemName: locationManager.isTracking ? "stop.fill" : "flag.fill")
-                    .font(.system(size: 20, weight: .semibold))
+                // 图标：上传中显示进度指示器，其余按追踪状态显示
+                if isUploading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(0.9)
+                        .frame(width: 20, height: 20)
+                } else {
+                    Image(systemName: locationManager.isTracking ? "stop.fill" : "flag.fill")
+                        .font(.system(size: 20, weight: .semibold))
+                }
 
                 // 文字
                 Text(claimingButtonTitle)
@@ -455,8 +467,8 @@ struct MapTabView: View {
                     .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
             )
         }
-        .disabled(!locationManager.isAuthorized)
-        .opacity(locationManager.isAuthorized ? 1.0 : 0.5)
+        .disabled(!locationManager.isAuthorized || isUploading)
+        .opacity(locationManager.isAuthorized && !isUploading ? 1.0 : 0.5)
     }
 
     /// 确认登记按钮
@@ -680,7 +692,8 @@ struct MapTabView: View {
     
     /// 领地圈占按钮标题 (Late-Binding: evaluated at render time)
     private var claimingButtonTitle: LocalizedStringResource {
-        locationManager.isTracking ? "map_stop_claiming" : "map_start_claiming"
+        if isUploading { return "map_uploading" }
+        return locationManager.isTracking ? "map_stop_claiming" : "map_start_claiming"
     }
 
     /// 处理探索按钮点击
@@ -1038,6 +1051,41 @@ struct MapTabView: View {
         }
     }
 
+    // MARK: - 事件反馈（触觉 + 声音）
+
+    private enum EventFeedbackType { case success, warning, danger, info }
+
+    private func triggerEventFeedback(_ type: EventFeedbackType) {
+        triggerEventHaptic(type)
+        triggerEventSound(type)
+    }
+
+    private func triggerEventHaptic(_ type: EventFeedbackType) {
+        switch type {
+        case .success:
+            let g = UINotificationFeedbackGenerator(); g.prepare(); g.notificationOccurred(.success)
+        case .warning:
+            let g = UIImpactFeedbackGenerator(style: .medium); g.prepare(); g.impactOccurred()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { g.impactOccurred() }
+        case .danger:
+            let g = UIImpactFeedbackGenerator(style: .heavy); g.prepare(); g.impactOccurred()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { g.impactOccurred() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { g.impactOccurred() }
+        case .info:
+            let g = UIImpactFeedbackGenerator(style: .light); g.prepare(); g.impactOccurred()
+        }
+    }
+
+    private func triggerEventSound(_ type: EventFeedbackType) {
+        // AudioToolbox 系统音效；遵守静音开关（使用 kSystemSoundID_Vibrate 替代方案已由触觉覆盖）
+        switch type {
+        case .success: AudioServicesPlaySystemSound(1016)   // 短促叮声
+        case .warning: AudioServicesPlaySystemSound(1073)   // 低电量提示
+        case .danger:  AudioServicesPlaySystemSound(1005)   // 日历提醒
+        case .info:    AudioServicesPlaySystemSound(1016)
+        }
+    }
+
     /// 上传当前领地
     private func uploadCurrentTerritory() async {
         // 防止重复上传
@@ -1094,9 +1142,10 @@ struct MapTabView: View {
             withAnimation {
                 showUploadSuccess = true
             }
+            triggerEventFeedback(.success)
 
-            // 3 秒后隐藏成功提示
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // 10 秒后隐藏成功提示
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 withAnimation {
                     showUploadSuccess = false
                 }
@@ -1104,12 +1153,16 @@ struct MapTabView: View {
 
             // 刷新领地列表
             await loadTerritories()
+            // 通知 TerritoryTabView 自动刷新
+            NotificationCenter.default.post(name: .territoryUpdated, object: nil)
 
         } catch {
             debugLog("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
+            TerritoryLogger.shared.log("领地上传失败: \(error.localizedDescription)", type: .error)
 
             // 保留路径数据（pathCoordinates 未清除），允许重试
             // 清除碰撞警告（追踪已停止，不再需要）
+            triggerEventFeedback(.danger)
             withAnimation {
                 let format = NSLocalizedString("map_upload_failed_format", comment: "Upload failed")
                 uploadError = String(format: format, error.localizedDescription)
