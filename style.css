@@ -356,3 +356,270 @@ a:hover {
     align-items: flex-start;
   }
 }
+
+/* ============================================
+   Guide Page – Supplemental Styles
+   ============================================ */
+
+.guide-body {
+  padding-bottom: 80px;
+}
+
+.guide-section {
+  margin: 56px 0;
+  padding-top: 8px;
+  scroll-margin-top: 72px;
+}
+
+.guide-section h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.guide-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 28px 0 10px;
+}
+
+.guide-section p {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+
+.guide-section ul,
+.guide-section ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.guide-section li {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 4px;
+}
+
+/* TOC */
+.toc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 8px;
+}
+
+.toc-card p {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.toc-grid a {
+  font-size: 0.9rem;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+
+.toc-grid a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Guide Table */
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.guide-table th {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: left;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.guide-table td {
+  font-size: 0.9rem;
+  color: var(--muted);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.guide-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Callout */
+.callout-warn {
+  background: #1a1800;
+  border-left: 3px solid #e5b800;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 0.9rem;
+  color: #c8a800;
+  line-height: 1.6;
+}
+
+/* Tip Cards */
+.tip-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.tip-card h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.tip-card p,
+.tip-card li {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.tip-card ul {
+  padding-left: 18px;
+  margin-top: 6px;
+}
+
+/* FAQ Cards */
+.faq-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+
+.faq-card .q {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.faq-card .a-list {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.7;
+  list-style: none;
+  padding: 0;
+}
+
+/* Channel Cards */
+.channel-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.channel-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.channel-card h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.channel-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Achievement Cards */
+.achievement-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.achievement-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+
+.achievement-card h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.achievement-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Rarity Pills */
+.rarity-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.pill-common    { background: #1e1e28; color: #aaaacc; border: 1px solid #2e2e3e; }
+.pill-uncommon  { background: #0e2010; color: #40c060; border: 1px solid #1a4025; }
+.pill-rare      { background: #0a1525; color: #4090e0; border: 1px solid #1a3060; }
+.pill-epic      { background: #1a0a2a; color: #a060e0; border: 1px solid #3a1a5a; }
+.pill-legendary { background: #2a1500; color: #e08020; border: 1px solid #5a2e00; }
+
+/* Guide Responsive */
+@media (max-width: 600px) {
+  .guide-table { font-size: 0.825rem; }
+  .guide-table th, .guide-table td { padding: 8px; }
+  .toc-grid { grid-template-columns: 1fr; }
+  .channel-cards { grid-template-columns: 1fr; }
+  .achievement-cards { grid-template-columns: 1fr; }
+}
