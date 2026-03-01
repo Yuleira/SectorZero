@@ -135,7 +135,6 @@ enum POIType: String, CaseIterable {
     }
 }
 /// POI搜索管理器
-@MainActor
 final class POISearchManager {
     
     // MARK: - 单例
@@ -165,20 +164,23 @@ final class POISearchManager {
         debugLog("🔍 [POI搜索] 开始搜索，中心点: (\(String(format: "%.6f", center.latitude)), \(String(format: "%.6f", center.longitude)))")
         
         var allPOIs: [NearbyPOI] = []
-        
+        // 每种类型的 (结果数, 错误描述?)
+        var typeResults: [POIType: (Int, String?)] = [:]
+
         // 搜索多种类型的POI
         let typesToSearch: [POIType] = [.supermarket, .convenience, .hospital, .pharmacy, .gasStation, .restaurant, .cafe]
-        
+
         // 并发搜索所有类型
-        await withTaskGroup(of: [NearbyPOI].self) { group in
+        await withTaskGroup(of: (POIType, [NearbyPOI], String?).self) { group in
             for poiType in typesToSearch {
                 group.addTask {
                     await self.searchPOIs(type: poiType, center: center)
                 }
             }
-            
-            for await pois in group {
+
+            for await (type, pois, errorMsg) in group {
                 allPOIs.append(contentsOf: pois)
+                typeResults[type] = (pois.count, errorMsg)
             }
         }
         
@@ -205,16 +207,37 @@ final class POISearchManager {
             allPOIs = Array(allPOIs.prefix(20))
         }
         
-        debugLog("🔍 [POI搜索] 搜索完成，共找到 \(allPOIs.count) 个POI")
+        // 汇总摘要：写入 TerritoryLogger（Release 可见，支持设备内查看和导出）
+        var summary = "[POI搜索] 共 \(allPOIs.count) 个结果"
+        for type in typesToSearch {
+            if let (count, errorMsg) = typeResults[type] {
+                if let msg = errorMsg {
+                    summary += "\n  ✗ \(type.rawValue): 失败 — \(msg)"
+                } else {
+                    summary += "\n  ✓ \(type.rawValue): \(count) 个"
+                }
+            }
+        }
+        let hasErrors = typeResults.values.contains { $0.1 != nil }
+        let logType: LogType = hasErrors ? .warning : .info
+        await MainActor.run { TerritoryLogger.shared.log(summary, type: logType) }
+        debugLog("🔍 " + summary)
+
         return allPOIs
     }
     
     // MARK: - 私有方法
     
     /// 搜索指定类型的POI
-    private func searchPOIs(type: POIType, center: CLLocationCoordinate2D) async -> [NearbyPOI] {
+    /// 返回 (type, 结果列表, 错误描述?) — 错误描述为 nil 表示成功
+    private func searchPOIs(type: POIType, center: CLLocationCoordinate2D) async -> (POIType, [NearbyPOI], String?) {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = type.searchQuery
+        
+        // 优先使用 POI 分类过滤以提高精准度；保留自然语言以增强召回
+        if let category = type.poiCategory {
+            request.pointOfInterestFilter = MKPointOfInterestFilter(including: [category])
+        }
         
         // 🔥 修改这里：直接定义半径，不依赖外部变量，防报错！
         let defaultRadius: CLLocationDistance = 2000 // 默认2000米
@@ -248,7 +271,12 @@ final class POISearchManager {
                 guard distance <= specificRadius else { return nil }
                 
                 // 生成唯一ID
-                let id = "\(coordinate.latitude)_\(coordinate.longitude)_\(name)"
+                // 坐标四舍五入到 1e-5 度（≈1.1m），避免浮点微差导致同地重复
+                let latRounded = (coordinate.latitude * 1e5).rounded() / 1e5
+                let lonRounded = (coordinate.longitude * 1e5).rounded() / 1e5
+                // 优先用电话/URL作为额外区分，彻底避免同名不同地的冲突
+                let disambiguator = item.phoneNumber ?? item.url?.host ?? ""
+                let id = "\(latRounded)_\(lonRounded)_\(name)_\(disambiguator)"
                     .replacingOccurrences(of: " ", with: "_")
                 
                 return NearbyPOI(
@@ -263,10 +291,10 @@ final class POISearchManager {
                 debugLog("🔍 [POI搜索] \(type.rawValue): 找到 \(pois.count) 个 (关键词: \(type.searchQuery))")
             }
             // 限制每种类型最多返回 10 个
-            return Array(pois.prefix(10))
+            return (type, Array(pois.prefix(10)), nil)
         } catch {
             debugLog("🔍 [POI搜索] \(type.rawValue) 搜索失败: \(error.localizedDescription)")
-            return []
+            return (type, [], error.localizedDescription)
         }
     }
 }

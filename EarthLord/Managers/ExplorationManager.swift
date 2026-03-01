@@ -114,6 +114,9 @@ final class ExplorationManager: NSObject, ObservableObject {
     /// 注意：设置为100米以便测试，生产环境可以调整为更小的值
     private let poiTriggerRadius: CLLocationDistance = 100
 
+    /// POI搜刮最大允许速度（km/h）——超过此速度（驾车/骑行）不触发
+    private let poiMaxSpeedKmh: Double = 15.0
+
     /// 当前密度等级（决定POI显示数量）
     private var currentDensityLevel: DensityLevel = .alone
 
@@ -727,7 +730,14 @@ final class ExplorationManager: NSObject, ObservableObject {
             // 已经在显示弹窗，不重复触发
             return
         }
-        
+
+        // 速度检测：驾车/骑行时不触发POI搜刮（只有步行才能回收资源）
+        let currentSpeedKmh = locationManager.currentSpeed
+        guard currentSpeedKmh <= poiMaxSpeedKmh || currentSpeedKmh == 0 else {
+            debugLog("🏪 [POI] 速度过快 (\(String(format: "%.1f", currentSpeedKmh)) km/h)，跳过POI检测")
+            return
+        }
+
         guard let userLocation = locationManager.userLocation else {
             debugLog("🏪 [POI] 检测跳过：无用户位置")
             return
