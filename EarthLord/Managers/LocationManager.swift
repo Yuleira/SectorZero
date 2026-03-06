@@ -110,6 +110,72 @@ enum LocationProviderFactory {
     }
 }
 
+// MARK: - Territory Simulation Scenarios (DEBUG only)
+
+/// 圈地模拟场景——覆盖验证的每个分支
+enum TerritorySimScenario: String, CaseIterable, Identifiable {
+    case validSquare  = "✅ 有效领地 (50×50m)"
+    case tooFewPoints = "❌ 点数不足 (4点 < 最少6点)"
+    case tooShort     = "❌ 距离不足 (< 30m)"
+    case tooSmall     = "❌ 面积不足 (< 100m²)"
+
+    var id: String { rawValue }
+
+    /// 预制坐标。基准点：Oslo 59.91°N, 10.75°E
+    /// 换算：1m ≈ 0.000009° lat，1m ≈ 0.000018° lon（cos59.91°≈0.5003）
+    var coordinates: [CLLocationCoordinate2D] {
+        switch self {
+
+        case .validSquare:
+            // 50×50m 方形，8 个点，面积 2500m²，周长 175m——全部通过验证
+            return [
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75000), // SW 起点
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75045), // 25m 东
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75090), // SE 角（50m 东）
+                CLLocationCoordinate2D(latitude: 59.91023, longitude: 10.75090), // 25m 北
+                CLLocationCoordinate2D(latitude: 59.91045, longitude: 10.75090), // NE 角（50m 北）
+                CLLocationCoordinate2D(latitude: 59.91045, longitude: 10.75045), // 25m 西
+                CLLocationCoordinate2D(latitude: 59.91045, longitude: 10.75000), // NW 角（50m 西）
+                CLLocationCoordinate2D(latitude: 59.91023, longitude: 10.75000), // 25m 南（距起点 25m）
+            ]
+
+        case .tooFewPoints:
+            // 4 个点 → 点数检查失败（最少 6 点）
+            return [
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75000),
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75090), // 50m 东
+                CLLocationCoordinate2D(latitude: 59.91045, longitude: 10.75090), // 50m 北
+                CLLocationCoordinate2D(latitude: 59.91045, longitude: 10.75000), // 50m 西
+            ]
+
+        case .tooShort:
+            // 6 个点，但总距离仅约 5.5m → 距离检查失败（最少 30m）
+            return [
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75000),
+                CLLocationCoordinate2D(latitude: 59.91001, longitude: 10.75000), // 1.1m 北
+                CLLocationCoordinate2D(latitude: 59.91002, longitude: 10.75000), // 1.1m 北
+                CLLocationCoordinate2D(latitude: 59.91003, longitude: 10.75000), // 1.1m 北
+                CLLocationCoordinate2D(latitude: 59.91002, longitude: 10.75000), // 1.1m 南
+                CLLocationCoordinate2D(latitude: 59.91001, longitude: 10.75000), // 1.1m 南
+            ]
+
+        case .tooSmall:
+            // 极细长条：宽 1.1m × 长 33m，面积 ~36m² → 面积检查失败（最少 100m²）
+            // 总距离 ~68m（通过距离检查），6+ 点（通过点数检查）
+            return [
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75000),
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75018), // 10m 东
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75036), // 20m 东
+                CLLocationCoordinate2D(latitude: 59.91000, longitude: 10.75054), // 30m 东
+                CLLocationCoordinate2D(latitude: 59.91001, longitude: 10.75054), // 1.1m 北
+                CLLocationCoordinate2D(latitude: 59.91001, longitude: 10.75036), // 20m 西
+                CLLocationCoordinate2D(latitude: 59.91001, longitude: 10.75018), // 10m 西
+                CLLocationCoordinate2D(latitude: 59.91001, longitude: 10.75000), // 回到附近
+            ]
+        }
+    }
+}
+
 #endif
 
 // MARK: - Location Manager
@@ -898,6 +964,51 @@ final class LocationManager: NSObject, ObservableObject {
         UserDefaults.standard.removeObject(forKey: kSavedPath)
         UserDefaults.standard.removeObject(forKey: kSavedPathDate)
     }
+
+    // MARK: - 圈地模拟 (DEBUG only)
+
+#if DEBUG
+    /// 注入预制坐标，触发完整的验证 + 上传流程，无需真实 GPS。
+    /// MapTabView 的 onReceive($isPathClosed) 会自动响应并执行上传。
+    func simulateClosedTerritory(_ scenario: TerritorySimScenario) {
+        // 1. 重置所有追踪状态
+        pathUpdateTimer?.invalidate()
+        pathUpdateTimer = nil
+        isTracking = false
+        isPathClosed = false
+        territoryValidationPassed = false
+        territoryValidationError = nil
+        calculatedArea = 0
+
+        // 2. 注入坐标
+        pathCoordinates = scenario.coordinates
+        pathUpdateVersion += 1
+
+        // 3. 计算总距离（等同于 calculateTotalPathDistance()）
+        var dist: Double = 0
+        for i in 1..<pathCoordinates.count {
+            let a = CLLocation(latitude: pathCoordinates[i-1].latitude, longitude: pathCoordinates[i-1].longitude)
+            let b = CLLocation(latitude: pathCoordinates[i].latitude, longitude: pathCoordinates[i].longitude)
+            dist += b.distance(from: a)
+        }
+        totalDistance = dist
+
+        // 4. 验证（设置 territoryValidationPassed / calculatedArea / territoryValidationError）
+        let result = validateTerritory()
+        territoryValidationPassed = result.isValid
+        territoryValidationError = result.errorMessage
+
+        debugLog("🧪 [模拟圈地] 场景: \(scenario.rawValue)")
+        debugLog("🧪 [模拟圈地] 点数: \(pathCoordinates.count), 距离: \(String(format: "%.1f", dist))m, 面积: \(String(format: "%.1f", calculatedArea))m²")
+        debugLog("🧪 [模拟圈地] 验证结果: \(territoryValidationPassed ? "✅ 通过" : "❌ 失败 — \(territoryValidationError ?? "")")")
+
+        // 5. 触发闭环（主线程下一 RunLoop，确保 false→true 变更被 Combine 分两次发布）
+        DispatchQueue.main.async { [weak self] in
+            self?.isPathClosed = true
+            self?.pathUpdateVersion += 1
+        }
+    }
+#endif
 
     // MARK: - 私有方法
 

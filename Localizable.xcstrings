@@ -9153,6 +9153,23 @@
         }
       }
     },
+    "map_territory_saved_locally" : {
+      "comment" : "Territory GPS path saved locally, will sync when network is available",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Territory saved. Will sync automatically when connected."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "领地已保存，联网后自动同步。"
+          }
+        }
+      }
+    },
     "map_upload_failed_format" : {
       "comment" : "Upload failed",
       "localizations" : {

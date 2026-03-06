@@ -35,6 +35,19 @@ private nonisolated struct UploadTerritoryParams: Encodable, Sendable {
     let p_distance_walked: Double
 }
 
+/// 网络不可用时，本地保存的待上传领地数据
+struct PendingTerritoryUpload: Codable {
+    struct Coord: Codable { let lat: Double; let lon: Double }
+    let coords: [Coord]
+    let area: Double
+    let startTime: Date
+    let distanceWalked: Double
+
+    var clCoordinates: [CLLocationCoordinate2D] {
+        coords.map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon) }
+    }
+}
+
 /// 领地管理器
 /// 负责领地数据的上传和拉取
 @MainActor
@@ -60,6 +73,41 @@ final class TerritoryManager: ObservableObject {
     // MARK: - 私有属性
 
     private init() {}
+
+    // MARK: - 离线上传队列
+
+    private static let pendingUploadKey = "tm_pending_territory_v1"
+
+    /// 是否有本地待上传的领地
+    var hasPendingUpload: Bool {
+        UserDefaults.standard.data(forKey: Self.pendingUploadKey) != nil
+    }
+
+    /// 将领地数据保存到本地（网络失败时调用）
+    func savePendingUpload(coordinates: [CLLocationCoordinate2D], area: Double, startTime: Date, distanceWalked: Double) {
+        let pending = PendingTerritoryUpload(
+            coords: coordinates.map { .init(lat: $0.latitude, lon: $0.longitude) },
+            area: area,
+            startTime: startTime,
+            distanceWalked: distanceWalked
+        )
+        guard let data = try? JSONEncoder().encode(pending) else { return }
+        UserDefaults.standard.set(data, forKey: Self.pendingUploadKey)
+        debugLog("📦 [离线队列] 领地已保存本地 (\(coordinates.count)点, \(String(format: "%.0f", area))m²)")
+    }
+
+    /// 读取本地待上传的领地
+    func loadPendingUpload() -> PendingTerritoryUpload? {
+        guard let data = UserDefaults.standard.data(forKey: Self.pendingUploadKey),
+              let pending = try? JSONDecoder().decode(PendingTerritoryUpload.self, from: data) else { return nil }
+        return pending
+    }
+
+    /// 清除本地待上传的领地
+    func clearPendingUpload() {
+        UserDefaults.standard.removeObject(forKey: Self.pendingUploadKey)
+        debugLog("📦 [离线队列] 本地待上传数据已清除")
+    }
 
     // MARK: - 坐标转换方法
 
@@ -142,13 +190,19 @@ final class TerritoryManager: ObservableObject {
         // Entitlement: territory limit by membership tier (Pioneer/Archon get higher limits)
         let maxAllowed = StoreKitManager.shared.currentMembershipTier.maxTerritories
         struct TerritoryIdRow: Decodable { let id: String }
-        let existing: [TerritoryIdRow] = try await supabase
-            .from("territories")
-            .select("id")
-            .eq("user_id", value: verifiedUserId.uuidString)
-            .eq("is_active", value: true)
-            .execute()
-            .value
+        let existing: [TerritoryIdRow]
+        do {
+            existing = try await supabase
+                .from("territories")
+                .select("id")
+                .eq("user_id", value: verifiedUserId.uuidString)
+                .eq("is_active", value: true)
+                .execute()
+                .value
+        } catch {
+            let friendlyMessage = friendlyUploadError(from: error)
+            throw TerritoryError.uploadFailed(friendlyMessage)
+        }
         if existing.count >= maxAllowed {
             throw TerritoryError.territoryLimitReached(maxAllowed)
         }
@@ -751,6 +805,12 @@ enum TerritoryError: LocalizedError {
     case loadFailed(String)
     case territoryLimitReached(Int)
     case territoryOverlap
+
+    /// 是否可以自动重试（网络/服务器错误）
+    var isRetryable: Bool {
+        if case .uploadFailed = self { return true }
+        return false
+    }
 
     var errorDescription: String? {
         switch self {

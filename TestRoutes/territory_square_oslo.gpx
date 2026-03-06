@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="EarthLord Territory Test">
+  <!--
+    EarthLord 圈地测试路线 — Oslo 50×50m 方形
+    用于 Xcode Simulator GPS 模拟
+
+    使用方法：
+    1. Xcode → Product → Scheme → Edit Scheme → Run → Options
+    2. Default Location → Custom GPX File → 选择此文件
+    3. 或在 Simulator 运行时：Features → Location → Custom GPX Location
+
+    路线参数：
+    - 每步 12m，每 4 秒一个点 → 速度 3 m/s = 10.8 km/h（步行范围，不触发警告）
+    - 总距离 ~200m，总时长 ~84 秒
+    - 闭环：最后一点距起点约 11m（< 50m 阈值），自动触发闭合
+    - 面积：50m × 50m = 2500m²（通过所有验证）
+
+    Simulator 设置提示：
+    - 勾选 MOCK_LOCATION=OSLO 环境变量可让 POI 搜索也在 Oslo 工作
+  -->
+  <trk>
+    <name>EarthLord 圈地测试 Oslo 50×50m</name>
+    <trkseg>
+      <!-- 起点 SW 角 -->
+      <trkpt lat="59.91000" lon="10.75000"><time>2026-03-06T10:00:00Z</time></trkpt>
+
+      <!-- 东行 ~50m（5步 × 10m） -->
+      <trkpt lat="59.91000" lon="10.75018"><time>2026-03-06T10:00:04Z</time></trkpt>
+      <trkpt lat="59.91000" lon="10.75036"><time>2026-03-06T10:00:08Z</time></trkpt>
+      <trkpt lat="59.91000" lon="10.75054"><time>2026-03-06T10:00:12Z</time></trkpt>
+      <trkpt lat="59.91000" lon="10.75072"><time>2026-03-06T10:00:16Z</time></trkpt>
+      <trkpt lat="59.91000" lon="10.75090"><time>2026-03-06T10:00:20Z</time></trkpt>
+
+      <!-- 北行 ~50m（5步 × ~11m，SE→NE） -->
+      <trkpt lat="59.91010" lon="10.75090"><time>2026-03-06T10:00:24Z</time></trkpt>
+      <trkpt lat="59.91020" lon="10.75090"><time>2026-03-06T10:00:28Z</time></trkpt>
+      <trkpt lat="59.91030" lon="10.75090"><time>2026-03-06T10:00:32Z</time></trkpt>
+      <trkpt lat="59.91040" lon="10.75090"><time>2026-03-06T10:00:36Z</time></trkpt>
+      <trkpt lat="59.91050" lon="10.75090"><time>2026-03-06T10:00:40Z</time></trkpt>
+
+      <!-- 西行 ~50m（5步，NE→NW） -->
+      <trkpt lat="59.91050" lon="10.75072"><time>2026-03-06T10:00:44Z</time></trkpt>
+      <trkpt lat="59.91050" lon="10.75054"><time>2026-03-06T10:00:48Z</time></trkpt>
+      <trkpt lat="59.91050" lon="10.75036"><time>2026-03-06T10:00:52Z</time></trkpt>
+      <trkpt lat="59.91050" lon="10.75018"><time>2026-03-06T10:00:56Z</time></trkpt>
+      <trkpt lat="59.91050" lon="10.75000"><time>2026-03-06T10:01:00Z</time></trkpt>
+
+      <!-- 南行返回（NW→SW），最后一点距起点 ~11m → 触发闭环 -->
+      <trkpt lat="59.91040" lon="10.75000"><time>2026-03-06T10:01:04Z</time></trkpt>
+      <trkpt lat="59.91030" lon="10.75000"><time>2026-03-06T10:01:08Z</time></trkpt>
+      <trkpt lat="59.91020" lon="10.75000"><time>2026-03-06T10:01:12Z</time></trkpt>
+      <trkpt lat="59.91010" lon="10.75000"><time>2026-03-06T10:01:16Z</time></trkpt>
+      <!-- 距起点 (59.91000) 约 11m → 闭合！ -->
+      <trkpt lat="59.91001" lon="10.75000"><time>2026-03-06T10:01:20Z</time></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

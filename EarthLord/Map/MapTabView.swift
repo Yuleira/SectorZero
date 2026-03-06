@@ -834,9 +834,10 @@ struct MapTabView: View {
             locationManager.startUpdatingLocation()
         }
 
-        // 加载所有领地
+        // 加载所有领地，并自动重传本地待上传的领地
         Task {
             await loadTerritories()
+            await retryPendingUploadIfNeeded()
         }
     }
 
@@ -1089,7 +1090,7 @@ struct MapTabView: View {
         }
     }
 
-    /// 上传当前领地
+    /// 上传当前领地（含自动重试，最多重试 2 次）
     private func uploadCurrentTerritory() async {
         // 防止重复上传
         guard !isUploading else {
@@ -1119,52 +1120,106 @@ struct MapTabView: View {
 
         isUploading = true
 
-        do {
-            try await territoryManager.uploadTerritory(
+        let maxAttempts = 3
+        var lastError: Error?
+
+        for attempt in 0..<maxAttempts {
+            if attempt > 0 {
+                // 指数退避：1.5s、3s
+                let delay = UInt64(attempt) * 1_500_000_000
+                debugLog("🗺️ [地图页面] 网络错误，\(attempt) 秒后自动重试（第 \(attempt)/\(maxAttempts - 1) 次）...")
+                try? await Task.sleep(nanoseconds: delay)
+            }
+
+            do {
+                try await territoryManager.uploadTerritory(
+                    coordinates: coordinates,
+                    area: area,
+                    startTime: startTime,
+                    distanceWalked: distance
+                )
+
+                // 上传成功
+                debugLog("🗺️ [地图页面] 领地上传成功" + (attempt > 0 ? "（第 \(attempt + 1) 次尝试）" : ""))
+
+                // 累计行走距离
+                await territoryManager.addCumulativeDistance(distance)
+
+                // 停止碰撞监控
+                stopCollisionMonitoring()
+
+                // 停止追踪（会重置所有状态）
+                locationManager.stopPathTracking()
+                trackingStartTime = nil
+                canRetryUpload = false
+
+                // 显示成功提示
+                withAnimation {
+                    showUploadSuccess = true
+                }
+                triggerEventFeedback(.success)
+
+                // 10 秒后隐藏成功提示
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                    withAnimation {
+                        showUploadSuccess = false
+                    }
+                }
+
+                // 刷新领地列表
+                await loadTerritories()
+                // 通知 TerritoryTabView 自动刷新
+                NotificationCenter.default.post(name: .territoryUpdated, object: nil)
+
+                isUploading = false
+                return
+
+            } catch let terrError as TerritoryError where terrError.isRetryable && attempt < maxAttempts - 1 {
+                // 网络/服务器错误，且还有重试机会
+                lastError = terrError
+                debugLog("🗺️ [地图页面] 上传失败（可重试）: \(terrError.localizedDescription)")
+                TerritoryLogger.shared.log("上传失败，准备重试: \(terrError.localizedDescription)", type: .warning)
+
+            } catch {
+                // 不可重试的错误（验证失败、领地上限等），直接退出循环
+                lastError = error
+                debugLog("🗺️ [地图页面] 上传失败（不可重试）: \(error.localizedDescription)")
+                break
+            }
+        }
+
+        // 所有尝试失败
+        if let terrErr = lastError as? TerritoryError, terrErr.isRetryable {
+            // 网络错误 — GPS 路径已采集成功，本地保存，等待有网时自动上传
+            territoryManager.savePendingUpload(
                 coordinates: coordinates,
                 area: area,
                 startTime: startTime,
                 distanceWalked: distance
             )
-
-            // 上传成功
-            debugLog("🗺️ [地图页面] 领地上传成功")
-
-            // 累计行走距离
-            await territoryManager.addCumulativeDistance(distance)
-
-            // 停止碰撞监控
+            // 停止追踪（数据已安全存储，不需要 GPS 路径了）
             stopCollisionMonitoring()
-
-            // 停止追踪（会重置所有状态）
             locationManager.stopPathTracking()
+            locationManager.clearSavedPath()
             trackingStartTime = nil
             canRetryUpload = false
-
-            // 显示成功提示
+            debugLog("🗺️ [地图页面] 网络不可用，领地已保存本地，待网络恢复后自动上传")
+            TerritoryLogger.shared.log("领地已保存本地，待网络恢复后上传", type: .warning)
+            triggerEventFeedback(.warning)
             withAnimation {
-                showUploadSuccess = true
+                uploadError = NSLocalizedString("map_territory_saved_locally", comment: "Territory saved locally. Will sync automatically when connected.")
+                showCollisionWarning = false
+                collisionWarning = nil
             }
-            triggerEventFeedback(.success)
-
-            // 10 秒后隐藏成功提示
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-                withAnimation {
-                    showUploadSuccess = false
-                }
+            // 8 秒后自动消失（这不是错误，只是通知）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+                withAnimation { uploadError = nil }
             }
 
-            // 刷新领地列表
-            await loadTerritories()
-            // 通知 TerritoryTabView 自动刷新
-            NotificationCenter.default.post(name: .territoryUpdated, object: nil)
-
-        } catch {
+        } else if let error = lastError {
+            // 非网络错误（多边形无效、领地上限、重叠等）— 保留路径供手动重试
             debugLog("🗺️ [地图页面] 领地上传失败: \(error.localizedDescription)")
             TerritoryLogger.shared.log("领地上传失败: \(error.localizedDescription)", type: .error)
-
-            // 保留路径数据（pathCoordinates 未清除），允许重试
-            // 清除碰撞警告（追踪已停止，不再需要）
             triggerEventFeedback(.danger)
             withAnimation {
                 let format = NSLocalizedString("map_upload_failed_format", comment: "Upload failed")
@@ -1173,10 +1228,41 @@ struct MapTabView: View {
                 showCollisionWarning = false
                 collisionWarning = nil
             }
-            // 不自动清除错误，等用户手动重试或放弃
         }
 
         isUploading = false
+    }
+
+    /// 有网络时自动重传本地保存的领地
+    private func retryPendingUploadIfNeeded() async {
+        guard let pending = territoryManager.loadPendingUpload() else { return }
+        debugLog("🗺️ [地图页面] 发现本地待上传领地，尝试自动上传...")
+
+        do {
+            try await territoryManager.uploadTerritory(
+                coordinates: pending.clCoordinates,
+                area: pending.area,
+                startTime: pending.startTime,
+                distanceWalked: pending.distanceWalked
+            )
+            territoryManager.clearPendingUpload()
+            await territoryManager.addCumulativeDistance(pending.distanceWalked)
+            debugLog("🗺️ [地图页面] 本地领地自动上传成功")
+            await loadTerritories()
+            NotificationCenter.default.post(name: .territoryUpdated, object: nil)
+            triggerEventFeedback(.success)
+            withAnimation { showUploadSuccess = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                withAnimation { self.showUploadSuccess = false }
+            }
+        } catch let terrErr as TerritoryError where terrErr.isRetryable {
+            // 仍无网络，保留本地数据，下次再试
+            debugLog("🗺️ [地图页面] 自动上传失败（仍无网络），保留本地数据")
+        } catch {
+            // 非网络错误（如领地已过期、重叠）— 放弃并清除，避免永久卡死
+            debugLog("🗺️ [地图页面] 自动上传失败（非网络错误），清除本地数据: \(error.localizedDescription)")
+            territoryManager.clearPendingUpload()
+        }
     }
 
     /// 加载所有领地
