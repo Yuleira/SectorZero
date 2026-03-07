@@ -1,2 +1,7 @@
 supabase/.temp/
-supabase/.temp/
+
+# Build artifacts
+build/
+
+# Backup files
+*.bak

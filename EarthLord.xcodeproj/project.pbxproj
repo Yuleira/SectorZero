@@ -164,7 +164,7 @@
 		E62484F82F152D4D001B6ABC /* ExplorationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplorationManager.swift; sourceTree = "<group>"; };
 		E62484FA2F152D59001B6ABC /* InventoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryManager.swift; sourceTree = "<group>"; };
 		E62484FC2F152D66001B6ABC /* RewardGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardGenerator.swift; sourceTree = "<group>"; };
-		E632AFC02F12BECD0098D5EC /* SectorZero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SectorZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E632AFC02F12BECD0098D5EC /* SectorZero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = SectorZero.app; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E652F40C2F41155B00C8DEC7 /* Settings/PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings/PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		E66247742F250BC70094BEBF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		E68C12DA2F1A5983008967AA /* AIDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDebugView.swift; sourceTree = "<group>"; };
